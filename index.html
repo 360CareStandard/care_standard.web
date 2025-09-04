@@ -1,12 +1,79 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- Favicons -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="/favicon/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/favicon/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+
+    <!-- Preload visuals so first paint matches the app -->
+    <link rel="preload" href="/GradientLines.svg" as="image" />
+    <link rel="preload" href="/Rectangle.svg" as="image" />
+    <link
+      rel="preload"
+      href="/logo/logo-care-standard.svg"
+      as="image"
+      fetchpriority="high"
+    />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <!-- Mobile status bar tint -->
+    <meta name="theme-color" content="#043A68" />
+    <title>Care Standard</title>
   </head>
   <body>
+    <!-- Paints instantly on first byte -->
+    <div
+      id="boot-bg"
+      aria-hidden="true"
+      style="
+        position: fixed;
+        inset: 0;
+        z-index: 2147483646;
+        background: linear-gradient(180deg, #02794d 0%, #043a68 100%);
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          opacity: 0.6;
+          mix-blend-mode: overlay;
+          background-image: url('/GradientLines.svg'), url('/Rectangle.svg');
+          background-repeat: no-repeat, no-repeat;
+          background-size: cover, cover;
+          background-position: center, center;
+        "
+      ></div>
+      <div
+        style="position: absolute; inset: 0; display: grid; place-items: center"
+      >
+        <img
+          src="/logo/logo-care-standard.svg"
+          alt=""
+          style="
+            width: 250px;
+            height: auto;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+          "
+        />
+      </div>
+    </div>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
