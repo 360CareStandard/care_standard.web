@@ -44,17 +44,16 @@ export function NavUser({ user }: NavUserProps) {
         <SidebarMenuItem>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuButton
-                size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-              >
-                <Avatar className="h-8 w-8 rounded-lg border border-neutral-200">
+              <SidebarMenuButton size="lg" className="bg-white">
+                <Avatar className="h-8 w-8 rounded-full  border-neutral-200">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">SN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-start text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate text-muted-foreground text-xs">
+                    {user.email}
+                  </span>
                 </div>
                 <ChevronDown className="ms-auto size-4" />
               </SidebarMenuButton>

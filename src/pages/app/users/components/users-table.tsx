@@ -116,11 +116,15 @@ export function UsersTable({ columns, data }: DataTableProps) {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
+                <TableCell colSpan={columns.length} className="p-0">
+                  <div className="flex flex-col items-center justify-center gap-3 py-16">
+                    <img
+                      src="/EmptyState.svg"
+                      alt=""
+                      className="mx-auto h-28 w-[250px] opacity-90"
+                    />
+                    <p className="text-sm text-muted-foreground">No results.</p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}

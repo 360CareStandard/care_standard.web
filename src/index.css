@@ -26,7 +26,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--color-neutral-100);
+  --color-border: var(--color-neutral-200);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-chart-1: var(--chart-1);
@@ -172,6 +172,88 @@
   --sidebar-accent-foreground: oklch(0.97 0.02 142);
   --sidebar-border: oklch(0.25 0 0);
   --sidebar-ring: oklch(0.87 0.06 142);
+}
+/* Root container (make it look like shadcn Input) */
+.cs-phone-input.PhoneInput {
+  display: flex;
+  align-items: center;
+  height: 2.75rem; /* ~ h-11 */
+  border-radius: 0.375rem; /* rounded-md */
+  border: 1px solid var(--input);
+  background-color: var(--background);
+  color: var(--foreground);
+  padding-left: 0.5rem; /* pl-2 */
+  padding-right: 0.5rem; /* pr-2 */
+  transition: border-color 150ms, box-shadow 150ms, background-color 150ms;
+}
+
+/* Focus ring to match shadcn (focus-visible:ring-2) */
+.cs-phone-input.PhoneInput:focus-within {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+/* Disabled state */
+.cs-phone-input.PhoneInput[disabled],
+.cs-phone-input .PhoneInputInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Error state (toggle with cs-phone-input--error) */
+.cs-phone-input--error.PhoneInput,
+.cs-phone-input--error .PhoneInput {
+  border-color: var(--destructive);
+  background-color: color-mix(
+    in oklab,
+    var(--destructive-foreground) 0%,
+    transparent
+  );
+  /* subtle red tint; adjust/remove if you prefer */
+}
+
+/* The actual text input */
+.cs-phone-input .PhoneInputInput {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 0.95rem; /* text-base-ish */
+  color: var(--foreground);
+  padding: 0 0.25rem; /* minimal internal gap */
+}
+
+/* Placeholder color like shadcn */
+.cs-phone-input .PhoneInputInput::placeholder {
+  color: var(--muted-foreground);
+}
+
+/* Country button (flag/code) — remove default borders/bg */
+.cs-phone-input .PhoneInputCountry {
+  margin-right: 0.375rem; /* gap-1.5 */
+}
+.cs-phone-input .PhoneInputCountrySelect {
+  /* let the lib handle the native select; no extra border */
+  border: 0;
+  background: transparent;
+}
+.cs-phone-input .PhoneInputCountryIcon {
+  /* ensure flag area aligns nicely */
+  width: 1.25rem;
+  height: 1rem;
+}
+
+/* High-contrast/dark: inherit from your variables */
+.dark .cs-phone-input.PhoneInput {
+  border-color: var(--input);
+  background-color: var(--background);
+  color: var(--foreground);
+}
+.dark .cs-phone-input.PhoneInput:focus-within {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--ring);
 }
 
 .login__box {

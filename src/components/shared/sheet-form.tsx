@@ -59,10 +59,8 @@ export function SheetForm({
   headerClassName,
   bodyClassName,
   footerClassName,
-
   title,
   description,
-
   onSubmit,
   submitLabel = "Save changes",
   cancelLabel = "Close",
@@ -76,13 +74,18 @@ export function SheetForm({
     <Sheet open={open} onOpenChange={onOpenChange}>
       {trigger ? <SheetTrigger asChild>{trigger}</SheetTrigger> : null}
 
-      <SheetContent side={side} className={cn("sm:max-w-lg w-full", className)}>
+      <SheetContent
+        side={side}
+        className={cn("sm:max-w-[520px] w-full", className)}
+      >
         {/* Form fills the sheet so footer stays at bottom */}
         <form onSubmit={onSubmit} className="flex h-full flex-col">
           <SheetHeader className={cn(headerClassName)}>
             <SheetTitle>{title}</SheetTitle>
             {description ? (
-              <SheetDescription>{description}</SheetDescription>
+              <SheetDescription className="text-xs">
+                {description}
+              </SheetDescription>
             ) : null}
           </SheetHeader>
 
@@ -90,12 +93,10 @@ export function SheetForm({
             {children}
           </div>
 
-          <SheetFooter className={cn("border-t px-4 py-3", footerClassName)}>
+          <SheetFooter className={cn("border-t px-4 py-3 ", footerClassName)}>
             <div className="ml-auto flex items-center gap-3">
               {footerExtra}
-              <Button type="submit" disabled={submitDisabled}>
-                {submitLabel}
-              </Button>
+
               {!hideCancel && (
                 <SheetClose asChild>
                   <Button type="button" variant="outline">
@@ -103,6 +104,9 @@ export function SheetForm({
                   </Button>
                 </SheetClose>
               )}
+              <Button type="submit" disabled={submitDisabled}>
+                {submitLabel}
+              </Button>
             </div>
           </SheetFooter>
         </form>

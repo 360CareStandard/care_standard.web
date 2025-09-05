@@ -1,6 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import "leaflet/dist/leaflet.css";
+
 import AppProvider from "./provider/index.tsx";
 import AppRoutes from "./routes/index.routes.tsx";
 

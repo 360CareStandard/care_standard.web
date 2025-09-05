@@ -53,14 +53,11 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
               hasError ? errorId : undefined
             )}
             className={cn(
-              // base sizing & shape (adjust to match your mock)
-              " px-4 text-base h-11",
-              // when error -> red border + subtle red bg
+              "px-4 text-base h-11 placeholder:text-[#667085]",
               hasError
                 ? "border-red-300 bg-red-50 text-red-900 placeholder:text-red-400 focus-visible:ring-red-500 focus-visible:border-red-500"
                 : "focus-visible:ring-2",
-              // make room for the status icon on the right
-              "pr-10",
+              hasError ? "pr-10" : undefined, // <- conditional
               className
             )}
             {...inputProps}
