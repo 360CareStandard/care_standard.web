@@ -20,7 +20,7 @@ export function ProfileImageField({
   setValue,
   initials,
   label = "Profile Image",
-  maxSizeMB = 12,
+  maxSizeMB = 5,
 }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const src = watch("profileImage"); // <-- typed as string | undefined
@@ -56,23 +56,17 @@ export function ProfileImageField({
               JPG, PNG • Max {maxSizeMB}MB
             </p>
           </div>
-          {/* <button
-            type="button"
-            onClick={openPicker}
-            className="absolute -bottom-1 -right-1 grid h-7 w-7 place-items-center rounded-full bg-emerald-600 text-white shadow hover:bg-emerald-700"
-            aria-label="Upload profile image"
-          >
-            <Upload className="h-4 w-4" />
-          </button> */}
         </div>
 
         <div className="flex gap-2">
           <Button type="button" variant="outline" onClick={openPicker}>
             <Edit className="mr-2 h-4 w-4" /> Update
           </Button>
-          <Button type="button" variant="outline" onClick={onRemove}>
-            <Trash className="mr-2 h-4 w-4" /> Remove
-          </Button>
+          {src && (
+            <Button type="button" variant="outline" onClick={onRemove}>
+              <Trash className="mr-2 h-4 w-4" /> Remove
+            </Button>
+          )}
         </div>
       </div>
 

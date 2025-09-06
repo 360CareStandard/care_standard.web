@@ -5,10 +5,10 @@ import { SheetForm } from "@/components/shared/sheet-form";
 import { Button } from "@/components/ui/button";
 import PersonalDetails from "./personal-details";
 import { clientSchema, type ClientFormData } from "../schemas/add-client";
-import { Stepper } from "../components/stepper";
 import ContactDetails from "./contact-details";
 import Addresses from "./addresses";
 import WellbeingOverview from "./wellbeing-overview";
+import { StepperHeader } from "../components/stepper-header";
 
 interface Props {
   open: boolean;
@@ -175,7 +175,7 @@ const AddClient = ({ open, setOpen }: Props) => {
       onOpenChange={setOpen}
       title="Add New Client"
       description="Capture basic details to create a client profile"
-      headerClassName="bg-[#E4E7EC]"
+      headerClassName="bg-[#E4E7EC] py-2.5"
       onSubmit={onFormSubmit}
       submitLabel={
         currentStep < lastStep
@@ -200,10 +200,15 @@ const AddClient = ({ open, setOpen }: Props) => {
       }
       submitDisabled={isStepValidating || isSubmitting}
     >
-      <Stepper
+      {/* <Stepper
         steps={steps}
         current={currentStep}
         completed={completedSteps}
+        onStepClick={handleStepClick}
+      /> */}
+      <StepperHeader
+        steps={steps}
+        current={currentStep}
         onStepClick={handleStepClick}
       />
 
