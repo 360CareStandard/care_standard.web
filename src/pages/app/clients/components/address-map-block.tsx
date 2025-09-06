@@ -15,6 +15,7 @@ import { MapContainer, TileLayer, Marker, Circle, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Info } from "lucide-react";
 import { reverseGeocodeNominatim } from "@/lib/geocoding";
+import { HelpPopover } from "@/components/shared/help-popover";
 
 const MIN = 50;
 const MAX = 500;
@@ -172,20 +173,28 @@ export function AddressMapBlock({ watch, setValue, errors, className }: Props) {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1">
             <Label className="font-normal">Secure check-in zone</Label>
-            <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-muted">
-              <Info className="h-3 w-3 text-muted-foreground" />
-            </span>
+            <HelpPopover title="Secure check-in zone">
+              <ul className="list-disc pl-5 space-y-1 text-xs">
+                <li>
+                  This sets a <strong>geofence radius</strong> around the map
+                  pin. Staff can check in only if their device location is{" "}
+                  <em>inside</em> the circle.
+                </li>
+                <li>
+                  Use the slider (50–500 m) or the number box to adjust the
+                  radius.
+                </li>
+                <li>
+                  If GPS is weak (apartments/indoors), choose a larger radius
+                  (150–300 m). For precise locations, use a smaller radius.
+                </li>
+                <li>Drag the map pin to move the center of the zone.</li>
+              </ul>
+            </HelpPopover>
           </div>
-          <p className="flex items-start gap-2 text-xs text-muted-foreground">
-            <span className="mt-[2px] inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border border-border">
-              <span className="h-[6px] w-[6px] rounded-full bg-muted-foreground/70" />
-            </span>
-            If this isn’t the correct location, drag the location icon to the
-            correct position.
-          </p>
         </div>
 
-        <div className="grid grid-cols-12 items-center gap-3">
+        <div className="grid grid-cols-12 items-center mt-4 gap-3">
           {/* left min label */}
           <div className="text-xs text-muted-foreground">{MIN}</div>
 
