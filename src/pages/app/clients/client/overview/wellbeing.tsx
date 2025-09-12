@@ -1,7 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { InfoRow } from "../components/info-row";
 import { Button } from "@/components/ui/button";
-import { CircleDashed, Edit, NotebookText } from "lucide-react";
+import { CircleDashed, NotebookText } from "lucide-react";
+import { EditIcon } from "@/assets/icons";
 const WellbeingOverview = () => {
   return (
     <Card>
@@ -14,7 +15,7 @@ const WellbeingOverview = () => {
           </p>
           <div className="flex flex-wrap gap-2">
             <Button size="sm" variant="outline" className="gap-2">
-              <Edit size={17.65} />
+              <EditIcon />
               Update
             </Button>
           </div>

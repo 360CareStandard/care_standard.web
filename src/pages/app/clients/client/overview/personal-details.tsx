@@ -1,16 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import {
-  Camera,
-  Trash2,
-  CalendarDays,
-  ShieldCheck,
-  User,
-  Edit,
-} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { InfoRow } from "../components/info-row";
+import {
+  CalendarAltIcon,
+  EditIcon,
+  StatusIcon,
+  TrashIcon,
+  UserIcon,
+} from "@/assets/icons";
 
 interface Props {
   personal: {
@@ -40,11 +39,11 @@ const PersonalDetails = ({ personal }: Props) => {
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button variant="outline" className="gap-2">
-                  <Camera size={17.65} />
+                  <EditIcon />
                   Update
                 </Button>
                 <Button variant="outline" className="gap-2">
-                  <Trash2 size={17.65} />
+                  <TrashIcon />
                   Remove
                 </Button>
               </div>
@@ -65,7 +64,7 @@ const PersonalDetails = ({ personal }: Props) => {
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="outline" className="gap-2">
-                  <Edit size={17.65} />
+                  <EditIcon />
                   Edit
                 </Button>
               </div>
@@ -73,34 +72,31 @@ const PersonalDetails = ({ personal }: Props) => {
 
             <Card>
               <CardContent className="p-0">
-                <InfoRow label="Title" icon={<User size={17.65} />}>
+                <InfoRow label="Title" icon={<UserIcon />}>
                   {personal.title}
                 </InfoRow>
 
-                <InfoRow icon={<User size={17.65} />} label="First Name">
+                <InfoRow icon={<UserIcon />} label="First Name">
                   {personal.firstName}
                 </InfoRow>
 
-                <InfoRow icon={<User size={17.65} />} label="Last Name">
+                <InfoRow icon={<UserIcon />} label="Last Name">
                   {personal.lastName}
                 </InfoRow>
 
-                <InfoRow icon={<User size={17.65} />} label="Preferred Name">
+                <InfoRow icon={<UserIcon />} label="Preferred Name">
                   {personal.preferredName || "—"}
                 </InfoRow>
 
-                <InfoRow icon={<User size={17.65} />} label="Pronouns">
+                <InfoRow icon={<UserIcon />} label="Pronouns">
                   {personal.pronouns || "—"}
                 </InfoRow>
 
-                <InfoRow
-                  label="Date of Birth"
-                  icon={<CalendarDays size={17.65} />}
-                >
+                <InfoRow label="Date of Birth" icon={<CalendarAltIcon />}>
                   {personal.dateOfBirth || "—"}
                 </InfoRow>
 
-                <InfoRow label="Status" icon={<ShieldCheck size={17.65} />}>
+                <InfoRow label="Status" icon={<StatusIcon />}>
                   <span
                     className={cn(
                       "rounded-full px-2 py-0.5 text-xs",

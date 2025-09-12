@@ -12,16 +12,14 @@ import { NavLink, useParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { NavUser } from "./nav-user";
 
+import { ShieldAlert, Settings, Download } from "lucide-react";
 import {
-  Home,
-  UserRound,
-  CalendarClock,
-  ClipboardList,
-  Hash,
-  ShieldAlert,
-  Settings,
-  Download,
-} from "lucide-react";
+  HomeIcon,
+  UserSquareIcon,
+  CalendarCircleIcon,
+  NoteIcon,
+  HashtagIcon,
+} from "@/assets/icons";
 
 /* --- describe nav with slugs; we'll build full URLs from clientId --- */
 type Item = {
@@ -35,25 +33,25 @@ type Group = { heading?: string; items: Item[] };
 const NAV: Group[] = [
   {
     items: [
-      { title: "Overview", slug: "overview", icon: Home, end: true },
-      { title: "Client Info", slug: "info", icon: UserRound },
-      { title: "Visit Schedule", slug: "schedule", icon: CalendarClock },
-      { title: "Care Plan", slug: "care-plan", icon: ClipboardList },
+      { title: "Overview", slug: "overview", icon: HomeIcon, end: true },
+      { title: "Client Info", slug: "info", icon: UserSquareIcon },
+      { title: "Visit Schedule", slug: "schedule", icon: CalendarCircleIcon },
+      { title: "Care Plan", slug: "care-plan", icon: NoteIcon },
     ],
   },
   {
     heading: "Health & Care",
     items: [
-      { title: "Health & Meds", slug: "health", icon: Hash },
-      { title: "Notes Media", slug: "notes", icon: Hash },
-      { title: "Care Circle", slug: "circle", icon: Hash },
+      { title: "Health & Meds", slug: "health", icon: HashtagIcon },
+      { title: "Notes Media", slug: "notes", icon: HashtagIcon },
+      { title: "Care Circle", slug: "circle", icon: HashtagIcon },
       { title: "Safety Risks", slug: "risks", icon: ShieldAlert },
     ],
   },
   {
     heading: "More Actions",
     items: [
-      { title: "Clients Docs", slug: "docs", icon: Hash },
+      { title: "Clients Docs", slug: "docs", icon: HashtagIcon },
       { title: "Settings", slug: "settings", icon: Settings },
       { title: "Download Info", slug: "download", icon: Download },
     ],
@@ -104,16 +102,16 @@ export function AppSidebar() {
                           asChild
                           isActive={isActive}
                           className={cn(
-                            "group relative my-1 flex items-center gap-2 rounded-lg px-2 py-3 text-[15px]",
+                            "group relative my-1 flex items-center gap-2 !rounded-[4px] px-2 !py-4 text-[15px]",
                             "hover:bg-muted",
                             isActive &&
-                              "!bg-primary-accent text-primary ring-1 ring-primary/10 hover:bg-primary/15"
+                              "!bg-primary-accent text-primary  hover:bg-primary/15"
                           )}
                           onClick={() => setOpenMobile(false)}
                         >
                           <span className="inline-flex items-center gap-2">
                             <span className="grid size-8 place-items-center text-muted-foreground">
-                              <Icon className="h-4 w-4" />
+                              <Icon />
                             </span>
                             <span
                               className={cn(

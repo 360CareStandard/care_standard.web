@@ -89,7 +89,12 @@ export function SheetForm({
             ) : null}
           </SheetHeader>
 
-          <div className={cn("flex-1 overflow-auto px-4 py-4", bodyClassName)}>
+          <div
+            className={cn(
+              "flex-1 overflow-auto bg-white rounded-t-2xl px-4 py-4",
+              bodyClassName
+            )}
+          >
             {children}
           </div>
 

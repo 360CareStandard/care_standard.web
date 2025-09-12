@@ -1,7 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { InfoRow } from "../components/info-row";
 import { Button } from "@/components/ui/button";
-import { Edit, Mail, Phone } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
+import { EditIcon } from "@/assets/icons";
 const ContactDetails = () => {
   return (
     <Card>
@@ -12,8 +13,8 @@ const ContactDetails = () => {
             Clients contact details
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="outline" className="gap-2">
-              <Edit size={17.65} />
+            <Button variant="outline" className="gap-2">
+              <EditIcon />
               Update
             </Button>
           </div>

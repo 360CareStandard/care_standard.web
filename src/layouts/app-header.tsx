@@ -32,8 +32,15 @@ const links = [
 
 export function AppHeader() {
   return (
-    <Header fixed className="bg-[#01301F] text-white ">
-      <div className="mx-auto flex w-full  items-center gap-6 px-6">
+    <Header
+      fixed
+      className="
+    fixed top-0 z-50 bg-[#01301F] text-white backdrop-blur
+    border-b border-white/10
+    pt-[max(env(safe-area-inset-top),0px)]
+  "
+    >
+      <div className="mx-auto flex w-full items-center gap-3 sm:gap-6 px-3 sm:px-6 h-14">
         {/* left: logo */}
         <Logo />
 

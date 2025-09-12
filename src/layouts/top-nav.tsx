@@ -28,24 +28,22 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
       {/* Mobile: hamburger dropdown */}
       <div className="lg:hidden">
         <DropdownMenu>
-          {/* NOTE: remove modal={false} for better touch behavior */}
           <DropdownMenuTrigger asChild>
             <Button
               size="icon"
-              variant="outline"
-              className="md:size-7 bg-transparent"
+              variant="ghost"
+              className="h-10 w-10 text-white hover:bg-white/10"
               aria-label="Open menu"
             >
-              <Menu />
+              <Menu className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuContent className="w-56" align="start" sideOffset={8}>
             {links.map(({ title, href, disabled }) => (
               <DropdownMenuItem
                 key={`${title}-${href}`}
                 disabled={!!disabled}
-                // Use onSelect for Radix items; navigate imperatively
                 onSelect={(e) => {
                   if (disabled) return;
                   navigate(appPath(href));
@@ -62,30 +60,41 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
         </DropdownMenu>
       </div>
 
-      {/* Desktop: horizontal nav */}
+      {/* Desktop: horizontal nav (no wrap, scroll if overflow) */}
       <nav
-        className={cn("hidden items-center lg:flex gap-6 xl:gap-8", className)}
+        className={cn(
+          "hidden lg:flex items-center gap-2",
+          "max-w-full overflow-x-auto whitespace-nowrap scrollbar-none nav-mask",
+          className
+        )}
+        aria-label="Primary"
         {...props}
       >
         {links.map(({ title, href, disabled }) => {
           const active = isActive(href);
-          return disabled ? (
-            <span
-              key={`${title}-${href}`}
-              className="text-sm font-medium text-white/50 cursor-not-allowed"
-              aria-disabled="true"
-            >
-              {title}
-            </span>
-          ) : (
+
+          if (disabled) {
+            return (
+              <span
+                key={`${title}-${href}`}
+                className="px-3 py-1.5 text-sm font-medium text-white/50 cursor-not-allowed"
+                aria-disabled="true"
+              >
+                {title}
+              </span>
+            );
+          }
+
+          return (
             <Link
               key={`${title}-${href}`}
               to={appPath(href)}
+              aria-current={active ? "page" : undefined}
               className={cn(
-                "text-sm font-medium transition-colors",
+                "px-3 py-1.5 text-sm font-medium rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40",
                 active
-                  ? "bg-primary text-white rounded-lg px-3 py-1.5 shadow-sm"
-                  : "text-white/80 hover:text-white"
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
               )}
             >
               {title}

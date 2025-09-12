@@ -308,6 +308,35 @@
     opacity: 0.5;
   }
 }
+/* hide scrollbars for the horizontal nav overflow */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* optional: subtle edge fade when nav overflows */
+
+@media (max-width: 1320px) {
+  .nav-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 24px,
+      black calc(100% - 24px),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 24px,
+      black calc(100% - 24px),
+      transparent
+    );
+  }
+}
 
 /* perf + accessibility */
 @media (prefers-reduced-motion: reduce) {
@@ -320,7 +349,7 @@
     /* slightly lighter effect on small/low-power devices */
     filter: drop-shadow(0 0 0.5px rgba(255, 255, 255, 0.14))
       drop-shadow(0 0 8px rgba(2, 121, 77, 0.24))
-      drop-shadow(0 0 18px rgba(2, 121, 77, 0.18));
+      drop-shadow(0 0 18px rgba(15, 15, 15, 0.18));
   }
 }
 

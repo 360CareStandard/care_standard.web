@@ -9,9 +9,9 @@ const Staff = lazy(() => import("@/pages/app/staff"));
 const ClientOverview = lazy(
   () => import("@/pages/app/clients/client/overview")
 );
-// const ClientPersonal = lazy(() => import("@/pages/app/client/personal"));
-// const ClientContacts = lazy(() => import("@/pages/app/client/contacts"));
-// const ClientAddresses = lazy(() => import("@/pages/app/client/addresses"));
+const ClientInformation = lazy(
+  () => import("@/pages/app/clients/client/information")
+);
 
 const appChildRoutes = (
   <>
@@ -21,16 +21,13 @@ const appChildRoutes = (
     <Route element={<ContainerLayout />}>
       <Route path="clients" element={<Clients />} />
       <Route path="staff" element={<Staff />} />
-      {/* add other “boxed” pages here */}
     </Route>
 
     {/* client profile: its own layout & spacing */}
     <Route path="clients/:clientId" element={<ClientProfileLayout />}>
       <Route index element={<Navigate to="overview" replace />} />
       <Route path="overview" element={<ClientOverview />} />
-      {/* <Route path="personal" element={<ClientPersonal />} />
-      <Route path="contacts" element={<ClientContacts />} />
-      <Route path="addresses" element={<ClientAddresses />} /> */}
+      <Route path="info" element={<ClientInformation />} />
     </Route>
 
     <Route path="*" element={<Navigate to="/app/clients" replace />} />

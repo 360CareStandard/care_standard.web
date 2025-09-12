@@ -37,7 +37,7 @@ const AddClient = ({ open, setOpen }: Props) => {
       accessDetails: "",
       lat: 51.5074, // London default is fine
       lng: -0.1278,
-      checkinRadiusM: 500,
+      checkinRadiusM: 200,
     },
     // errors appear on Next; but we will also revalidate on change
     mode: "onSubmit",

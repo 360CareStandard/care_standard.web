@@ -8,6 +8,7 @@ import {
   MapPinnedIcon,
   NotebookText,
 } from "lucide-react";
+import { EditIcon } from "@/assets/icons";
 const Addresses = () => {
   return (
     <Card>
@@ -19,7 +20,7 @@ const Addresses = () => {
           </p>
           <div className="flex flex-wrap gap-2">
             <Button size="sm" variant="outline" className="gap-2">
-              <Edit size={17.65} />
+              <EditIcon />
               Update
             </Button>
           </div>
