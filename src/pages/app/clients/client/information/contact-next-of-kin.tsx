@@ -1,56 +1,74 @@
-import React from "react";
+// pages/app/clients/client/overview/ContactNextOfKin.tsx
+import * as React from "react";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { EmptyStateCard } from "../components/empty-state";
+
+import {
+  AddContactSchema,
+  type AddContactForm,
+} from "../../schemas/add-contact-form";
+import AddContact from "../forms/add-contact";
+import { ContactDetailsCard } from "../components/contact-card";
+import { ContactDetails } from "../../schemas/contact-details";
+import { PeopleIcon } from "../icons/people";
+
 const ContactNextOfKin = () => {
   const [open, setOpen] = React.useState(false);
-  const PeopleIcon = () => (
-    <svg
-      width={32}
-      height={32}
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M12.3576 14.3318C12.2294 14.319 12.0755 14.319 11.9344 14.3318C8.88191 14.2292 6.45789 11.7282 6.45789 8.6501C6.45789 5.50784 8.99734 2.95557 12.1524 2.95557C15.2947 2.95557 17.8469 5.50784 17.8469 8.6501C17.8341 11.7282 15.4101 14.2292 12.3576 14.3318Z"
-        stroke="#191D31"
-        strokeWidth="1.92383"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M21.6561 5.521C24.1443 5.521 26.145 7.5346 26.145 10.0099C26.145 12.434 24.2212 14.4091 21.8228 14.4989C21.7202 14.486 21.6048 14.486 21.4894 14.4989"
-        stroke="#191D31"
-        strokeWidth="1.92383"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M5.94478 19.0645C2.841 21.1422 2.841 24.5282 5.94478 26.5931C9.47179 28.953 15.2561 28.953 18.7831 26.5931C21.8869 24.5153 21.8869 21.1294 18.7831 19.0645C15.2689 16.7174 9.48462 16.7174 5.94478 19.0645Z"
-        stroke="#191D31"
-        strokeWidth="1.92383"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M24.1313 26.0415C25.0548 25.8491 25.9269 25.4772 26.6451 24.9257C28.6459 23.4251 28.6459 20.9498 26.6451 19.4492C25.9397 18.9105 25.0804 18.5514 24.1698 18.3462"
-        stroke="#191D31"
-        strokeWidth="1.92383"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+  const [lastContact, setLastContact] = React.useState<ContactDetails | null>(
+    null
   );
+
+  const methods = useForm<AddContactForm>({
+    resolver: zodResolver(AddContactSchema),
+    mode: "onBlur",
+    defaultValues: {
+      fullName: "",
+      relationship: "Other",
+      phone: "",
+      email: "",
+      address: "",
+      notes: "",
+      primaryContact: true,
+      emergencyContact: true,
+      familyAccessApp: true,
+    },
+  });
+
+  const onSubmit = async (values: AddContactForm) => {
+    // values have "", not undefined, per your schema preference
+    setLastContact(values as ContactDetails);
+    setOpen(false);
+    methods.reset();
+  };
+  // const onSubmit = async (values: AddContactForm) => {
+  //   // TODO: call your API
+  //   console.log("submit:", values);
+
+  //   // success UX
+  //   setOpen(false);
+  //   methods.reset();
+  // };
+
+  const handleSheetSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    void methods.handleSubmit(onSubmit)();
+  };
+
+  const { formState } = methods;
+
   return (
     <>
       <Card>
-        <CardContent className="grid grid-cols-1  sm:grid-cols-2 gap-16">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-16">
           <div className="flex flex-col gap-4">
-            <h2 className="font-bold text-xl"> Contact Information</h2>
-            <p className=" text-sm text-muted-foreground">
+            <h2 className="font-bold text-xl">Contact Information</h2>
+            <p className="text-sm text-muted-foreground">
               Manage communication details and Family App access
             </p>
             <div className="flex flex-wrap gap-2">
@@ -64,11 +82,19 @@ const ContactNextOfKin = () => {
               </Button>
             </div>
           </div>
-          <EmptyStateCard
-            icon={<PeopleIcon />}
-            title="No contacts added yet"
-            description="Start by adding contact information for family members, friends, or carers who should have access to updates"
-          />
+          {lastContact ? (
+            <ContactDetailsCard
+              contact={lastContact}
+              onEdit={() => setOpen(true)}
+              onDelete={() => setLastContact(null)}
+            />
+          ) : (
+            <EmptyStateCard
+              icon={<PeopleIcon />}
+              title="No contacts added yet"
+              description="Start by adding contact information for family members, friends, or carers who should have access to updates"
+            />
+          )}
         </CardContent>
       </Card>
 
@@ -78,9 +104,14 @@ const ContactNextOfKin = () => {
         title="Add New Contact"
         description="Add a new contact for Jemmy Wilson. Include their communication details and access permissions."
         headerClassName="bg-[#E4E7EC] py-2.5"
-        submitLabel={"Add Contact"}
+        submitLabel={formState.isSubmitting ? "Saving..." : "Add Contact"}
+        submitDisabled={formState.isSubmitting}
+        onSubmit={handleSheetSubmit}
+        bodyClassName="space-y-4"
       >
-        <div>Form Content</div>
+        <FormProvider {...methods}>
+          <AddContact />
+        </FormProvider>
       </SheetForm>
     </>
   );

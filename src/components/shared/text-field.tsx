@@ -72,7 +72,7 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
         </div>
 
         {hasError && typeof error === "string" ? (
-          <p id={errorId} role="alert" className="mt-2 text-sm text-red-600">
+          <p id={errorId} role="alert" className="mt-1 text-sm text-red-600">
             {error}
           </p>
         ) : hint ? (

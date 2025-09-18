@@ -114,12 +114,14 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
   });
 
   const onSubmit = (values: UserForm) => {
+    console.log(values);
+
     form.reset();
     // showSubmittedData(values)
     onOpenChange(false);
   };
 
-  const isPasswordTouched = !!form.formState.dirtyFields.password;
+  // const isPasswordTouched = !!form.formState.dirtyFields.password;
 
   return (
     <Dialog

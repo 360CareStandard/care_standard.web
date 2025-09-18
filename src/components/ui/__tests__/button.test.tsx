@@ -2,16 +2,14 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 import { Button } from "../button";
-import { axe } from "vitest-axe";
-// Tip: if you add data-variant/data-size in <Button />, prefer those over class checks.
+import { axe } from "vitest-axe"; // ok to use vitest-axe
 
 describe("<Button />", () => {
   it("renders with default props", async () => {
-    render(<Button>Click me</Button>);
+    const { container } = render(<Button>Click me</Button>);
     const button = screen.getByRole("button", { name: /click me/i });
     expect(button).toBeInTheDocument();
-    expect(await axe(screen.container)).toHaveNoViolations();
-    // Keep or replace with data-variant if you add it:
+    expect(await axe(container)).toHaveNoViolations(); // ⬅ use container
     expect(button).toHaveClass("bg-primary");
   });
 
@@ -53,11 +51,18 @@ describe("<Button />", () => {
     const btn = screen.getByRole("button", { name: /disabled/i });
     expect(btn).toBeDisabled();
     expect(btn).toHaveClass("disabled:pointer-events-none");
-    // disabled should not fire
-    const user = userEvent.setup();
+
+    // optional: assert no click if disabled
     const onClick = vi.fn();
+    const user = userEvent.setup();
     // re-render with handler:
-    // (some button implementations ignore clicks if disabled anyway)
+    render(
+      <Button disabled onClick={onClick}>
+        Disabled
+      </Button>
+    );
+    await user.click(screen.getByRole("button", { name: /disabled/i }));
+    expect(onClick).not.toHaveBeenCalled();
   });
 
   it("supports keyboard activation (Enter/Space)", async () => {
@@ -78,23 +83,4 @@ describe("<Button />", () => {
       "custom-class"
     );
   });
-
-  // OPTIONAL — uncomment if your Button forwards refs
-  // it("forwards refs", () => {
-  //   const ref = { current: null as HTMLButtonElement | null };
-  //   render(<Button ref={(el) => (ref.current = el)}>Ref</Button>);
-  //   expect(ref.current?.tagName).toBe("BUTTON");
-  // });
-
-  // OPTIONAL — uncomment if your Button supports asChild/as polymorphism
-  // import { Slot } from "@radix-ui/react-slot";
-  // it("renders as a link when using asChild", () => {
-  //   render(
-  //     <Button asChild>
-  //       <a href="/docs">Docs</a>
-  //     </Button>
-  //   );
-  //   const link = screen.getByRole("link", { name: /docs/i });
-  //   expect(link).toHaveAttribute("href", "/docs");
-  // });
 });

@@ -1,8 +1,6 @@
 // components/shared/form-fields.tsx
-import * as React from "react";
-import { UseFormReturn, Controller } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   FormField,

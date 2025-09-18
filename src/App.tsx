@@ -9,13 +9,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { TopNavigation, Sidebar, NavLink } from "@/components/ui/navigation";
 import { Radio, Checkbox, Toggle } from "@/components/ui/form-controls";
 import { useState } from "react";
 import { DropdownMenuDemo } from "./components/shared/dropdownmenu";
 
 function App() {
-  const [tags, setTags] = useState<string[]>(["Design", "Software"]);
   const [toggleChecked, setToggleChecked] = useState(true);
 
   return (

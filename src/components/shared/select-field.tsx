@@ -67,10 +67,10 @@ export const SelectField: React.FC<SelectFieldProps> = ({
             hasError ? errorId : undefined
           )}
           className={cn(
-            "!h-11 text-base min-w-[262px]",
+            "!h-11 text-sm w-full",
             hasError
               ? "border-red-300 bg-red-50 text-red-900 placeholder:text-red-400 focus-visible:ring-red-500 focus-visible:border-red-500"
-              : "focus-visible:ring-2",
+              : "focus-visible:ring-2 placeholder:text-sm",
             triggerClassName
           )}
         >
@@ -82,6 +82,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
               key={opt.value}
               value={opt.value}
               disabled={opt.disabled}
+              className="text-sm"
             >
               {opt.label}
             </SelectItem>

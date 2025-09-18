@@ -135,6 +135,8 @@ const AddClient = ({ open, setOpen }: Props) => {
   };
 
   const onValidSubmit = async (vals: ClientFormData) => {
+    console.log("Submitting new client", vals);
+
     try {
       setIsSubmitting(true);
       // TODO: call API with vals

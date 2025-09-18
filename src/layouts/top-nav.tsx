@@ -44,7 +44,7 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
               <DropdownMenuItem
                 key={`${title}-${href}`}
                 disabled={!!disabled}
-                onSelect={(e) => {
+                onSelect={() => {
                   if (disabled) return;
                   navigate(appPath(href));
                 }}

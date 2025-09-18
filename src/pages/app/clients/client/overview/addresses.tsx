@@ -1,13 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { InfoRow } from "../components/info-row";
 import { Button } from "@/components/ui/button";
-import {
-  Edit,
-  MapIcon,
-  MapPin,
-  MapPinnedIcon,
-  NotebookText,
-} from "lucide-react";
+import { MapIcon, MapPin, MapPinnedIcon, NotebookText } from "lucide-react";
 import { EditIcon } from "@/assets/icons";
 const Addresses = () => {
   return (

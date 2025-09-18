@@ -14,8 +14,8 @@ export default function LoginForm() {
       state: { email },
     });
     // fake server check
-    // const exists = false;
-    // setError(exists ? "" : "There is no user with this email");
+    const exists = false;
+    setError(exists ? "" : "There is no user with this email");
   };
 
   return (

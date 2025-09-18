@@ -19,6 +19,7 @@ type Props = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
   autoResize?: boolean;
   maxRows?: number;
 };
+// components/shared/textarea-field.tsx (only the changed bits)
 
 export const TextareaField = React.forwardRef<HTMLTextAreaElement, Props>(
   (
@@ -44,13 +45,16 @@ export const TextareaField = React.forwardRef<HTMLTextAreaElement, Props>(
     const errorId = `${textareaId}-error`;
     const hasError = !!error;
 
-    // optional auto-resize
     const innerRef = React.useRef<HTMLTextAreaElement | null>(null);
-    React.useImperativeHandle(
-      ref,
-      () => innerRef.current as HTMLTextAreaElement,
-      []
-    );
+
+    // Compose refs: ensure RHF's register(ref) sees the DOM node
+    const setRefs = (node: HTMLTextAreaElement | null) => {
+      innerRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref)
+        (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current =
+          node;
+    };
 
     const handleInput: React.FormEventHandler<HTMLTextAreaElement> = (e) => {
       if (autoResize && innerRef.current) {
@@ -58,7 +62,7 @@ export const TextareaField = React.forwardRef<HTMLTextAreaElement, Props>(
         el.style.height = "0px";
         el.style.height = `${Math.min(
           el.scrollHeight,
-          maxRows ? maxRows * 24 + 22 : Number.POSITIVE_INFINITY // 24px-ish line-height + vpadding
+          maxRows ? maxRows * 24 + 22 : Number.POSITIVE_INFINITY
         )}px`;
       }
       onInput?.(e);
@@ -86,7 +90,7 @@ export const TextareaField = React.forwardRef<HTMLTextAreaElement, Props>(
         <div className="relative">
           <Textarea
             id={textareaId}
-            ref={innerRef}
+            ref={setRefs}
             aria-invalid={hasError || undefined}
             aria-describedby={cn(
               hint ? helpId : undefined,
@@ -94,11 +98,10 @@ export const TextareaField = React.forwardRef<HTMLTextAreaElement, Props>(
             )}
             onInput={handleInput}
             className={cn(
-              " px-4 py-2 text-base placeholder:text-[#667085]",
+              "px-4 py-2 text-base placeholder:text-[#667085]",
               "focus-visible:ring-2",
               hasError &&
                 "border-red-300 bg-red-50 text-red-900 placeholder:text-red-400 focus-visible:ring-red-500 focus-visible:border-red-500",
-              // leave room for the error icon/counter
               (hasError || (showCounter && maxLength)) && "pr-10",
               className
             )}
@@ -125,7 +128,7 @@ export const TextareaField = React.forwardRef<HTMLTextAreaElement, Props>(
         </div>
 
         {hasError && typeof error === "string" ? (
-          <p id={errorId} role="alert" className="mt-2 text-sm text-red-600">
+          <p id={errorId} role="alert" className="mt-1 text-sm text-red-600">
             {error}
           </p>
         ) : hint ? (
@@ -137,4 +140,5 @@ export const TextareaField = React.forwardRef<HTMLTextAreaElement, Props>(
     );
   }
 );
+
 TextareaField.displayName = "TextareaField";

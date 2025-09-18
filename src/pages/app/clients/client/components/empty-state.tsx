@@ -18,6 +18,7 @@ export type EmptyStateCardProps = {
   centered?: boolean;
   button?: React.ReactNode;
   btnText?: string;
+  onClick?: () => void;
 };
 
 const sizeStyles: Record<
@@ -57,6 +58,7 @@ export function EmptyStateCard({
   centered = true,
   button,
   btnText,
+  onClick,
 }: EmptyStateCardProps) {
   const s = sizeStyles[size];
 
@@ -90,7 +92,7 @@ export function EmptyStateCard({
         {actions ? <div className="mt-1">{actions}</div> : null}
         {button && (
           <div className="mt-1">
-            <Button className="text-xs" size={"sm"}>
+            <Button onClick={onClick} className="text-xs" size={"sm"}>
               <PlusIcon />
               {btnText}
             </Button>

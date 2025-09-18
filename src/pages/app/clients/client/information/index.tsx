@@ -5,19 +5,6 @@ import ContactNextOfKin from "./contact-next-of-kin";
 import CareSetup from "./care-setup";
 import Legal from "./legal";
 
-const personal = {
-  title: "Mrs",
-  firstName: "Jemmy",
-  lastName: "Wilson",
-  preferredName: "Jem",
-  pronouns: "She/Her",
-  dateOfBirth: "07 October 1943 (81 years old)",
-  status: "Active",
-  name: "Jemmy Wilson",
-  avatarUrl: "/images/smiley-elder-woman-standing-kitchen.png",
-  avatarFallback: "JW",
-};
-
 const TAB_KEYS = [
   "contact&next-of-kin",
   "care-setup",

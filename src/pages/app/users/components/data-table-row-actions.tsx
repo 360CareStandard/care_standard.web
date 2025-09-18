@@ -17,6 +17,7 @@ interface DataTableRowActionsProps {
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+  console.log(row);
   const [open, setOpen] = useState(false);
 
   return (

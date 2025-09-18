@@ -1,7 +1,3 @@
-// components/shared/rhf-simple-date.tsx
-"use client";
-
-import * as React from "react";
 import { CalendarIcon } from "lucide-react";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 import { Input } from "@/components/ui/input";

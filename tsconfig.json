@@ -5,10 +5,14 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
+    "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"]
-  }
+    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "exclude": ["node_modules", "dist", "src/**/*.test.*", "src/**/__tests__/**"]
 }

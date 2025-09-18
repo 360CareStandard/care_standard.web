@@ -1,49 +1,66 @@
-import React from "react";
+import * as React from "react";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { EmptyStateCard } from "../components/empty-state";
+import { BoxIcon } from "../icons/box";
+import { CareSetupAccordion } from "../components/care-accordion";
+
+import { CareSetupSchema, type CareSetupForm } from "../../schemas/care-setup";
+
 const CareSetup = () => {
   const [open, setOpen] = React.useState(false);
-  const BoxIcon = () => (
-    <svg
-      width={32}
-      height={31}
-      viewBox="0 0 32 31"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M4.67517 9.54297L16.0001 16.0968L27.2481 9.58144"
-        stroke="#191D31"
-        strokeWidth="1.92383"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M16 27.7158V16.083"
-        stroke="#191D31"
-        strokeWidth="1.92383"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M13.3451 3.18071L6.4963 6.97707C4.94441 7.83638 3.67468 9.99107 3.67468 11.761V19.0074C3.67468 20.7773 4.94441 22.932 6.4963 23.7913L13.3451 27.6005C14.8072 28.4085 17.2056 28.4085 18.6677 27.6005L25.5165 23.7913C27.0684 22.932 28.3382 20.7773 28.3382 19.0074V11.761C28.3382 9.99107 27.0684 7.83638 25.5165 6.97707L18.6677 3.16789C17.1928 2.35988 14.8072 2.35988 13.3451 3.18071Z"
-        stroke="#191D31"
-        strokeWidth="1.92383"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
+
+  const methods = useForm<CareSetupForm>({
+    resolver: zodResolver(CareSetupSchema),
+    mode: "onBlur",
+    defaultValues: {
+      packageType: "Domiciliary",
+      startDate: "",
+      status: "Active",
+      authorisedHours: 0,
+      visitDuration: undefined,
+      doubleUpRequired: false,
+      overnightCare: false,
+      overnightStart: "",
+      overnightEnd: "",
+      overnightStartPeriod: "AM",
+      overnightEndPeriod: "AM",
+      visitPresets: [],
+      continuityPriority: false,
+      preferredCarers: [],
+      avoidCarers: [],
+      requiredSkills: [],
+      languageRequirement: "No requirement",
+      checkInMethod: undefined as any, // or "GPS" if you want a default
+      lateVisitAlertMins: 15,
+      escalationContactId: "", // empty string maps to undefined via schema
+      loneWorkerAlert: false,
+    },
+  });
+
+  const onSubmit = (values: CareSetupForm) => {
+    console.log("submit:", values);
+    setOpen(false);
+    methods.reset();
+  };
+
+  const handleSheetSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    void methods.handleSubmit(onSubmit)();
+  };
+
   return (
     <>
       <Card>
-        <CardContent className="grid grid-cols-1  sm:grid-cols-2 gap-16">
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-16">
           <div className="flex flex-col gap-4">
-            <h2 className="font-bold text-xl"> Care Setup</h2>
-            <p className=" text-sm text-muted-foreground">
+            <h2 className="font-bold text-xl">Care Setup</h2>
+            <p className="text-sm text-muted-foreground">
               Define package, schedule, and rostering rules for this client
             </p>
             <div className="flex flex-wrap gap-2">
@@ -63,6 +80,7 @@ const CareSetup = () => {
             description="Configure how care will be delivered: service package, scheduling preferences, funding authorization, and safety settings."
             btnText="Add Care Setup"
             button
+            onClick={() => setOpen(true)}
           />
         </CardContent>
       </Card>
@@ -70,12 +88,19 @@ const CareSetup = () => {
       <SheetForm
         open={open}
         onOpenChange={setOpen}
-        title="Add New Contact"
-        description="Add a new contact for Jemmy Wilson. Include their communication details and access permissions."
+        title="Add Care Setup"
+        description="Configure the care package, scheduling preferences, and safety settings."
         headerClassName="bg-[#E4E7EC] py-2.5"
-        submitLabel={"Add Contact"}
+        submitLabel={
+          methods.formState.isSubmitting ? "Saving..." : "Save Care Setup"
+        }
+        submitDisabled={methods.formState.isSubmitting}
+        onSubmit={handleSheetSubmit}
+        bodyClassName="space-y-6"
       >
-        <div>Form Content</div>
+        <FormProvider {...methods}>
+          <CareSetupAccordion />
+        </FormProvider>
       </SheetForm>
     </>
   );
