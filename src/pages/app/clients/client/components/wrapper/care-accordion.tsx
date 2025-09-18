@@ -35,7 +35,9 @@ export function CareAccordionSection({
             </span>
           ) : null}
           <div className="flex-1">
-            <div className=" font-semibold leading-none">{title}</div>
+            <div className=" font-semibold text-[15px] leading-none">
+              {title}
+            </div>
             {subtitle ? (
               <div className="mt-1 text-[12px] text-muted-foreground">
                 {subtitle}

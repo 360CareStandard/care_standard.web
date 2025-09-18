@@ -101,7 +101,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
               autoFocus
               className={`
              w-20  bg-white border-0 
-                outline-none text-center
+                outline-none text-center text-xs
                 ${error ? "border-red-500 text-red-600" : "text-gray-900"}
               `}
             />
@@ -109,7 +109,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
             <button
               onClick={handleTimeEdit}
               className={`
-                py-2 px-4 bg-border/50 border-0 outline-none
+                py-2 px-4  text-xs bg-border/50 border-0 outline-none
                  cursor-pointer rounded-md 
                 ${error ? "text-red-600" : "text-gray-900"}
               `}
@@ -124,14 +124,19 @@ export const TimePicker: React.FC<TimePickerProps> = ({
           type="single"
           variant="outline"
           value={value.period}
+          className="text-xs "
           // prevent clearing to empty; keep last period if user clicks the same item
           onValueChange={(v) => {
             if (!v) return; // make it non-clearable
             onChange({ ...value, period: v as "AM" | "PM" });
           }}
         >
-          <ToggleGroupItem value="AM">AM</ToggleGroupItem>
-          <ToggleGroupItem value="PM">PM</ToggleGroupItem>
+          <ToggleGroupItem value="AM" className="text-xs">
+            AM
+          </ToggleGroupItem>
+          <ToggleGroupItem value="PM" className="text-xs">
+            PM
+          </ToggleGroupItem>
         </ToggleGroup>
       </div>
       {error && <p className="text-sm text-red-600 mt-1">{error}</p>}

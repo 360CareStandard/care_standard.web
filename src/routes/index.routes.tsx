@@ -21,6 +21,7 @@ export default function AppRoutes() {
           <Route index element={<Navigate to="login" replace />} />
           <Route path="login" element={<Login />} />
           <Route path="login/check-email" element={<CheckEmailPage />} />
+          <Route path="/404" element={<NotFound />} />
         </Route>
 
         <Route path="app" element={<AppLayout />}>
@@ -28,7 +29,6 @@ export default function AppRoutes() {
         </Route>
 
         {/* 404 */}
-        <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
     </Suspense>

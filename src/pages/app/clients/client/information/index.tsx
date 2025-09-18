@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ContactNextOfKin from "./contact-next-of-kin";
 import CareSetup from "./care-setup";
 import Legal from "./legal";
+import Health from "./health";
 
 const TAB_KEYS = [
   "contact&next-of-kin",
@@ -120,7 +121,7 @@ export default function Information() {
           <Legal />
         </TabsContent>
         <TabsContent value="health" className="pt-4">
-          <h1>Health</h1>
+          <Health />
         </TabsContent>
         <TabsContent value="gp&support" className="pt-4">
           <h1>GP and Support</h1>

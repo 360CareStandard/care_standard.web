@@ -4,32 +4,11 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { EmptyStateCard } from "../components/empty-state";
+import { DocIcon } from "../icons/doc";
+import { LegalSetupAccordion } from "../components/legal-accordion";
 const Legal = () => {
   const [open, setOpen] = React.useState(false);
-  const DocIcon = () => (
-    <svg
-      width={32}
-      height={31}
-      viewBox="0 0 32 31"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M28.8255 12.8258V19.2386C28.8255 25.6514 26.2604 28.2165 19.8476 28.2165H12.1523C5.73954 28.2165 3.17444 25.6514 3.17444 19.2386V11.5433C3.17444 5.13053 5.73954 2.56543 12.1523 2.56543H18.5651"
-        stroke="#191D31"
-        strokeWidth="1.92383"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M28.8255 12.8258H23.6953C19.8476 12.8258 18.5651 11.5433 18.5651 7.69564V2.56543L28.8255 12.8258Z"
-        stroke="#191D31"
-        strokeWidth="1.92383"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
+
   return (
     <>
       <Card>
@@ -57,6 +36,7 @@ const Legal = () => {
             description="Record Power of Attorney, DNAR, mental capacity notes, data-sharing consent, court orders and signed documents for audit, compliance and to safely invite family users."
             btnText="Add Legal Info"
             button
+            onClick={() => setOpen(true)}
           />
         </CardContent>
       </Card>
@@ -64,12 +44,12 @@ const Legal = () => {
       <SheetForm
         open={open}
         onOpenChange={setOpen}
-        title="Add New Contact"
-        description="Add a new contact for Jemmy Wilson. Include their communication details and access permissions."
+        title="Add Legal Information"
+        description="Record legal status, consent and authorization details for Jemmy Wilson."
         headerClassName="bg-[#E4E7EC] py-2.5"
-        submitLabel={"Add Contact"}
+        submitLabel={"Save Legal Info"}
       >
-        <div>Form Content</div>
+        <LegalSetupAccordion />
       </SheetForm>
     </>
   );

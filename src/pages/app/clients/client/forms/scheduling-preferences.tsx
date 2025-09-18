@@ -89,7 +89,7 @@ export function SchedulingPreferencesFields() {
                       type="checkbox"
                       checked={values.includes(opt.value)}
                       onChange={() => toggle(opt.value)}
-                      className="h-4 w-4"
+                      className="h-4 w-4 accent-primary"
                     />
                     {opt.label}
                   </label>

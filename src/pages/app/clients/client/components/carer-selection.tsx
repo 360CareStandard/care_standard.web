@@ -128,7 +128,7 @@ export const CarerSelection: React.FC<CarerSelectionProps> = ({
   const [searchTerm, setSearchTerm] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const boxRef = React.useRef<HTMLDivElement | null>(null);
-  const inputRef = React.useRef<HTMLInputElement | null>(null);
+  // const inputRef = React.useRef<HTMLInputElement | null>(null);
   const inputWrapRef = React.useRef<HTMLDivElement | null>(null); // the relative input container
   const dropdownRef = React.useRef<HTMLDivElement | null>(null);
 

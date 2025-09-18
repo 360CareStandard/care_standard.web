@@ -26,7 +26,6 @@ export function CareSetupAccordion() {
         title="Service Package"
         // subtitle="Configure package, dates, duration & staffing"
       >
-        {/* --- SERVICE PACKAGE FIELDS GO HERE (next step) --- */}
         <ServicePackageFields />
       </CareAccordionSection>
 
