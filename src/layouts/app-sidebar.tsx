@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { NavLink, useParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { NavUser } from "./nav-user";
+// import { NavUser } from "./nav-user";
 
 import { ShieldAlert, Settings, Download } from "lucide-react";
 import {
@@ -20,6 +20,7 @@ import {
   NoteIcon,
   HashtagIcon,
 } from "@/assets/icons";
+import { ClientQuickSwitcher } from "@/components/nav/ClientQuickSwitcher";
 
 /* --- describe nav with slugs; we'll build full URLs from clientId --- */
 type Item = {
@@ -35,7 +36,11 @@ const NAV: Group[] = [
     items: [
       { title: "Overview", slug: "overview", icon: HomeIcon, end: true },
       { title: "Client Info", slug: "info", icon: UserSquareIcon },
-      { title: "Visit Schedule", slug: "schedule", icon: CalendarCircleIcon },
+      {
+        title: "Visit Schedule",
+        slug: "visit-schedule",
+        icon: CalendarCircleIcon,
+      },
       { title: "Care Plan", slug: "care-plan", icon: NoteIcon },
     ],
   },
@@ -66,16 +71,22 @@ export function AppSidebar() {
   const base = clientId ? `/app/clients/${clientId}` : "/app/clients";
 
   return (
-    <Sidebar collapsible="icon" variant="sidebar" className="!bg-white pt-20">
+    <Sidebar
+      collapsible="icon"
+      variant="sidebar"
+      className="!bg-white pt-20 !w-[272px]"
+    >
       {/* Top user block */}
       <SidebarHeader className="border-b bg-white">
-        <NavUser
+        {/* <NavUser
           user={{
             name: "Jemmy Wilson",
             email: "Female • ~64 Years",
             avatar: "/images/smiley-elder-woman-standing-kitchen.png",
           }}
-        />
+        /> */}
+
+        <ClientQuickSwitcher />
       </SidebarHeader>
 
       <SidebarGroupContent className="px-3 !bg-white">

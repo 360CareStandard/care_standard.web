@@ -6,21 +6,25 @@ import SplashVisual from "@/layouts/splash-visual";
 import AppLayout from "@/layouts/app-layout";
 import appChildRoutes from "./app.routes";
 import NotFound from "@/pages/404";
-
+import WorkspaceSelectionPage from "@/pages/workplace";
 const AuthLayout = lazy(() => import("@/layouts/auth-layout"));
 const Login = lazy(() => import("@/pages/auth/login-page"));
 const CheckEmailPage = lazy(() => import("@/pages/auth/check-email-page"));
+const MagicLinkCallback = lazy(() => import("@/pages/auth/magic-link"));
 
 export default function AppRoutes() {
   return (
     <Suspense fallback={<SplashVisual message="Loading…" />}>
       <Routes>
+        <Route path="workspace" element={<WorkspaceSelectionPage />} />
         <Route path="/design" element={<App />} />
 
         <Route element={<AuthLayout />}>
           <Route index element={<Navigate to="login" replace />} />
           <Route path="login" element={<Login />} />
           <Route path="login/check-email" element={<CheckEmailPage />} />
+          <Route path="/login/magic" element={<MagicLinkCallback />} />
+
           <Route path="/404" element={<NotFound />} />
         </Route>
 

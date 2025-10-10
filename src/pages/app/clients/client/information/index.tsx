@@ -5,14 +5,17 @@ import ContactNextOfKin from "./contact-next-of-kin";
 import CareSetup from "./care-setup";
 import Legal from "./legal";
 import Health from "./health";
+import GPsupport from "./GP-support";
+import HomeEnvironment from "./home";
+import Preferences from "./preferences";
 
 const TAB_KEYS = [
-  "contact&next-of-kin",
+  "contact-next-of-kin",
   "care-setup",
   "legal",
   "health",
-  "gp&support",
-  "home&environment",
+  "gp-support",
+  "home-environment",
   "preferences",
 ] as const;
 type TabKey = (typeof TAB_KEYS)[number];
@@ -21,10 +24,10 @@ export default function Information() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // read from url, validate, fallback
-  const raw = searchParams.get("tab") ?? "contact&next-of-kin";
+  const raw = searchParams.get("tab") ?? "contact-next-of-kin";
   const currentTab: TabKey = (TAB_KEYS as readonly string[]).includes(raw)
     ? (raw as TabKey)
-    : "contact&next-of-kin";
+    : "contact-next-of-kin";
 
   // Change handler updates only the 'tab' param, preserves the rest
   const onTabChange = (next: string) => {
@@ -41,7 +44,7 @@ export default function Information() {
       setSearchParams(
         (prev) => {
           const sp = new URLSearchParams(prev);
-          sp.set("tab", "contact&next-of-kin");
+          sp.set("tab", "contact-next-of-kin");
           return sp;
         },
         { replace: true }
@@ -66,7 +69,7 @@ export default function Information() {
       >
         <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
           <TabsTrigger
-            value="contact&next-of-kin"
+            value="contact-next-of-kin"
             className="relative rounded-none border-b-2 border-b-transparent !bg-transparent px-4 pb-3 pt-2 text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
           >
             Contacts & Next of Kin
@@ -90,13 +93,13 @@ export default function Information() {
             Health
           </TabsTrigger>
           <TabsTrigger
-            value="gp&support"
+            value="gp-support"
             className="relative rounded-none border-b-2 border-b-transparent !bg-transparent px-4 pb-3 pt-2 text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
           >
             GP & Support
           </TabsTrigger>
           <TabsTrigger
-            value="home&environment"
+            value="home-environment"
             className="relative rounded-none border-b-2 border-b-transparent !bg-transparent px-4 pb-3 pt-2 text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
           >
             Home & Environment
@@ -109,7 +112,7 @@ export default function Information() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="contact&next-of-kin" className="space-y-5 pt-4">
+        <TabsContent value="contact-next-of-kin" className="space-y-5 pt-4">
           <ContactNextOfKin />
         </TabsContent>
 
@@ -123,15 +126,15 @@ export default function Information() {
         <TabsContent value="health" className="pt-4">
           <Health />
         </TabsContent>
-        <TabsContent value="gp&support" className="pt-4">
-          <h1>GP and Support</h1>
+        <TabsContent value="gp-support" className="pt-4">
+          <GPsupport />
         </TabsContent>
-        <TabsContent value="home&environment" className="pt-4">
-          <h1>Home and Environs</h1>
+        <TabsContent value="home-environment" className="pt-4">
+          <HomeEnvironment />
         </TabsContent>
 
         <TabsContent value="preferences" className="pt-4">
-          <h1>Preferences</h1>
+          <Preferences />
         </TabsContent>
       </Tabs>
     </div>

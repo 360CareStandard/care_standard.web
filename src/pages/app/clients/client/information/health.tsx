@@ -5,6 +5,7 @@ import { PlusIcon } from "lucide-react";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { EmptyStateCard } from "../components/empty-state";
 import { HealthIcon } from "../icons/health";
+import { HealthSetupAccordion } from "../components/health-accordion";
 const Health = () => {
   const [open, setOpen] = React.useState(false);
 
@@ -47,7 +48,7 @@ const Health = () => {
         headerClassName="bg-[#E4E7EC] py-2.5"
         submitLabel={"Save Health Info"}
       >
-        <h1>Form Content</h1>
+        <HealthSetupAccordion />
       </SheetForm>
     </>
   );

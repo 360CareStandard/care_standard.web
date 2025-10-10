@@ -25,6 +25,8 @@ import {
 import { User } from "../data/schema";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -116,14 +118,25 @@ export function UsersTable({ columns, data }: DataTableProps) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="p-0">
-                  <div className="flex flex-col items-center justify-center gap-3 py-16">
+                <TableCell colSpan={columns.length} className="p-0 mx-a">
+                  <div className="flex flex-col  items-center justify-center  gap-3 py-16">
                     <img
                       src="/EmptyState.svg"
-                      alt=""
-                      className="mx-auto h-28 w-[250px] opacity-90"
+                      alt="empty"
+                      className="mx-auto h-28 !w-[250px] opacity-90"
                     />
                     <p className="text-sm text-muted-foreground">No results.</p>
+                    <p className="text-sm text-muted-foreground ">
+                      It looks like there are no clients here yet. Start by
+                      adding a new claim to get started.
+                    </p>
+                    <Button
+                      // onClick={() => setOpen(true)}
+                      className="gap-2"
+                    >
+                      <PlusIcon />
+                      Add New Client
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>

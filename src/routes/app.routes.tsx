@@ -12,6 +12,9 @@ const ClientOverview = lazy(
 const ClientInformation = lazy(
   () => import("@/pages/app/clients/client/information")
 );
+const VisitSchedule = lazy(
+  () => import("@/pages/app/clients/client/visit-schedule")
+);
 
 const appChildRoutes = (
   <>
@@ -28,6 +31,7 @@ const appChildRoutes = (
       <Route index element={<Navigate to="overview" replace />} />
       <Route path="overview" element={<ClientOverview />} />
       <Route path="info" element={<ClientInformation />} />
+      <Route path="visit-schedule" element={<VisitSchedule />} />
     </Route>
 
     <Route path="*" element={<Navigate to="/app/clients" replace />} />

@@ -5,6 +5,11 @@ import { TopNav } from "./top-nav";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 // import { cn } from "@/lib/utils";
 import ProfileDropdown from "@/components/shared/profile-dropdown";
+import { Button } from "@/components/ui/button";
+import {
+  Workspace,
+  WorkspaceQuickSwitcher,
+} from "@/components/nav/WorkspaceSwitcher";
 
 function Logo() {
   // Replace with your SVG/logo component
@@ -29,8 +34,14 @@ const links = [
   { title: "Finance", href: "/finance" },
   { title: "Safeguarding", href: "/safeguarding" },
 ];
+const DEMO_WORKSPACES: Workspace[] = [
+  { id: "lighthouse-homecare", name: "Lighthouse Homecare Ltd", meta: "Admin" },
+  { id: "sunrise-care", name: "Sunrise Care Group", meta: "Member" },
+  { id: "new-leaf", name: "New Leaf Services", meta: "Member" },
+];
 
 export function AppHeader() {
+  const activeWorkspaceId = "lighthouse-homecare";
   return (
     <Header
       fixed
@@ -56,11 +67,16 @@ export function AppHeader() {
           >
             <Bell className="h-5 w-5" />
           </button>
-
-          {/* org name */}
-          <div className="hidden md:block text-sm font-semibold tracking-wide uppercase text-white/90">
-            Lighthouse Homecare Ltd
-          </div>
+          <WorkspaceQuickSwitcher
+            workspaces={DEMO_WORKSPACES}
+            activeId={activeWorkspaceId}
+            triggerLabel="Lighthouse Homecare Ltd"
+            // If your app uses a context instead of URL routing,
+            // provide onSelect to swap workspace without navigating:
+            // onSelect={(w) => setWorkspaceInContext(w.id)}
+            // Or adjust routing shape:
+            // buildPath={(id, sub) => `/app/w/${id}${sub}`}
+          />
 
           {/* user pill */}
           <ProfileDropdown>
