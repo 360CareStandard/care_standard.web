@@ -5,7 +5,7 @@ import { TopNav } from "./top-nav";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 // import { cn } from "@/lib/utils";
 import ProfileDropdown from "@/components/shared/profile-dropdown";
-import { Button } from "@/components/ui/button";
+
 import {
   Workspace,
   WorkspaceQuickSwitcher,

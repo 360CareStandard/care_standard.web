@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { ConfirmDialog } from "./confirm-dialog";
+import { useAuthStore } from "@/stores/auth-store";
 
 interface SignOutDialogProps {
   open: boolean;
@@ -9,18 +10,15 @@ interface SignOutDialogProps {
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const logout = useAuthStore((s) => s.clearAuth);
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     // Close dialog (optional)
-    onOpenChange(false);
-
     // Build current path string
+    logout();
+    onOpenChange(false);
     const currentPath = location.pathname + location.search + location.hash;
-
-    // Create `?redirect=...`
     const params = new URLSearchParams({ redirect: currentPath }).toString();
-
-    // React Router: navigate(string, options)
     navigate(`/sign-in?${params}`, { replace: true });
   };
 

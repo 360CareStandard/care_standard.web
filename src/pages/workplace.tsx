@@ -19,6 +19,7 @@ import {
   ChevronRight,
   HelpCircle,
 } from "lucide-react";
+import { useWorkspace } from "@/hooks/useWorkspace";
 
 /* ----------------------------- types & demo data ---------------------------- */
 type Role = "Owner" | "Admin" | "Coordinator" | "Viewer";
@@ -84,6 +85,9 @@ export default function WorkspaceSelectionPage({
     Viewer: false,
   });
 
+  const { data } = useWorkspace();
+  console.log("workspace data", data);
+
   const activeFilters = (Object.keys(roles) as Role[]).filter((r) => roles[r]);
 
   const filtered = React.useMemo(() => {
@@ -101,7 +105,7 @@ export default function WorkspaceSelectionPage({
 
   const selectWs = (id: string) => {
     // TODO: route where your app expects (e.g. to clients landing for the ws)
-    navigate(`/app/${id}/clients`);
+    navigate(`/app`);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

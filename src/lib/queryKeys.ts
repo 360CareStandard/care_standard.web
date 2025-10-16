@@ -4,4 +4,5 @@ export const qk = {
   menu: (p?: any) => ["menu", p] as const,
   clients: (params?: Record<string, unknown>) => ["clients", params] as const,
   client: (id: string) => ["client", id] as const,
+  workspace: ["workspace"] as const,
 };

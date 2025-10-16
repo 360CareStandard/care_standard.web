@@ -25,6 +25,5 @@ export const AuthApi = {
         agencyId: args.agencyId, // optional if your API needs it
       },
     }),
-  me: () => get<{ data: User }>("/users/me"),
-  // logout route optional; without refresh, simply clear client state
+  workspace: () => get<{ data: User }>("/agency/all"),
 };

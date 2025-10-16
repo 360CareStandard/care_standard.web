@@ -7,10 +7,12 @@ const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 export const publicApi = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
+  timeout: 15000,
 });
 export const api = axios.create({
   baseURL: BASE_URL,
-  withCredentials: false, // set true if your API uses cookies
+  withCredentials: true, // set true if your API uses cookies
+  timeout: 15000,
 });
 
 // request: attach bearer
@@ -30,12 +32,12 @@ api.interceptors.response.use(
     const status = error?.response?.status;
     if (status === 401) {
       // clear auth and optionally redirect
-      useAuthStore.getState().clearAuth();
+      // useAuthStore.getState().clearAuth();
       // if you want a soft redirect on client pages:
-      if (typeof window !== "undefined") {
-        const current = window.location.pathname;
-        window.location.href = `/login?next=${encodeURIComponent(current)}`;
-      }
+      // if (typeof window !== "undefined") {
+      //   const current = window.location.pathname;
+      //   window.location.href = `/login?next=${encodeURIComponent(current)}`;
+      // }
     }
     return Promise.reject(error);
   }

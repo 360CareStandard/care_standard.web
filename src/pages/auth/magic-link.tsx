@@ -11,7 +11,8 @@ export default function MagicLinkCallback() {
   const token = qs.get("token") || "";
   const email = qs.get("email") || "";
   const agencyId = qs.get("agencyId") || undefined;
-  const next = qs.get("next") || "/app";
+  const next = "/select-workspace";
+  // const next = qs.get("next") || "/select-workspace";
 
   const { mutate, isPending } = useVerifyMagicCallback();
 
