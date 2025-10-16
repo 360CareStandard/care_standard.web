@@ -25,7 +25,7 @@ export default function AuthLayout() {
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse" />
         <div
           className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-400/5 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "2s" }}
+          // style={{ animationDelay: "2s" }}
         />
       </div>
 

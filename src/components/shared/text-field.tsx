@@ -1,7 +1,8 @@
+// components/shared/text-field.tsx
 import * as React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils"; // shadcn's class combiner
+import { cn } from "@/lib/utils";
 import { CircleAlert } from "lucide-react";
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
@@ -26,7 +27,8 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
     },
     ref
   ) => {
-    const inputId = id ?? React.useId();
+    const reactId = React.useId();
+    const inputId = id ?? reactId;
     const helpId = `${inputId}-help`;
     const errorId = `${inputId}-error`;
     const hasError = !!error;
@@ -44,7 +46,9 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
         ) : null}
 
         <div className="relative">
+          {/* Put inputProps first so our computed props win last */}
           <Input
+            {...inputProps}
             id={inputId}
             ref={ref}
             aria-invalid={hasError || undefined}
@@ -53,14 +57,12 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
               hasError ? errorId : undefined
             )}
             className={cn(
-              "px-4 text-base h-11 placeholder:text-[#667085]",
-              hasError
-                ? "border-red-300 bg-red-50 text-red-900 placeholder:text-red-400 focus-visible:ring-red-500 focus-visible:border-red-500"
-                : "focus-visible:ring-2",
-              hasError ? "pr-10" : undefined, // <- conditional
+              "px-4 text-base h-11 placeholder:text-[#667085] focus-visible:ring-2",
+              hasError &&
+                "border-red-300 bg-red-50 text-red-900 placeholder:text-red-400 focus-visible:ring-red-500 focus-visible:border-red-500",
+              hasError ? "pr-10" : undefined,
               className
             )}
-            {...inputProps}
           />
 
           {hasError && (
@@ -72,11 +74,11 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
         </div>
 
         {hasError && typeof error === "string" ? (
-          <p id={errorId} role="alert" className="mt-1 text-sm text-red-600">
+          <p id={errorId} role="alert" className="mt-1 text-xs text-red-600">
             {error}
           </p>
         ) : hint ? (
-          <p id={helpId} className="mt-2 text-sm text-slate-500">
+          <p id={helpId} className="mt-2 text-xs text-slate-500">
             {hint}
           </p>
         ) : null}

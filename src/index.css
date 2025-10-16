@@ -285,13 +285,13 @@
   background-size: cover;
   background-position: center;
   mix-blend-mode: screen;
-  opacity: 0.3; /* was .5 + anim to .88—felt jumpy */
-  filter: drop-shadow(0 0 0.75px rgba(255, 255, 255, 0.18))
+  opacity: 0.4; /* was .5 + anim to .88—felt jumpy */
+}
+
+/* filter: drop-shadow(0 0 0.75px rgba(255, 255, 255, 0.18))
     drop-shadow(0 0 12px rgba(2, 121, 77, 0.3))
     drop-shadow(0 0 26px rgba(2, 121, 77, 0.22));
-  will-change: opacity, filter;
-  animation: cs360-glow 8s ease-in-out infinite; /* slower, softer */
-}
+  will-change: opacity, filter; */
 
 @keyframes cs360-glow {
   0%,
