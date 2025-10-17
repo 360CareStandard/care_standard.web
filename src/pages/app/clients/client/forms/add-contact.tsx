@@ -16,9 +16,9 @@ const relationshipOptions = RelationshipEnum.options.map((v) => ({
 }));
 
 export default function AddContact() {
-  const { register, control, formState, getValues, watch } =
+  const { register, control, formState, watch } =
     useFormContext<AddContactForm>();
-  const { errors, isSubmitted } = formState;
+  const { errors } = formState;
 
   //   const familyAccessEnabled = getValues("familyAccessApp");
 

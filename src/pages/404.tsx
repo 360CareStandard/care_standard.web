@@ -6,13 +6,13 @@ export default function NotFound() {
   //
   return (
     <div className="absolute left-1/2 top-1/2 mb-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center text-center">
-      <span className="text-white text-[10rem] font-extrabold leading-none">
+      <span className="text-primary text-[10rem] font-extrabold leading-none">
         404
       </span>
-      <h2 className="font-heading my-2 text-2xl font-bold text-gray-300">
+      <h2 className="font-heading my-2 text-2xl font-bold text-gray-500">
         Something&apos;s missing
       </h2>
-      <p className="text-gray-300">
+      <p className="text-gray-500">
         Sorry, the page you are looking for doesn&apos;t exist or has been
         moved.
       </p>

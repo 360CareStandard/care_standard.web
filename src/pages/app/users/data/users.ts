@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-export const users = Array.from({ length: 20 }, () => {
+export const users = Array.from({ length: 0 }, () => {
   const sex = faker.person.sexType(); // 'male' | 'female'
   const firstName = faker.person.firstName(sex);
   const lastName = faker.person.lastName(sex);

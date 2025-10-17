@@ -3,7 +3,11 @@
 import { publicApi } from "@/lib/axios";
 import { post, get, postPublic } from ".";
 import type { LoginBody, LoginResponse } from "@/types/auth";
-import type { User } from "@/types/user";
+import {
+  AgenciesResponse,
+  SelectAgencyReq,
+  SelectAgencyRes,
+} from "@/types/workspace";
 
 export const AuthApi = {
   login: (body: LoginBody) =>
@@ -25,5 +29,10 @@ export const AuthApi = {
         agencyId: args.agencyId, // optional if your API needs it
       },
     }),
-  workspace: () => get<{ data: User }>("/agency/all"),
+  // 👇 correct the type here
+  workspace: () => get<AgenciesResponse>("/agency/all"),
+
+  // 👇 new: select agency
+  selectAgency: (body: SelectAgencyReq) =>
+    post<SelectAgencyRes>("/auth/select-agency", body),
 };

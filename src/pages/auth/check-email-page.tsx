@@ -55,7 +55,7 @@ export default function CheckEmailPage() {
           {email ? (
             <>
               We sent a login link to <strong>{masked}</strong>. It expires in
-              10 minutes.
+              30 minutes.
             </>
           ) : (
             <>Check your inbox for a login link. It expires in 30 minutes.</>

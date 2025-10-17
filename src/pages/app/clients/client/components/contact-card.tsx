@@ -51,7 +51,6 @@ export function ContactDetailsCard({
 }: Props) {
   const {
     fullName,
-    relationship,
     phone,
     email,
     address,

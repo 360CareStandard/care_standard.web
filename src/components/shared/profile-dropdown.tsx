@@ -1,3 +1,4 @@
+// src/components/shared/profile-dropdown.tsx
 import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,37 +11,101 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SignOutDialog } from "./signout-dialog";
+import { cn } from "@/lib/utils";
 
 type ProfileDropdownProps = {
-  children: ReactNode; // <-- your trigger (button/pill) will be passed in
+  /** The trigger (avatar pill) */
+  children: ReactNode;
+
+  /** Display info */
+  name: string;
+  email: string;
+  role?: string;
+  workspaceName?: string;
+
+  /** Optional actions (wire from AppHeader) */
+  onOpenWorkspaceSwitcher?: () => void;
+  onOpenAccount?: () => void; // e.g. /user/settings
+  onOpenOrgSettings?: () => void; // e.g. /app/w/:id/settings
 };
 
-export default function ProfileDropdown({ children }: ProfileDropdownProps) {
+export default function ProfileDropdown({
+  children,
+  name,
+  email,
+  role,
+  workspaceName,
+  onOpenWorkspaceSwitcher,
+  onOpenAccount,
+  onOpenOrgSettings,
+}: ProfileDropdownProps) {
   const navigate = useNavigate();
   const [logoutModal, setLogoutModal] = useState(false);
 
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          {/* whatever you pass as `children` becomes the trigger */}
-          {children}
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuContent className="w-64" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">Kelvin Black</p>
-              <p className="text-xs leading-none text-muted-foreground">
-                kelvin@gmail.com
+              <p className="text-sm font-medium leading-none truncate">
+                {name || "User"}
               </p>
+              <p className="text-xs leading-none text-muted-foreground truncate">
+                {email}
+              </p>
+              <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                {role && (
+                  <span
+                    className={cn(
+                      "rounded-full px-2 py-0.5",
+                      "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200"
+                    )}
+                  >
+                    {role}
+                  </span>
+                )}
+                {workspaceName && (
+                  <span className="truncate" title={workspaceName}>
+                    • {workspaceName}
+                  </span>
+                )}
+              </div>
             </div>
           </DropdownMenuLabel>
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem onClick={() => navigate("/user/settings")}>
+          <DropdownMenuItem
+            onClick={
+              onOpenAccount ? onOpenAccount : () => navigate("/user/settings")
+            }
+          >
             Profile
+            <DropdownMenuShortcut />
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={
+              onOpenOrgSettings
+                ? onOpenOrgSettings
+                : () => navigate("/app/settings")
+            }
+          >
+            Organisation settings
+            <DropdownMenuShortcut />
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={
+              onOpenWorkspaceSwitcher
+                ? onOpenWorkspaceSwitcher
+                : () => navigate("/app/workspaces")
+            }
+          >
+            Switch workspace…
             <DropdownMenuShortcut />
           </DropdownMenuItem>
 
@@ -52,6 +117,7 @@ export default function ProfileDropdown({ children }: ProfileDropdownProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
       <SignOutDialog open={!!logoutModal} onOpenChange={setLogoutModal} />
     </>
   );

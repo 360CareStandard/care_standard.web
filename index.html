@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Mobile status bar tint -->
+    <meta name="theme-color" content="#043A68" />
 
     <!-- Favicons -->
     <link
@@ -29,11 +32,104 @@
       fetchpriority="high"
     />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Mobile status bar tint -->
-    <meta name="theme-color" content="#043A68" />
-    <title>Care Standard</title>
+    <!-- Canonical -->
+    <link rel="canonical" href="https://care-standard.vercel.app/" />
+
+    <!-- Primary Meta -->
+    <title>
+      Care360 Standard | Compassionate Home & Community Care Across the UK
+    </title>
+    <meta
+      name="description"
+      content="Care360 Standard provides reliable, person-centred home and community care across the UK — from domiciliary support to complex care. Safe, compassionate, and CQC-focused."
+    />
+    <meta name="author" content="Care360 Standard" />
+    <meta name="robots" content="index, follow" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Care360 Standard" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://care-standard.vercel.app/" />
+    <meta
+      property="og:title"
+      content="Care360 Standard | Compassionate Home & Community Care Across the UK"
+    />
+    <meta
+      property="og:description"
+      content="Person-centred, dignified support at home. Domiciliary, respite, live-in, and complex care tailored to you."
+    />
+    <meta
+      property="og:image"
+      content="https://care-standard.vercel.app/og-image.jpg"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Care360 Standard — professional carer supporting a client at home"
+    />
+    <meta property="og:site_name" content="Care360 Standard" />
+    <meta property="og:locale" content="en_GB" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Care360 Standard | Compassionate Home & Community Care Across the UK"
+    />
+    <meta
+      name="twitter:description"
+      content="Trusted UK care provider delivering safe, person-centred home and community support."
+    />
+    <meta
+      name="twitter:image"
+      content="https://care-standard.vercel.app/og-image.jpg"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Care360 Standard — professional carer supporting a client at home"
+    />
+
+    <!-- Structured Data: WebSite -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Care360 Standard",
+        "url": "https://care-standard.vercel.app/",
+        "inLanguage": "en-GB",
+        "description": "Care360 Standard provides reliable, person-centred home and community care across the UK.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://care-standard.vercel.app/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+
+    <!-- Structured Data: Organisation (safe defaults; fill in real details when ready) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": ["Organization", "LocalBusiness"],
+        "name": "Care360 Standard",
+        "url": "https://care-standard.vercel.app/",
+        "logo": "https://care-standard.vercel.app/logo/logo-care-standard.svg",
+        "image": "https://care-standard.vercel.app/og-image.jpg",
+        "telephone": "+44",
+        "email": "info@care360standard.co.uk",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "GB"
+        },
+        "areaServed": "GB",
+        "sameAs": []
+      }
+    </script>
   </head>
+
   <body>
     <!-- Paints instantly on first byte -->
     <div
@@ -64,7 +160,7 @@
       >
         <img
           src="/logo/logo-care-standard.svg"
-          alt=""
+          alt="Care360 Standard logo"
           style="
             width: 250px;
             height: auto;

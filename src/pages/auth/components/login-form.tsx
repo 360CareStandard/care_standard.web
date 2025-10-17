@@ -1,19 +1,51 @@
 // src/pages/auth/LoginForm.tsx
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { TextField } from "@/components/shared/text-field";
 import { LoadingButton } from "@/components/shared/loading-button";
-import { useNavigate, useLocation } from "react-router-dom";
 import { useRequestMagicLink } from "@/hooks/useMagicLink";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const ERROR_MESSAGES: Record<string, string> = {
+  "invalid-link": "That link is invalid. Please request a new magic link.",
+  expired:
+    "Your magic link is invalid or has expired. Please request a new one.",
+  server:
+    "We couldn't verify your link due to a server issue. Please try again.",
+};
+
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | boolean>("");
+
   const navigate = useNavigate();
   const location = useLocation();
-  const next = new URLSearchParams(location.search).get("next") || "/app";
+  const searchParams = useMemo(
+    () => new URLSearchParams(location.search),
+    [location.search]
+  );
+  const next = searchParams.get("next") || "/app";
   const { mutate, isPending } = useRequestMagicLink();
+
+  // 👇 read ?error=... coming from magic-link redirects
+  useEffect(() => {
+    const errKey = searchParams.get("error");
+    if (!errKey) return;
+
+    setError(
+      ERROR_MESSAGES[errKey] ?? "Something went wrong. Please try again."
+    );
+
+    // (optional) remove the error param from the URL so it doesn't persist on refresh
+    const clean = new URLSearchParams(location.search);
+    clean.delete("error");
+    navigate(
+      { pathname: location.pathname, search: clean.toString() },
+      { replace: true }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, location.pathname, navigate]);
 
   const submit = () => {
     setError("");
@@ -21,18 +53,13 @@ export default function LoginForm() {
       setError("Enter a valid email");
       return;
     }
-
     mutate(email.trim(), {
       onSuccess: () => {
-        // take user to "check your email" screen
         navigate(
           `/login/check-email?email=${encodeURIComponent(
             email
           )}&next=${encodeURIComponent(next)}`,
-          {
-            replace: true,
-            state: { email, next },
-          }
+          { replace: true, state: { email, next } }
         );
       },
       onError: (err: any) => {
@@ -54,13 +81,23 @@ export default function LoginForm() {
         </p>
       </div>
 
+      {/* optional global error banner */}
+      {typeof error === "string" && error && (
+        <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          {error}
+        </div>
+      )}
+
       <div className="space-y-4">
         <TextField
           label="Email address"
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          error={error}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (error) setError(""); // clear banner while typing
+          }}
+          error={false /* keep field-level error clean; we show banner above */}
           placeholder="Enter your email"
         />
 

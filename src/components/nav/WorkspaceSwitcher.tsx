@@ -181,7 +181,7 @@ export function WorkspaceQuickSwitcher({
                   {w.avatar ? (
                     <AvatarImage src={w.avatar} alt={w.name} />
                   ) : (
-                    <AvatarFallback>
+                    <AvatarFallback className="text-sm">
                       {w.name.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   )}
