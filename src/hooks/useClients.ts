@@ -1,7 +1,8 @@
 // src/hooks/useClients.ts
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/queryKeys";
 import { ClientsApi } from "@/api/client";
+import { ClientFormData } from "@/pages/app/clients/schemas/add-client";
 
 export function useClients(params?: {
   q?: string;
@@ -13,6 +14,21 @@ export function useClients(params?: {
     queryFn: () => ClientsApi.list(params),
     select: (res) => res, // { data, meta }
     staleTime: 60_000,
+  });
+}
+
+export function useCreateClient(params?: {
+  q?: string;
+  page?: number;
+  limit?: number;
+}) {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: ClientFormData) => ClientsApi.post(body),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: qk.clients(params) });
+    },
   });
 }
 

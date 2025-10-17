@@ -46,7 +46,7 @@ export function ProfileImageField({
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex gap-2 items-center">
           <Avatar className="h-16 w-16 ring-2 ring-white shadow">
-            <AvatarImage src={src || ""} />
+            <AvatarImage src={src || ""} className="object-cover" />
             <AvatarFallback className="text-base">{initials}</AvatarFallback>
           </Avatar>
 

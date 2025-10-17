@@ -1,19 +1,37 @@
 // features/clients/schemas/add-client.ts
 import * as z from "zod";
 
+// "gender": "male",
+// "nationality": "British",
+
+// "county": "Greater London",
+// "zip": "NW1 6XE",
+// "country": "United Kingdom",
+
+// "phone": "+447911123456",
+// "phoneType": "mobile",
+// "secondaryPhone": "02079460000",
+// "secondaryPhoneType": "work",
+
+// "wellbeingDetails": "YOU NEED TO ALWAYS WASH HIS BUM BUM WHEN HE SHITS, AND ALSO FEED HIM FOOD",
+
+// "riskLevel": "medium"
 export const clientSchema = z.object({
   profileImage: z.string().optional(),
 
-  title: z.string("Please enter a title").trim().min(1, "Please enter a title"),
+  title: z
+    .string("Please select a title")
+    .trim()
+    .min(1, "Please select a title"),
 
-  firstName: z
+  firstname: z
     .string("Please enter a first name")
     .trim()
     .min(1, "Please enter a first name"),
 
   middleName: z.string().optional(),
 
-  lastName: z
+  lastname: z
     .string("Please enter a last name")
     .trim()
     .min(1, "Please enter a last name"),
@@ -21,7 +39,7 @@ export const clientSchema = z.object({
   preferredName: z.string().optional(),
   pronouns: z.string().optional(),
 
-  dateOfBirth: z
+  dob: z
     .string("Please enter a date of birth")
     .refine((s) => !!s, "Please enter a date of birth")
     .refine((s) => !Number.isNaN(Date.parse(s)), "Invalid date")
@@ -51,7 +69,7 @@ export const clientSchema = z.object({
   additionalPhoneType: z.string().optional(),
   additionalPhoneCountry: z.string().optional(),
 
-  emailAddress: z
+  email: z
     .string()
     .trim()
     .min(1, "Please enter an email address")

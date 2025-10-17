@@ -22,6 +22,7 @@ import {
 import { useSelectWorkspace, useWorkspace } from "@/hooks/useWorkspace";
 import type { AgencyMembership } from "@/types/workspace";
 import { WorkspaceSelectionSkeleton } from "@/components/loading/workspace-selection-skeleton";
+import SplashVisual from "@/layouts/splash-visual";
 
 type Role = "Owner" | "Admin" | "Coordinator" | "Viewer";
 
@@ -131,6 +132,10 @@ export default function WorkspaceSelectionPage() {
     }
   };
 
+  if (selecting) {
+    return <SplashVisual message="Loading Dashboard " />;
+  }
+
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Top brand bar */}
@@ -174,6 +179,7 @@ export default function WorkspaceSelectionPage() {
                   onKeyDown={onKeyDown}
                   placeholder="Search for a workspace"
                   className="pl-9 bg-white"
+                  type="search"
                 />
               </div>
 
@@ -283,8 +289,18 @@ export default function WorkspaceSelectionPage() {
               ))}
 
               {!filtered.length && (
-                <div className="rounded-lg border bg-white px-6 py-10 text-center text-sm text-muted-foreground">
-                  No workspaces match your search.
+                <div className="flex flex-col  items-center justify-center  gap-3 ">
+                  <img
+                    src="/EmptyState.png"
+                    alt="empty"
+                    className="mx-auto  opacity-90"
+                  />
+                  <p className="font-semibold text-muted-foreground">
+                    No workspaces available
+                  </p>
+                  <p className="text-sm text-muted-foreground ">
+                    You don’t have any workspaces with this role assigned.
+                  </p>
                 </div>
               )}
             </section>

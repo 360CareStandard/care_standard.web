@@ -53,9 +53,9 @@ const WellbeingOverview = ({
         name="riskLevel"
         label="Risk level"
         options={[
-          { value: "H", label: "High" },
-          { value: "M", label: "Medium" },
-          { value: "L", label: "Low" },
+          { value: "high", label: "High" },
+          { value: "medium", label: "Medium" },
+          { value: "low", label: "Low" },
         ]}
         forceShowError={attemptedNext}
       />

@@ -30,8 +30,8 @@ const PersonalDetails = ({
   control,
   attemptedNext,
 }: Props) => {
-  const first = watch("firstName");
-  const last = watch("lastName");
+  const first = watch("firstname");
+  const last = watch("lastname");
   const initials = `${first?.[0] ?? "J"}${last?.[0] ?? "W"}`;
   return (
     <div className="grid gap-4">
@@ -56,8 +56,8 @@ const PersonalDetails = ({
       />
       <TextField
         label="First Name"
-        error={errors.firstName?.message}
-        {...register("firstName")}
+        error={errors.firstname?.message}
+        {...register("firstname")}
         placeholder="Enter legal first name"
       />
       <TextField
@@ -68,8 +68,8 @@ const PersonalDetails = ({
       />
       <TextField
         label="Last Name"
-        error={errors.lastName?.message}
-        {...register("lastName")}
+        error={errors.lastname?.message}
+        {...register("lastname")}
         placeholder="Enter legal last name"
       />
       <TextField
@@ -86,7 +86,7 @@ const PersonalDetails = ({
       />
       <RHFDatePicker
         control={control}
-        name="dateOfBirth"
+        name="dob"
         label="Date of Birth"
         minDate={new Date(1900, 0, 1)}
         maxDate={new Date()} // block future DOBs

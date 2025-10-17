@@ -74,8 +74,8 @@ const ContactDetails = ({
         />
         <TextField
           label="Email address"
-          error={errors.emailAddress?.message}
-          {...register("emailAddress")}
+          error={errors.email?.message}
+          {...register("email")}
           placeholder="Enter email address"
         />
       </div>

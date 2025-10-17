@@ -32,12 +32,12 @@ api.interceptors.response.use(
     const status = error?.response?.status;
     if (status === 401) {
       // clear auth and optionally redirect
-      // useAuthStore.getState().clearAuth();
+      useAuthStore.getState().clearAuth();
       // if you want a soft redirect on client pages:
-      // if (typeof window !== "undefined") {
-      //   const current = window.location.pathname;
-      //   window.location.href = `/login?next=${encodeURIComponent(current)}`;
-      // }
+      if (typeof window !== "undefined") {
+        const current = window.location.pathname;
+        window.location.href = `/login?next=${encodeURIComponent(current)}`;
+      }
     }
     return Promise.reject(error);
   }

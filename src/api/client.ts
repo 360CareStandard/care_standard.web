@@ -1,5 +1,6 @@
 // src/api/clients.ts
 import { api } from "@/lib/axios";
+import { ClientFormData } from "@/pages/app/clients/schemas/add-client";
 import type {
   ClientListResponse,
   ClientResponse,
@@ -15,6 +16,9 @@ export const ClientsApi = {
 
   update: (id: string, body: UpdateClientBody) =>
     api.patch<ClientResponse>(`/clients/${id}`, body).then((r) => r.data),
+
+  post: (body: ClientFormData) =>
+    api.post<ClientResponse>("/client", body).then((r) => r.data), // ← FIXED
 
   delete: (id: string) =>
     api.delete<{ status: "success" }>(`/clients/${id}`).then((r) => r.data),

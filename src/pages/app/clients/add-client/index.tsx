@@ -9,6 +9,7 @@ import ContactDetails from "./contact-details";
 import Addresses from "./addresses";
 import WellbeingOverview from "./wellbeing-overview";
 import { StepperHeader } from "../components/stepper-header";
+import { useCreateClient } from "@/hooks/useClients";
 
 interface Props {
   open: boolean;
@@ -20,12 +21,12 @@ const AddClient = ({ open, setOpen }: Props) => {
     resolver: zodResolver(clientSchema),
     defaultValues: {
       title: "",
-      firstName: "",
+      firstname: "",
       middleName: "",
-      lastName: "Wilson",
-      preferredName: "FizzySweet",
-      pronouns: "She/Her",
-      dateOfBirth: "",
+      lastname: "",
+      preferredName: "",
+      pronouns: "",
+      dob: "",
       status: "Active",
       primaryPhoneCountry: "GB",
       primaryPhoneType: "Work",
@@ -33,7 +34,7 @@ const AddClient = ({ open, setOpen }: Props) => {
       additionalPhoneType: "Home",
       primaryPhoneNumber: "",
       additionalPhoneNumber: "",
-      emailAddress: "",
+      email: "",
       accessDetails: "",
       lat: 51.5074, // London default is fine
       lng: -0.1278,
@@ -59,12 +60,12 @@ const AddClient = ({ open, setOpen }: Props) => {
 
   // fields to validate per step
   const stepFields: Record<number, readonly FieldPath<ClientFormData>[]> = {
-    1: ["title", "firstName", "lastName", "dateOfBirth", "status"],
+    1: ["title", "firstname", "lastname", "dob", "status"],
     2: [
       "primaryPhoneCountry",
       "primaryPhoneNumber",
       "primaryPhoneType",
-      "emailAddress",
+      "email",
     ],
     3: ["addressLine1", "city", "state", "postcode"],
     4: ["wellbeing", "riskLevel"],
@@ -72,7 +73,6 @@ const AddClient = ({ open, setOpen }: Props) => {
 
   const [currentStep, setCurrentStep] = useState<number>(firstStep);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isStepValidating, setIsStepValidating] = useState(false);
   const [attemptedNext, setAttemptedNext] = useState(false); // gate error display
 
@@ -133,19 +133,51 @@ const AddClient = ({ open, setOpen }: Props) => {
       }
     }
   };
+  const { mutateAsync: createClient, isPending: isSubmitting } =
+    useCreateClient();
+
+  // const onValidSubmit = async (vals: ClientFormData) => {
+  //   console.log("Submitting new client", vals);
+
+  //   try {
+  //     setIsSubmitting(true);
+  //     // TODO: call API with vals
+  //     methods.reset();
+  //     setCurrentStep(firstStep);
+  //     setAttemptedNext(false);
+  //     setOpen(false);
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
 
   const onValidSubmit = async (vals: ClientFormData) => {
-    console.log("Submitting new client", vals);
+    // If your API needs a different shape, map here:
+    // const payload = { ...vals, first_name: vals.firstname, last_name: vals.lastname };
+    const payload = vals;
 
     try {
-      setIsSubmitting(true);
-      // TODO: call API with vals
+      await createClient(payload);
+      // toast?.success?.("Client created");
       methods.reset();
       setCurrentStep(firstStep);
       setAttemptedNext(false);
       setOpen(false);
-    } finally {
-      setIsSubmitting(false);
+    } catch (err: any) {
+      // Optional: surface server validation errors back into the form
+      // Example expects { errors: [{ field: "email", message: "Already taken" }, ...] }
+      const serverErrors = err?.response?.data?.errors as
+        | { field: keyof ClientFormData; message: string }[]
+        | undefined;
+
+      if (serverErrors?.length) {
+        serverErrors.forEach(({ field, message }) => {
+          methods.setError(field, { type: "server", message });
+        });
+      } else {
+        // toast?.error?.("Failed to create client");
+        console.error(err);
+      }
     }
   };
 
@@ -170,6 +202,7 @@ const AddClient = ({ open, setOpen }: Props) => {
   //   }, [methods]);
 
   // --- render
+
   return (
     <SheetForm
       open={open}
@@ -219,9 +252,9 @@ const AddClient = ({ open, setOpen }: Props) => {
           <PersonalDetails
             FieldError={({ message }) =>
               fieldHasError("title") ||
-              fieldHasError("firstName") ||
-              fieldHasError("lastName") ||
-              fieldHasError("dateOfBirth") ||
+              fieldHasError("firstname") ||
+              fieldHasError("lastname") ||
+              fieldHasError("dob") ||
               fieldHasError("status") ? (
                 <p className="mt-1 text-xs text-destructive">{message}</p>
               ) : null
@@ -231,15 +264,13 @@ const AddClient = ({ open, setOpen }: Props) => {
               {
                 ...errors,
                 title: fieldHasError("title") ? errors.title : undefined,
-                firstName: fieldHasError("firstName")
-                  ? errors.firstName
+                firstname: fieldHasError("firstname")
+                  ? errors.firstname
                   : undefined,
-                lastName: fieldHasError("lastName")
-                  ? errors.lastName
+                lastname: fieldHasError("lastname")
+                  ? errors.lastname
                   : undefined,
-                dateOfBirth: fieldHasError("dateOfBirth")
-                  ? errors.dateOfBirth
-                  : undefined,
+                dob: fieldHasError("dob") ? errors.dob : undefined,
                 status: fieldHasError("status") ? errors.status : undefined,
               } as any
             }
@@ -254,16 +285,14 @@ const AddClient = ({ open, setOpen }: Props) => {
         {currentStep === 2 && (
           <ContactDetails
             FieldError={({ message }) =>
-              fieldHasError("emailAddress") ? (
+              fieldHasError("email") ? (
                 <p className="mt-1 text-xs text-destructive">{message}</p>
               ) : null
             }
             errors={
               {
                 ...errors,
-                emailAddress: fieldHasError("emailAddress")
-                  ? errors.emailAddress
-                  : undefined,
+                email: fieldHasError("email") ? errors.email : undefined,
                 primaryPhoneCountry: fieldHasError("primaryPhoneCountry")
                   ? errors.primaryPhoneCountry
                   : undefined,
