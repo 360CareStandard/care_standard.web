@@ -1,21 +1,66 @@
 // src/types/client.ts
-export type Client = {
+
+export type RiskLevel = "low" | "medium" | "high" | string;
+export type Gender = "male" | "female" | null | string;
+export type PhoneType = "home" | "mobile" | "work" | null | string;
+export type ClientStatus = "active" | "inactive" | string | null;
+
+export interface Agency {
   id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
+  tradingName: string;
+  legalName: string;
+  country: string | null;
+}
+
+export interface Client {
+  id: string;
+  agencyId: string;
+  primaryContactUserId: string | null;
+  firstname: string;
+  lastname: string;
+  middlename?: string; // sometimes empty string
+  preferredname?: string;
+  pronouns?: string | null;
+  dob?: string | null; // ISO date string e.g. "2002-06-07"
+  title?: string | null;
+  gender?: Gender;
+  nationality?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  city?: string | null;
+  county?: string | null;
+  accessDetails?: string | null;
+  state?: string | null;
+  zip?: string | null;
+  country?: string | null;
+  latitude?: string | null; // server returns stringified coords
+  longitude?: string | null;
+  secureCheckInZone?: number | null;
   phone?: string | null;
-  createdAt: string;
-  updatedAt: string;
-};
+  phoneType?: PhoneType;
+  secondaryPhone?: string | null;
+  secondaryPhoneType?: PhoneType;
+  email?: string | null;
+  wellbeingDetails?: string | null;
+  riskLevel?: RiskLevel;
+  status?: ClientStatus;
+  metadata?: Record<string, unknown>;
+  createdAt?: string; // ISO
+  updatedAt?: string; // ISO
+  agency?: Agency | null;
+}
 
-export type ClientListResponse = {
-  data: Client[];
-  meta: { total: number; page: number; limit: number };
-};
+export interface ClientsData {
+  result: number;
+  clients: Client[];
+  totalPages: number;
+  currentPage: number | string;
+}
 
-export type ClientResponse = { data: Client };
+export interface ClientsResponse {
+  // status: "success" | "error" | string;
+  message?: string;
+  data?: ClientsData;
+}
 
-export type UpdateClientBody = Partial<
-  Pick<Client, "firstName" | "lastName" | "email" | "phone">
->;
+export interface UpdateClientBody extends Partial<Client> {}

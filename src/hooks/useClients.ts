@@ -12,10 +12,19 @@ export function useClients(params?: {
   return useQuery({
     queryKey: qk.clients(params),
     queryFn: () => ClientsApi.list(params),
-    select: (res) => res, // { data, meta }
+    select: (res) => res,
     staleTime: 60_000,
   });
 }
+
+// export function useClients(params?: { q?: string; page?: number; limit?: number }) {
+//   return useQuery({
+//     queryKey: qk.clients(params),
+//     queryFn: () => ClientsApi.list(params),
+//     // server returns { data, meta } so keep it as-is
+//     staleTime: 60_000,
+//   });
+// }
 
 export function useCreateClient(params?: {
   q?: string;
@@ -36,7 +45,6 @@ export function useClient(id?: string, enabled = true) {
   return useQuery({
     queryKey: id ? qk.client(id) : ["client", "nil"],
     queryFn: () => ClientsApi.get(id!),
-    select: (res) => res.data,
     enabled: Boolean(id) && enabled,
     staleTime: 60_000,
   });

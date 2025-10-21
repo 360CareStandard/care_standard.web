@@ -51,10 +51,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   return (
     <div className={cn("w-full", containerClassName)}>
       {label ? (
-        <Label
-          id={labelId}
-          className="mb-2 block text-sm font-normal text-slate-700"
-        >
+        <Label id={labelId} className="mb-2 block ">
           {label}
         </Label>
       ) : null}
@@ -95,7 +92,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
           {error}
         </p>
       ) : hint ? (
-        <p id={helpId} className="mt-2 text-sm text-slate-500">
+        <p id={helpId} className="mt-2 text-xs text-slate-500">
           {hint}
         </p>
       ) : null}

@@ -12,6 +12,7 @@ import {
 import { TextField } from "@/components/shared/text-field";
 import { AddressMapBlock } from "../components/address-map-block";
 import { TextareaField } from "@/components/shared/textarea-field";
+import { AddressAutocomplete } from "../components/address-autocomplete";
 
 interface Props {
   watch: UseFormWatch<ClientFormData>;
@@ -36,6 +37,7 @@ const Addresses = ({
       <div>
         <p className="font-normal">Primary address</p>
       </div>
+      <AddressAutocomplete setValue={setValue} />
 
       <TextField
         label="Address line 1"
@@ -68,16 +70,16 @@ const Addresses = ({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <TextField
-          label="Postal code"
+          label="Zip code"
           placeholder="e.g. SW1A 1AA"
-          error={errors.postcode?.message}
-          {...register("postcode")}
+          error={errors.zip?.message}
+          {...register("zip")}
         />
         <TextField
           label="Country"
           placeholder=""
-          error={errors.primaryPhoneCountry?.message}
-          {...register("primaryPhoneCountry")}
+          error={errors.country?.message}
+          {...register("country")}
         />
         {/* Reserved space for future Country field if you add it to the schema */}
         <div />

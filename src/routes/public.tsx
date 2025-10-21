@@ -4,11 +4,13 @@ import { PropsWithChildren } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
 export default function PublicOnlyRoute({ children }: PropsWithChildren) {
-  const { isAuthed } = useAuthStore();
+  const isAuthed = useAuthStore((s) => s.isAuthed);
   const location = useLocation();
+
   if (isAuthed) {
-    const next = new URLSearchParams(location.search).get("next");
-    return <Navigate to={next || "/app"} replace />;
+    const next = new URLSearchParams(location.search).get("next") || "/app";
+    return <Navigate to={next} replace state={{ from: location }} />;
   }
+
   return <>{children}</>;
 }

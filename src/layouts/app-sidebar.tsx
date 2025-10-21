@@ -78,14 +78,6 @@ export function AppSidebar() {
     >
       {/* Top user block */}
       <SidebarHeader className="border-b bg-white">
-        {/* <NavUser
-          user={{
-            name: "Jemmy Wilson",
-            email: "Female • ~64 Years",
-            avatar: "/images/smiley-elder-woman-standing-kitchen.png",
-          }}
-        /> */}
-
         <ClientQuickSwitcher />
       </SidebarHeader>
 

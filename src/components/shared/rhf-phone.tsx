@@ -56,7 +56,7 @@ export function RHFPhone<T extends FieldValues>({
           />
 
           {fieldState.error?.message && (
-            <p className="text-sm text-destructive">
+            <p className="text-xs text-destructive">
               {fieldState.error.message}
             </p>
           )}

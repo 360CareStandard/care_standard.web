@@ -17,7 +17,7 @@ type Client = {
   id: string;
   name: string;
   meta?: string; // e.g. "Female • ~64 Years"
-  avatar?: string;
+  avatar?: string | null;
 };
 
 type Props = {
@@ -32,8 +32,18 @@ const DEMO_CLIENTS: Client[] = [
     meta: "Female • ~64 Years",
     avatar: "/images/smiley-elder-woman-standing-kitchen.png",
   },
-  { id: "robert-w", name: "Robert Wilson", meta: "Male • ~68 Years" },
-  { id: "eliza-w", name: "Elizabeth Wilson", meta: "Female • ~36 Years" },
+  {
+    id: "robert-w",
+    name: "Robert Wilson",
+    meta: "Male • ~68 Years",
+    avatar: null,
+  },
+  {
+    id: "eliza-w",
+    name: "Elizabeth Wilson",
+    meta: "Female • ~36 Years",
+    avatar: null,
+  },
 ];
 
 export function ClientQuickSwitcher({
@@ -103,7 +113,7 @@ export function ClientQuickSwitcher({
           aria-haspopup="listbox"
           aria-expanded={open}
         >
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-11 w-11  text-black">
             {active?.avatar ? (
               <AvatarImage src={active.avatar} alt={active.name} />
             ) : (

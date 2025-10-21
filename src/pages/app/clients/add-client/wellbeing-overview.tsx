@@ -36,15 +36,16 @@ const WellbeingOverview = ({
       </div>
 
       <TextareaField
-        label="Access details"
-        placeholder="Enter access details..."
-        value={watch("wellbeing") ?? ""}
+        label="Wellbeing details"
+        placeholder="Enter wellbeing details..."
+        value={watch("wellbeingDetails") ?? ""}
         onChange={(e) =>
-          setValue("wellbeing", e.target.value, { shouldDirty: true })
+          setValue("wellbeingDetails", e.target.value, { shouldDirty: true })
         }
         showCounter
         maxLength={400}
         autoResize
+        className="h-20"
         // maxRows={6}
       />
 

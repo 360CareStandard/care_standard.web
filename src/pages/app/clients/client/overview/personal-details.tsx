@@ -10,6 +10,8 @@ import {
   TrashIcon,
   UserIcon,
 } from "@/assets/icons";
+import AddClient from "../../add-client";
+import { useState } from "react";
 
 interface Props {
   personal: {
@@ -26,6 +28,7 @@ interface Props {
   };
 }
 const PersonalDetails = ({ personal }: Props) => {
+  const [open, setOpen] = useState(false);
   return (
     <>
       <div className=" space-y-5">
@@ -63,7 +66,12 @@ const PersonalDetails = ({ personal }: Props) => {
                 Basic information about this client
               </p>
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" className="gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-2"
+                  onClick={() => setOpen(true)}
+                >
                   <EditIcon />
                   Edit
                 </Button>
@@ -113,6 +121,8 @@ const PersonalDetails = ({ personal }: Props) => {
           </CardContent>
         </Card>
       </div>
+
+      <AddClient open={open} setOpen={setOpen} />
     </>
   );
 };

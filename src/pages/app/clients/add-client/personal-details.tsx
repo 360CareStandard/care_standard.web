@@ -55,28 +55,28 @@ const PersonalDetails = ({
         forceShowError={attemptedNext} // <-- new
       />
       <TextField
-        label="First Name"
+        label="First name"
         error={errors.firstname?.message}
         {...register("firstname")}
         placeholder="Enter legal first name"
       />
       <TextField
-        label="Middle Name"
-        error={errors.middleName?.message}
-        {...register("middleName")}
+        label="Middle name"
+        error={errors.middlename?.message}
+        {...register("middlename")}
         placeholder="Enter legal middle name"
       />
       <TextField
-        label="Last Name"
+        label="Last name"
         error={errors.lastname?.message}
         {...register("lastname")}
         placeholder="Enter legal last name"
       />
       <TextField
-        label="Preffered Name"
-        error={errors.preferredName?.message}
-        {...register("preferredName")}
-        placeholder="Enter legal last name"
+        label="Preffered name"
+        error={errors.preferredname?.message}
+        {...register("preferredname")}
+        placeholder="Enter preffered name"
       />
       <TextField
         label="Pronouns"
@@ -84,26 +84,39 @@ const PersonalDetails = ({
         {...register("pronouns")}
         placeholder="Add Pronouns"
       />
-      <RHFDatePicker
-        control={control}
-        name="dob"
-        label="Date of Birth"
-        minDate={new Date(1900, 0, 1)}
-        maxDate={new Date()} // block future DOBs
-      />
-      {/* <Input type="date" /> */}
-
       <RHFSelectField
         control={control}
-        name="status"
-        label="Status"
+        name="gender"
+        label="Gender Identity"
         options={[
-          { value: "Active", label: "Active" },
-          { value: "Paused", label: "Paused" },
-          { value: "Inactive", label: "Inactive" },
+          { value: "male", label: "Male" },
+          { value: "female", label: "Female" },
+          { value: "other", label: "Other" },
         ]}
         forceShowError={attemptedNext} // <-- new
       />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 items-center">
+        <RHFDatePicker
+          control={control}
+          name="dob"
+          label="Date of Birth"
+          minDate={new Date(1900, 0, 1)}
+          maxDate={new Date()} // block future DOBs
+        />
+        <RHFSelectField
+          control={control}
+          name="status"
+          label="Status"
+          options={[
+            { value: "active", label: "Active" },
+            { value: "paused", label: "Paused" },
+            { value: "inactive", label: "Inactive" },
+          ]}
+          forceShowError={attemptedNext} // <-- new
+        />
+      </div>
+      {/* <Input type="date" /> */}
     </div>
   );
 };

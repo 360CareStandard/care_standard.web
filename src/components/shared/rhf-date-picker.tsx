@@ -64,7 +64,7 @@ export function RHFDatePicker<T extends FieldValues>({
               </Label>
             )}
 
-            <div className="relative !w-[262px]">
+            <div className="relative w-full">
               {/* Visible pretty display (doesn't handle clicks) */}
               <Input
                 id={`${name}-display`}

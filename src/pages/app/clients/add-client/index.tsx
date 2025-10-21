@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { FormProvider, useForm, FieldPath } from "react-hook-form";
+import { FormProvider, useForm, FieldPath, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { Button } from "@/components/ui/button";
@@ -10,37 +10,31 @@ import Addresses from "./addresses";
 import WellbeingOverview from "./wellbeing-overview";
 import { StepperHeader } from "../components/stepper-header";
 import { useCreateClient } from "@/hooks/useClients";
+import toast from "react-hot-toast";
 
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
+const resolver = zodResolver(
+  clientSchema
+) as unknown as Resolver<ClientFormData>;
 
 const AddClient = ({ open, setOpen }: Props) => {
   const methods = useForm<ClientFormData>({
-    resolver: zodResolver(clientSchema),
+    resolver,
     defaultValues: {
-      title: "",
-      firstname: "",
-      middleName: "",
-      lastname: "",
-      preferredName: "",
-      pronouns: "",
+      status: "active",
       dob: "",
-      status: "Active",
-      primaryPhoneCountry: "GB",
-      primaryPhoneType: "Work",
-      additionalPhoneCountry: "GB",
-      additionalPhoneType: "Home",
-      primaryPhoneNumber: "",
-      additionalPhoneNumber: "",
+      latitude: 51.5074,
+      longitude: -0.1278,
+      secureCheckInZone: 200,
+      phone: "",
+      phoneType: "",
       email: "",
-      accessDetails: "",
-      lat: 51.5074, // London default is fine
-      lng: -0.1278,
-      checkinRadiusM: 200,
+      riskLevel: "",
+      wellbeingDetails: "",
     },
-    // errors appear on Next; but we will also revalidate on change
     mode: "onSubmit",
     reValidateMode: "onChange",
     shouldUnregister: false,
@@ -61,14 +55,9 @@ const AddClient = ({ open, setOpen }: Props) => {
   // fields to validate per step
   const stepFields: Record<number, readonly FieldPath<ClientFormData>[]> = {
     1: ["title", "firstname", "lastname", "dob", "status"],
-    2: [
-      "primaryPhoneCountry",
-      "primaryPhoneNumber",
-      "primaryPhoneType",
-      "email",
-    ],
-    3: ["addressLine1", "city", "state", "postcode"],
-    4: ["wellbeing", "riskLevel"],
+    2: ["nationality", "phone", "phoneType", "email"],
+    3: ["addressLine1", "city", "state", "zip"],
+    4: ["wellbeingDetails", "riskLevel"],
   } as const;
 
   const [currentStep, setCurrentStep] = useState<number>(firstStep);
@@ -136,29 +125,18 @@ const AddClient = ({ open, setOpen }: Props) => {
   const { mutateAsync: createClient, isPending: isSubmitting } =
     useCreateClient();
 
-  // const onValidSubmit = async (vals: ClientFormData) => {
-  //   console.log("Submitting new client", vals);
-
-  //   try {
-  //     setIsSubmitting(true);
-  //     // TODO: call API with vals
-  //     methods.reset();
-  //     setCurrentStep(firstStep);
-  //     setAttemptedNext(false);
-  //     setOpen(false);
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
   const onValidSubmit = async (vals: ClientFormData) => {
     // If your API needs a different shape, map here:
     // const payload = { ...vals, first_name: vals.firstname, last_name: vals.lastname };
-    const payload = vals;
+    const payload = {
+      ...vals,
+      latitude: vals.latitude?.toString() ?? "",
+      longitude: vals.longitude?.toString() ?? "",
+    };
 
     try {
       await createClient(payload);
-      // toast?.success?.("Client created");
+      toast?.success?.("Client created");
       methods.reset();
       setCurrentStep(firstStep);
       setAttemptedNext(false);
@@ -175,6 +153,7 @@ const AddClient = ({ open, setOpen }: Props) => {
           methods.setError(field, { type: "server", message });
         });
       } else {
+        toast.error("Failed to create client");
         // toast?.error?.("Failed to create client");
         console.error(err);
       }
@@ -293,14 +272,12 @@ const AddClient = ({ open, setOpen }: Props) => {
               {
                 ...errors,
                 email: fieldHasError("email") ? errors.email : undefined,
-                primaryPhoneCountry: fieldHasError("primaryPhoneCountry")
-                  ? errors.primaryPhoneCountry
+                nationality: fieldHasError("nationality")
+                  ? errors.nationality
                   : undefined,
-                primaryPhoneNumber: fieldHasError("primaryPhoneNumber")
-                  ? errors.primaryPhoneNumber
-                  : undefined,
-                primaryPhoneType: fieldHasError("primaryPhoneType")
-                  ? errors.primaryPhoneType
+                phone: fieldHasError("phone") ? errors.phone : undefined,
+                phoneType: fieldHasError("phoneType")
+                  ? errors.phoneType
                   : undefined,
               } as any
             }

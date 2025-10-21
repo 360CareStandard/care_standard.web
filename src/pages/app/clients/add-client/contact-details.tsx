@@ -20,6 +20,11 @@ interface Props {
   register: UseFormRegister<ClientFormData>;
   errors: FieldErrors<ClientFormData>;
 }
+const phoneArr = [
+  { value: "mobile", label: "Mobile" },
+  { value: "home", label: "Home" },
+  { value: "work", label: "Work" },
+];
 
 const ContactDetails = ({
   control,
@@ -31,23 +36,13 @@ const ContactDetails = ({
     <section className="space-y-5 mt-4">
       <div className="grid gap-4">
         <h4 className="font-normal">Primary phone details</h4>
-        <RHFPhone
-          control={control}
-          name="primaryPhoneNumber"
-          label="Primary phone number"
-        />
+        <RHFPhone control={control} name="phone" label="Primary phone number" />
 
         <RHFSelectField
           control={control}
-          name="primaryPhoneType"
+          name="phoneType"
           label="Phone number type"
-          options={[
-            { value: "Mobile", label: "Mobile" },
-            { value: "Home", label: "Home" },
-            { value: "Work", label: "Work" },
-            { value: "Temp", label: "Temp" },
-            { value: "Old", label: "Old" },
-          ]}
+          options={phoneArr}
           forceShowError={attemptedNext} // <-- new
         />
       </div>
@@ -56,20 +51,14 @@ const ContactDetails = ({
 
         <RHFPhone
           control={control}
-          name="additionalPhoneNumber"
+          name="secondaryPhone"
           label="Additional phone number"
         />
         <RHFSelectField
           control={control}
-          name="additionalPhoneType"
+          name="secondaryPhoneType"
           label="Phone number type"
-          options={[
-            { value: "Mobile", label: "Mobile" },
-            { value: "Home", label: "Home" },
-            { value: "Work", label: "Work" },
-            { value: "Temp", label: "Temp" },
-            { value: "Old", label: "Old" },
-          ]}
+          options={phoneArr}
           forceShowError={attemptedNext} // <-- new
         />
         <TextField
