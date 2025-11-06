@@ -1,10 +1,15 @@
 // src/api/clients.ts
 import { api } from "@/lib/axios";
 import { ClientFormData } from "@/pages/app/clients/schemas/add-client";
-import type { Client, ClientsResponse, UpdateClientBody } from "@/types/client";
+import type {
+  Client,
+  ClientDetailResponse,
+  ClientsResponse,
+  UpdateClientBody,
+} from "@/types/client/client";
 
 export const ClientsApi = {
-  list: (params?: { q?: string; page?: number; limit?: number }) => {
+  list: async (params?: { q?: string; page?: number; limit?: number }) => {
     const safe = {
       page: Number(params?.page ?? 1),
       limit: Number(params?.limit ?? 10),
@@ -15,10 +20,11 @@ export const ClientsApi = {
       .then((r) => r.data);
   },
 
-  get: (id: string) => api.get<Client>(`/clients/${id}`).then((r) => r.data),
+  get: (id: string) =>
+    api.get<ClientDetailResponse>(`/client/${id}`).then((r) => r.data.data),
 
   update: (id: string, body: UpdateClientBody) =>
-    api.patch<Client>(`/clients/${id}`, body).then((r) => r.data),
+    api.patch<Client>(`/client/${id}`, body).then((r) => r.data),
 
   post: (body: ClientFormData) =>
     api.post<Client>("/client", body).then((r) => r.data), // ← FIXED

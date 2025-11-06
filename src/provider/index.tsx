@@ -28,19 +28,19 @@ export default function AppProvider({
           duration: 5000,
           removeDelay: 1000,
           style: {
-            background: "#363636",
-            color: "#fff",
+            // background: "#363636",
+            // color: "#fff",
             fontSize: 12,
           },
 
           // Default options for specific types
-          success: {
-            duration: 3000,
-            iconTheme: {
-              primary: "green",
-              secondary: "black",
-            },
-          },
+          // success: {
+          //   duration: 3000,
+          //   iconTheme: {
+          //     primary: "green",
+          //     secondary: "black",
+          //   },
+          // },
         }}
       />
     </QueryClientProvider>

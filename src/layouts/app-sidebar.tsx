@@ -105,7 +105,7 @@ export function AppSidebar() {
                           asChild
                           isActive={isActive}
                           className={cn(
-                            "group relative my-1 flex items-center gap-2 !rounded-[4px] px-2 !py-4 text-[15px]",
+                            "group relative my-1 flex items-center gap-2 !rounded-[4px] px-2 h-9 !py-4 text-[15px]",
                             "hover:bg-muted",
                             isActive &&
                               "!bg-primary-accent text-primary  hover:bg-primary/15"

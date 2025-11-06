@@ -8,7 +8,7 @@ import { SchedulingPreferencesFields } from "../forms/scheduling-preferences";
 import { FundingFields } from "../forms/funding-fields";
 import { SafetyCheckinFields } from "../forms/safety-checkin-fields";
 
-export function CareSetupAccordion() {
+export function CareSetupAccordion({ clientId }: { clientId: string }) {
   // optional: control which is open
   const [open, setOpen] = React.useState<string | undefined>("service");
 
@@ -60,6 +60,7 @@ export function CareSetupAccordion() {
             { id: "b933…", label: "David Wilson (Son)" },
             { id: "c1aa…", label: "Sarah Johnson (Daughter)" },
           ]}
+          clientId={clientId}
         />
       </CareAccordionSection>
     </Accordion>

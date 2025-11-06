@@ -1,7 +1,6 @@
 // src/components/clients/data-table-pagination.tsx
 import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;

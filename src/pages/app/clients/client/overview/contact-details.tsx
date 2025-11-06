@@ -3,7 +3,14 @@ import { InfoRow } from "../components/info-row";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone } from "lucide-react";
 import { EditIcon } from "@/assets/icons";
-const ContactDetails = () => {
+import { Client } from "@/types/client/client";
+import { UkFlagIcon } from "../icons/uk-flag";
+
+interface Props {
+  personal: Client | undefined;
+  isLoading: boolean;
+}
+const ContactDetails = ({ personal }: Props) => {
   return (
     <Card>
       <CardContent className="grid grid-cols-1  sm:grid-cols-2 gap-16">
@@ -22,17 +29,32 @@ const ContactDetails = () => {
 
         <Card>
           <CardContent className="p-0">
-            <InfoRow label="Primary Phone number" icon={<Phone size={17.65} />}>
-              +4444544445 Work
-            </InfoRow>
             <InfoRow
-              label="Additional Phone number"
+              label="Primary Phone number"
               icon={<Phone size={17.65} />}
+              className="flex gap-2 items-center py-1"
             >
-              +4444544445 Home
+              <UkFlagIcon /> {personal?.phone}{" "}
+              <span className="text-muted-foreground">
+                {personal?.phoneType}
+              </span>
             </InfoRow>
+            {personal?.secondaryPhone && (
+              <InfoRow
+                label="Additional Phone number"
+                icon={<Phone size={17.65} />}
+                className="flex gap-2 items-center py-1"
+              >
+                <UkFlagIcon /> {personal?.secondaryPhone}{" "}
+                <span className="text-muted-foreground">
+                  {personal?.secondaryPhoneType}
+                </span>
+              </InfoRow>
+            )}
             <InfoRow label="Email Address" icon={<Mail size={17.65} />}>
-              Jemmy@care360.co.uk
+              <a href={`mailto:${personal?.email}`} className="hover:underline">
+                {personal?.email}
+              </a>
             </InfoRow>
           </CardContent>
         </Card>

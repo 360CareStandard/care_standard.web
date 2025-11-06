@@ -2,8 +2,7 @@
 import { useFormContext } from "react-hook-form";
 import { RHFSelectField } from "@/components/shared/rhf-select-field";
 import { TextField } from "@/components/shared/text-field";
-import { FundingSourceEnum } from "../../schemas/funding-source";
-import { CareSetupForm } from "../../schemas/care-setup";
+import { CareSetupForm, FundingSourceEnum } from "../../schemas/care-setup";
 
 const fundingOptions = FundingSourceEnum.options.map((v) => ({
   value: v,
@@ -27,21 +26,27 @@ export function FundingFields() {
       <TextField
         label="Funder/Council/ICB"
         placeholder="e.g. Camden Council"
-        {...register("funderCouncil")}
-        error={errors.funderCouncil?.message}
+        {...register("funder")}
+        error={errors.funder?.message}
       />
 
       <TextField
         label="Authorisation/ Reference No."
         placeholder="e.g. CAM-23456"
-        {...register("authorisationRef")}
-        error={errors.authorisationRef?.message}
+        {...register("authorizationNumber")}
+        error={errors.authorizationNumber?.message}
       />
 
       <TextField
         label="Budget Cap/Rate Plan"
         placeholder="e.g. £500/week"
         {...register("budgetCap")}
+        onInput={(e) => {
+          // Allow only digits and one dot
+          e.currentTarget.value = e.currentTarget.value
+            .replace(/[^0-9.]/g, "") // strip non-numeric chars
+            .replace(/(\..*?)\..*/g, "$1"); // keep only the first dot
+        }}
         error={errors.budgetCap?.message}
       />
     </div>

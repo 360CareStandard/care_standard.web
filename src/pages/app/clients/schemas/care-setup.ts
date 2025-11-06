@@ -1,42 +1,115 @@
+// schemas/care-setup-full.ts
 import { z } from "zod";
-import { SchedulingPreferencesSchema } from "./scheduling-preferences";
-import { FundingSchema } from "./funding-source";
-import { SafetySchema } from "./safety-checkin";
 
-export const PackageTypeEnum = z.enum([
-  "Domiciliary",
-  "Live-in",
-  "Night",
-  "Complex",
+/**
+ * Helper: accept numeric strings or numbers, produce number
+ */
+const NumberLike = z.union([z.string(), z.number()]).transform((val) => {
+  if (typeof val === "number") return val;
+  const parsed = Number(val);
+  return Number.isFinite(parsed) ? parsed : undefined;
+});
+export const SkillEnum = z.enum([
+  "Medication",
+  "Dementia Care",
+  "PEG Feeding",
+  "Catheter Care",
+  "Moving & Handling",
 ]);
 
-export const StatusEnum = z.enum(["Active", "Paused", "Ended"]);
+export const LanguageEnum = z.enum(["No requirement", "English", "Spanish"]);
+/**
+ * Status: API shows "active" etc. (lowercase) — make tolerant of case by normalizing.
+ */
+export const StatusEnum = z.enum(["active", "paused", "ended"]);
+export const VisitPresetEnum = z.enum(["AM", "PM", "Evening", "Custom"]);
+export const CheckInMethodEnum = z.enum(["GPS", "NFC", "QR Code"]);
+export const FundingSourceEnum = z.enum([
+  "NHS",
+  "local authority",
+  "private",
+  "mixed",
+]);
+/**
+ * Visit duration preset allowed values in API: "30", "15" etc.
+ * Accepts either string or number but stores string form.
+ */
+export const VisitDurationEnum = z.enum(["15", "30", "45", "60"]);
 
-// 1) This is the section we're building now
-export const ServicePackageSchema = z.object({
-  packageType: PackageTypeEnum,
-  startDate: z.string().min(1, "Start date is required"),
+/**
+ * Time-of-day must be "HH:mm:ss" for API. We validate simple pattern here.
+ */
+const TimeHHMMSS = z
+  .string()
+  .regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/, "Time must be HH:mm:ss");
+
+/**
+ * Escalation contact: allow empty string -> undefined, or a uuid
+ */
+// const EmptyOrUuid = z
+//   .string()
+//   .optional()
+//   .or(z.literal(""))
+//   .transform((v) => (v && v.trim() !== "" ? v : undefined))
+//   .pipe(z.string().uuid().optional());
+
+/**
+ * Language list — API accepts array of strings
+ */
+const LanguageString = z.string();
+
+/**
+ * Main full schema mapping to the API payload
+ */
+export const CareSetupApiSchema = z.object({
+  // top-level meta
+  // agencyId: z.string().uuid(),
+  packageId: z.string().trim().min(1, "Please select a package"),
+
+  // service package block
+  // .refine((s) => /^\d{4}-\d{2}-\d{2}$/.test(s),
+  // startDate: z.string().refine((s) => /^\d{4}-\d{2}-\d{2}$/.test(s), {
+  //   message: "startDate must be is required",
+  // }),
+  startDate: z.string().trim().min(1, "Please enter a date"),
   status: StatusEnum,
-  authorisedHours: z.number("Enter hours per week").min(0),
-  visitDuration: z.enum(["15", "30", "45", "60"]).optional(),
-  doubleUpRequired: z.boolean().default(false),
-  overnightCare: z.boolean().default(false),
-  overnightStart: z.string().optional(),
-  overnightEnd: z.string().optional(),
-  overnightStartPeriod: z.enum(["AM", "PM"]).optional(),
-  overnightEndPeriod: z.enum(["AM", "PM"]).optional(),
+  visitDurationPreset: VisitDurationEnum.optional(),
+
+  // Booleans
+  doubleUpVisitRequired: z.boolean().default(false).optional(),
+  overnightCareRequired: z.boolean().default(false).optional(),
+
+  // overnight specifics (only required if overnightCareRequired true)
+  overnightCareType: z.enum(["sleep-in", "waking-night"]).optional(), // API example used "sleep-in"
+  overnightCareStartTime: TimeHHMMSS.optional(),
+  overnightCareEndTime: TimeHHMMSS.optional(),
+  // Scheduling / preferences
+  visitPeriodPreset: z.string().optional(), // can be "Custom" or others
+  continuityPriority: z.boolean().default(false),
+  preferredCarers: z.array(z.string()).default([]),
+  avoidedCarers: z.array(z.string()).default([]),
+  requiredSkills: z.array(z.string()).default([]),
+  languageRequirements: z.array(LanguageString).default([]),
+
+  // Funding
+  fundingSource: FundingSourceEnum.optional(),
+  funder: z.string().optional(),
+  authorizationNumber: z.string().optional(),
+  budgetCap: NumberLike.optional(),
+  // Safety / checkin
+  checkInMethod: z
+    .string()
+    .transform((s) => (typeof s === "string" ? s.toLowerCase() : s))
+    .refine(
+      (s) => ["gps", "nfc", "qr code", "qr-code", "qr_code"].includes(s) || !s,
+      {
+        message: "Invalid check in method",
+      }
+    )
+    .optional(),
+  lateVisitAlertThreshold: NumberLike.optional(),
+  escalationContact: z.string().uuid().optional(), // name matches API field in example: null
+  loneWorkerAlertEnabled: z.boolean().default(false),
 });
-
-// 2) For now, use this as the page-level schema.
-//    Later we can .merge() other sections into a full CareSetupSchema.
-// export const CareSetupSchema = ServicePackageSchema;
-export const CareSetupSchema = ServicePackageSchema.merge(
-  SchedulingPreferencesSchema
-)
-  .merge(FundingSchema)
-  .merge(SafetySchema);
-
-// 3) Export the type used by RHF
-// export type CareSetupForm = z.infer<typeof CareSetupSchema>;
-export type CareSetupForm = z.input<typeof CareSetupSchema>;
-export type CareSetupValues = z.infer<typeof CareSetupSchema>;
+// export type CareSetupForm = z.infer<typeof CareSetupApiSchema>;
+export type CareSetupForm = z.input<typeof CareSetupApiSchema>;

@@ -9,6 +9,7 @@ import { DataTableRowActions } from "./data-table-row-actions";
 import { LongText } from "@/components/shared/long-text";
 import { Link } from "react-router-dom";
 import { ClientNormalized } from "../data/normalize-clients";
+import { riskColorMap } from "@/helpers/risk-colors";
 
 // small helper to compute age from YYYY-MM-DD string (returns undefined if no dob)
 function getAge(dob?: string | null) {
@@ -129,13 +130,13 @@ export const clientsColumns: ColumnDef<ClientNormalized>[] = [
     enableSorting: false,
   },
 
-  {
-    accessorKey: "city",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="City" />
-    ),
-    cell: ({ row }) => <div>{row.getValue("city") ?? "—"}</div>,
-  },
+  //   {
+  //     accessorKey: "city",
+  //     header: ({ column }) => (
+  //       <DataTableColumnHeader column={column} title="City" />
+  //     ),
+  //     cell: ({ row }) => <div>{row.getValue("city") ?? "—"}</div>,
+  //   },
 
   //   {
   //     accessorKey: "country",
@@ -150,9 +151,24 @@ export const clientsColumns: ColumnDef<ClientNormalized>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Risk" />
     ),
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("riskLevel") ?? "—"}</div>
-    ),
+    cell: ({ row }) => {
+      const riskLevel = row.original.riskLevel ?? row.getValue("riskLevel");
+      const riskStyle =
+        riskLevel && riskColorMap[riskLevel]
+          ? riskColorMap[riskLevel]
+          : { bg: "bg-gray-100", text: "text-gray-600" };
+      return (
+        <Badge
+          className={cn(
+            "text-xs font-medium rounded-md px-2 py-1 capitalize",
+            riskStyle.bg,
+            riskStyle.text
+          )}
+        >
+          {riskLevel ?? "—"}
+        </Badge>
+      );
+    },
     enableSorting: false,
   },
 

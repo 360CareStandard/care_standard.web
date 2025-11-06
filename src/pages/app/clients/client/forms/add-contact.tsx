@@ -28,13 +28,13 @@ export default function AddContact() {
         label="Full Name"
         placeholder="Enter full name"
         required
-        {...register("fullName")}
-        error={errors.fullName?.message}
+        {...register("contactName")}
+        error={errors.contactName?.message}
       />
 
       <RHFSelectField
         control={control}
-        name="relationship"
+        name="relationshipToClient"
         label="Relationship"
         placeholder="Select relationship to client..."
         options={relationshipOptions}
@@ -44,8 +44,8 @@ export default function AddContact() {
         label="Phone Number"
         placeholder="Enter phone number"
         inputMode="tel"
-        {...register("phone")}
-        error={errors.phone?.message}
+        {...register("contactPhone")}
+        error={errors.contactPhone?.message}
         // hint="Digits, spaces, (), -, optional +"
       />
       <TextField
@@ -53,15 +53,15 @@ export default function AddContact() {
         placeholder="Enter email address"
         inputMode="email"
         type="email"
-        {...register("email")}
-        error={errors.email?.message}
+        {...register("contactEmail")}
+        error={errors.contactEmail?.message}
       />
 
       <TextField
         label="Address"
         placeholder="Full address"
-        {...register("address")}
-        error={errors.address?.message}
+        {...register("contactAddress")}
+        error={errors.contactAddress?.message}
       />
       <TextareaField
         label="Notes"
@@ -72,12 +72,23 @@ export default function AddContact() {
         value={watch("notes") ?? ""}
         error={errors.notes?.message}
       />
+      <RHFSelectField
+        control={control}
+        {...register("status")}
+        name="status"
+        label="Status"
+        options={[
+          { value: "active", label: "Active" },
+          { value: "paused", label: "Paused" },
+          { value: "inactive", label: "Inactive" },
+        ]}
+      />
       <Separator />
       {/* Toggles */}
       <div className="mt-2 space-y-4">
         <Controller
           control={control}
-          name="primaryContact"
+          name="isPrimaryContact"
           render={({ field }) => (
             <div className="flex items-start justify-between gap-4 py-2">
               <div>
@@ -96,7 +107,7 @@ export default function AddContact() {
 
         <Controller
           control={control}
-          name="emergencyContact"
+          name="isEmergencyContact"
           render={({ field }) => (
             <div className="flex items-start justify-between gap-4 py-2">
               <div>
@@ -115,7 +126,7 @@ export default function AddContact() {
 
         <Controller
           control={control}
-          name="familyAccessApp"
+          name="hasAppAccess"
           render={({ field }) => (
             <div className="flex items-start justify-between gap-4 py-2">
               <div>
@@ -123,9 +134,9 @@ export default function AddContact() {
                 <p className="text-sm text-muted-foreground">
                   Can view updates and information through the family app
                 </p>
-                {field.value && errors.email?.message ? (
+                {field.value && errors.contactEmail?.message ? (
                   <p className="mt-1 text-sm text-red-600">
-                    {errors.email.message}
+                    {errors.contactEmail.message}
                   </p>
                 ) : null}
               </div>

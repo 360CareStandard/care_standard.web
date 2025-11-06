@@ -1,103 +1,78 @@
 import { useFormContext, Controller, useWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
+import Select, { MultiValue } from "react-select";
 import {
-  VisitPresetEnum,
-  SkillEnum,
   LanguageEnum,
-  type SchedulingPreferencesForm,
-} from "../../schemas/scheduling-preferences";
-import { Carer } from "../components/carer-selection";
-import { RHFCarerSelection } from "../components/rhf-carer-selection";
-import { RHFSelectField } from "@/components/shared/rhf-select-field";
+  SkillEnum,
+  CareSetupForm,
+  VisitPresetEnum,
+} from "../../schemas/care-setup";
+import z from "zod";
+import { customSelectStyles } from "@/styles/react-select";
+import React from "react";
+import CarerSelector from "./selector";
+import { Input } from "@/components/ui/input";
 
-const presetOptions = VisitPresetEnum.options.map((v) => ({
+const durationOptions = VisitPresetEnum.options.map((v) => ({
   value: v,
   label: v,
 }));
+
 const skills = SkillEnum.options.map((v) => ({ value: v, label: v }));
 const languages = LanguageEnum.options.map((v) => ({ value: v, label: v }));
+type SkillValue = z.infer<typeof SkillEnum>; // "Medication" | "Dementia Care" | ...
+type LanguageValue = z.infer<typeof LanguageEnum>; // "Medication" | "Dementia Care" | ...
+type Option = { value: SkillValue; label: string };
+type LanguageOption = { value: LanguageValue; label: string };
 
 export function SchedulingPreferencesFields() {
-  const { control } = useFormContext<SchedulingPreferencesForm>();
-
-  const carers: Carer[] = [
-    {
-      id: "1",
-      name: "John Malik",
-      email: "john.john@careservice.com",
-      initials: "JM",
-      skills: ["Medication", "Dementia Care"],
-    },
-    {
-      id: "2",
-      name: "A. Brown",
-      email: "anna.brown@careservice.com",
-      initials: "AB",
-      skills: ["Moving & Handling", "PEG Feeding"],
-    },
-    {
-      id: "3",
-      name: "S. Johnson",
-      email: "sarah.john@careservice.com",
-      initials: "SJ",
-      skills: ["Medication", "Dementia Care"],
-    },
-    {
-      id: "4",
-      name: "M. Davis",
-      email: "mike.davis@careservice.com",
-      initials: "MD",
-      skills: ["Catheter Care", "Moving & Handling"],
-    },
-  ];
-  const preferredIds = useWatch({ control, name: "preferredCarers" }) as
-    | string[]
-    | undefined;
-  const avoidIds = useWatch({ control, name: "avoidCarers" }) as
-    | string[]
-    | undefined;
+  const { control } = useFormContext<CareSetupForm>();
+  const sheetContentRef = React.useRef(null);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" ref={sheetContentRef}>
       {/* Visit Duration Presets (multi-checkbox) */}
+
       <div>
         <Label className="mb-2 block text-sm font-medium">
-          Visit Duration Presets
+          Visit Period Presets
         </Label>
+
         <Controller
-          name="visitPresets"
           control={control}
+          name="visitPeriodPreset"
           render={({ field }) => {
-            const values: string[] = field.value ?? [];
-            const toggle = (val: string) =>
-              field.onChange(
-                values.includes(val)
-                  ? values.filter((v) => v !== val)
-                  : [...values, val]
-              );
+            const current = field.value ?? "";
 
             return (
-              <div className="flex flex-wrap gap-6">
-                {presetOptions.map((opt) => (
-                  <label
-                    key={opt.value}
-                    className="flex items-center gap-2 text-sm text-muted-foreground"
+              <div className="flex flex-wrap gap-4">
+                {durationOptions.map((d) => (
+                  <Label
+                    key={d.value}
+                    className="flex items-center gap-2 text-xs text-muted-foreground"
                   >
                     <Input
                       type="checkbox"
-                      checked={values.includes(opt.value)}
-                      onChange={() => toggle(opt.value)}
-                      className="h-4 w-4 accent-primary"
+                      className="h-4 w-4 border-gray-300 accent-primary"
+                      checked={current === d.value}
+                      onChange={() =>
+                        field.onChange(current === d.value ? "" : d.value)
+                      }
                     />
-                    {opt.label}
-                  </label>
+                    {d.label}
+                  </Label>
                 ))}
               </div>
             );
           }}
         />
+        {/* 
+        {errors.visitPeriodPreset?.message && (
+          <p className="mt-1 text-sm text-red-600">
+            {String(errors.visitPeriodPreset.message)}
+          </p>
+        )} */}
       </div>
 
       {/* Continuity Priority */}
@@ -116,76 +91,104 @@ export function SchedulingPreferencesFields() {
           </div>
         )}
       />
-
-      {/* Preferred & Avoid carers (chips input for now) */}
-      <RHFCarerSelection
-        name="preferredCarers"
-        label="Preferred Carers"
-        description="Select carers who should be prioritised for this client"
-        availableCarers={carers}
-        placeholder="Search for preferred carers"
-        // maxSelections={6}
-        // prevent picking those already in 'avoid'
-        disabledIds={avoidIds ?? []}
-        variant="preferred"
-      />
-
-      <RHFCarerSelection
-        name="avoidCarers"
-        label="Avoid Carers"
-        description="Select carers who should not be assigned to this client"
-        availableCarers={carers}
-        placeholder="Search for carers to avoid"
-        // maxSelections={6}
-        // prevent picking those already in 'preferred'
-        disabledIds={preferredIds ?? []}
-        variant="avoid"
-      />
+      <CarerSelector />
       {/* Required Skills (multi-checkbox) */}
       <div>
         <Label className="mb-2 block text-sm font-medium">
           Required Skills
         </Label>
+
         <Controller
           name="requiredSkills"
           control={control}
-          render={({ field }) => {
-            const values: string[] = field.value ?? [];
-            const toggle = (val: string) =>
-              field.onChange(
-                values.includes(val)
-                  ? values.filter((v) => v !== val)
-                  : [...values, val]
-              );
+          render={({ field, fieldState }) => {
+            // field.value is string[] (e.g. ["Medication","PEG Feeding"])
+            const selectedOptions = (field.value ?? [])
+              .map((val: string) => skills.find((o) => o.value === val)!)
+              .filter(Boolean);
+
+            const handleChange = (selected: MultiValue<Option>) => {
+              const vals = (selected ?? []).map((o) => o.value);
+              field.onChange(vals);
+            };
 
             return (
-              <div className="flex flex-wrap gap-4">
-                {skills.map((s) => (
-                  <Label
-                    key={s.value}
-                    className="flex items-center gap-2 text-sm text-muted-foreground"
-                  >
-                    <Input
-                      type="checkbox"
-                      checked={values.includes(s.value)}
-                      onChange={() => toggle(s.value)}
-                      className="h-4 w-4 accent-primary"
-                    />
-                    {s.label}
-                  </Label>
-                ))}
-              </div>
+              <>
+                <Select<Option, true>
+                  isMulti
+                  options={skills}
+                  value={selectedOptions}
+                  onChange={handleChange}
+                  placeholder="Select required skills..."
+                  // PORTAL / POSITIONING fixes:
+                  menuPortalTarget={sheetContentRef.current}
+                  // menuPortalTarget={portalTarget}
+                  menuPosition="fixed" // <- important
+                  menuShouldScrollIntoView={false}
+                  styles={customSelectStyles}
+                  // optional: control whether menu closes on scroll
+                  closeMenuOnScroll={false}
+                />
+
+                {fieldState.error && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {String(fieldState.error.message)}
+                  </p>
+                )}
+              </>
             );
           }}
         />
       </div>
-      <RHFSelectField
-        control={control}
-        name="languageRequirement"
-        label="Language Requirement"
-        placeholder="Select Language Requirement"
-        options={languages}
-      />
+      <div>
+        <Label className="mb-2 block text-sm font-medium">
+          Language Requirement
+        </Label>
+
+        <Controller
+          name="languageRequirements"
+          control={control}
+          render={({ field, fieldState }) => {
+            // field.value is string[] (e.g. ["Medication","PEG Feeding"])
+            const selectedLanguages = (field.value ?? [])
+              .map((val: string) => languages.find((o) => o.value === val)!)
+              .filter(Boolean);
+
+            const handleLanguageChange = (
+              selected: MultiValue<LanguageOption>
+            ) => {
+              const vals = (selected ?? []).map((o) => o.value);
+              field.onChange(vals);
+            };
+
+            return (
+              <>
+                <Select<LanguageOption, true>
+                  isMulti
+                  options={languages}
+                  value={selectedLanguages}
+                  onChange={handleLanguageChange}
+                  placeholder="Select Language Requirement..."
+                  // PORTAL / POSITIONING fixes:
+                  menuPortalTarget={sheetContentRef.current}
+                  // menuPortalTarget={portalTarget}
+                  menuPosition="fixed" // <- important
+                  menuShouldScrollIntoView={false}
+                  styles={customSelectStyles}
+                  // optional: control whether menu closes on scroll
+                  closeMenuOnScroll={false}
+                />
+
+                {fieldState.error && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {String(fieldState.error.message)}
+                  </p>
+                )}
+              </>
+            );
+          }}
+        />
+      </div>
     </div>
   );
 }

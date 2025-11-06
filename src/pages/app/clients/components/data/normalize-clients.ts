@@ -3,7 +3,7 @@ import type {
   ClientsResponse,
   Client as ClientRaw,
   ClientStatus,
-} from "@/types/client";
+} from "@/types/client/client";
 
 export interface ClientNormalized {
   id: string;

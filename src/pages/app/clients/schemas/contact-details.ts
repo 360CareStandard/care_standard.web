@@ -1,20 +1,21 @@
 export type ContactDetails = {
-  fullName: string;
-  relationship:
-    | "Spouse"
-    | "Son"
-    | "Daughter"
-    | "Sibling"
-    | "Parent"
-    | "Friend"
-    | "Neighbor"
-    | "Carer"
-    | "Other";
-  phone: string;
-  email: string;
-  address: string;
+  contactName: string;
+  relationshipToClient:
+    | "spouse"
+    | "son"
+    | "daughter"
+    | "sibling"
+    | "parent"
+    | "friend"
+    | "neighbor"
+    | "guardian"
+    | "carer"
+    | "other";
+  contactPhone: string;
+  contactEmail: string;
+  contactAddress: string;
   notes: string;
-  primaryContact: boolean;
-  emergencyContact: boolean;
-  familyAccessApp: boolean;
+  isPrimaryContact: boolean;
+  isEmergencyContact: boolean;
+  hasAppAccess: boolean;
 };

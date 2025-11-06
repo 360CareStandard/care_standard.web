@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ContactNextOfKin from "./contact-next-of-kin";
 import CareSetup from "./care-setup";
@@ -21,6 +21,7 @@ const TAB_KEYS = [
 type TabKey = (typeof TAB_KEYS)[number];
 
 export default function Information() {
+  const { clientId } = useParams<{ clientId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // read from url, validate, fallback
@@ -113,11 +114,11 @@ export default function Information() {
         </TabsList>
 
         <TabsContent value="contact-next-of-kin" className="space-y-5 pt-4">
-          <ContactNextOfKin />
+          <ContactNextOfKin clientId={clientId as string} />
         </TabsContent>
 
         <TabsContent value="care-setup" className="pt-4">
-          <CareSetup />
+          <CareSetup clientId={clientId as string} />
         </TabsContent>
 
         <TabsContent value="legal" className="pt-4">

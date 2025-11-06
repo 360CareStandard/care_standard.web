@@ -12,7 +12,7 @@ import {
 import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
 
 // interface DataTableRowActionsProps {
-//   row: Row<User>;
+//   row: Row<Client>;
 // }
 
 export function DataTableRowActions() {
@@ -40,6 +40,7 @@ export function DataTableRowActions() {
         onClick={(e) => e.stopPropagation()} // keep clicks local
       >
         <DropdownMenuItem
+        // onClick={() => navigate(`/app/clients/${row.original.id}`)}
         // onSelect={() => { /* set row + open edit dialog */ }}
         >
           Edit

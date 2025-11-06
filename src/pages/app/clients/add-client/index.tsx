@@ -9,7 +9,7 @@ import ContactDetails from "./contact-details";
 import Addresses from "./addresses";
 import WellbeingOverview from "./wellbeing-overview";
 import { StepperHeader } from "../components/stepper-header";
-import { useCreateClient } from "@/hooks/useClients";
+import { useCreateClient } from "@/hooks/client/useClients";
 import toast from "react-hot-toast";
 
 interface Props {

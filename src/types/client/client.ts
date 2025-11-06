@@ -62,5 +62,10 @@ export interface ClientsResponse {
   message?: string;
   data?: ClientsData;
 }
+export interface ClientDetailResponse {
+  status: "success" | "error" | string;
+  message?: string;
+  data?: Client;
+}
 
 export interface UpdateClientBody extends Partial<Client> {}

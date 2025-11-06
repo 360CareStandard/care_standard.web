@@ -1,0 +1,100 @@
+// src/hooks/useClientContacts.ts
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { qk } from "@/lib/queryKeys";
+import type { AddContactForm } from "@/pages/app/clients/schemas/add-contact-form";
+import { ClientContactApi } from "@/api/client/contact";
+import { ClientCarePlanApi } from "@/api/client/care-plan";
+import { CareSetupForm } from "@/pages/app/clients/schemas/care-setup";
+
+export function useClientContacts(clientId: string) {
+  return useQuery({
+    queryKey: qk.clientContacts(clientId),
+    queryFn: () => ClientContactApi.list(clientId),
+    staleTime: 60_000,
+    enabled: Boolean(clientId),
+  });
+}
+// export function useClientContact(
+//   id: string,
+//   contactId: string,
+//   enabled = false
+// ) {
+//   return useQuery({
+//     queryKey: id ? qk.clientContacts(id) : [contactId],
+//     queryFn: () => ClientContactApi.get(id!, contactId),
+//     enabled: Boolean(id) && enabled,
+//     staleTime: 60_000,
+//   });
+// }
+export function useClientCareSetup(clientId: string, enabled = false) {
+  return useQuery({
+    // unique key for a single contact
+    queryKey: clientId ? qk.clientCare(clientId) : ["client-care"],
+    queryFn: () => ClientCarePlanApi.get(clientId),
+    enabled: Boolean(clientId && enabled),
+    staleTime: 60_000,
+  });
+}
+/**
+ * Create contact
+ * Expects ClientsApi.createContact(clientId, body) -> returns created contact
+ */
+export function useCreateClientCarePlan(clientId: string) {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: CareSetupForm) => {
+      if (!clientId)
+        throw new Error("clientId is required to create a care-setup");
+      // adapt ClientsApi function name to your implementation
+      return ClientCarePlanApi.post(clientId, body);
+    },
+    onSuccess: (data) => {
+      // optionally update client query detail cache if needed
+      qc.invalidateQueries({ queryKey: qk.client(clientId) });
+      return qc.invalidateQueries({ queryKey: qk.clientCares(clientId) });
+    },
+  });
+}
+
+/**
+ * Update contact
+ * Expects ClientsApi.updateContact(clientId, contactId, body) -> returns updated contact
+ */
+export function useUpdateClientCarePlan(clientId: string) {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ body }: { body: CareSetupForm }) => {
+      if (!clientId)
+        throw new Error("clientId is required to update care setup");
+      return ClientCarePlanApi.update(clientId, body);
+    },
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: qk.client(clientId) });
+      // also update specific contact query if you have one
+      return qc.invalidateQueries({ queryKey: qk.clientCares(clientId) });
+    },
+  });
+}
+
+/**
+ * Delete contact
+ * Expects ClientsApi.deleteContact(clientId, contactId)
+ */
+// export function useDeleteClientContact(clientId: string) {
+//   const qc = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: (contactId: string) => {
+//       if (!clientId)
+//         throw new Error("clientId is required to delete a contact");
+//       return ClientContactApi.delete(clientId, contactId);
+//     },
+//     onSuccess: () => {
+//       qc.invalidateQueries({ queryKey: qk.clientContacts(clientId) });
+
+//       qc.invalidateQueries({ queryKey: qk.client(clientId) });
+//     },
+//   });
+// }

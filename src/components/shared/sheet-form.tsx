@@ -42,6 +42,7 @@ type SheetFormProps = {
 
   /** Form body goes here */
   children: React.ReactNode;
+  sheetContentRef?: React.MutableRefObject<null>;
 };
 
 /**
@@ -66,6 +67,7 @@ export function SheetForm({
   cancelLabel = "Close",
   submitDisabled,
   hideCancel = false,
+  sheetContentRef,
   footerExtra,
 
   children,
@@ -75,6 +77,7 @@ export function SheetForm({
       {trigger ? <SheetTrigger asChild>{trigger}</SheetTrigger> : null}
 
       <SheetContent
+        ref={sheetContentRef}
         side={side}
         className={cn("sm:max-w-[520px] w-full", className)}
       >

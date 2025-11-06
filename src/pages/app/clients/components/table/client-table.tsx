@@ -28,13 +28,14 @@ import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
-import { useClients } from "@/hooks/useClients";
+import { useClients } from "@/hooks/client/useClients";
 import { clientsColumns } from "./column";
 import {
   ClientNormalized,
   normalizeClientsResponse,
 } from "../data/normalize-clients";
 import AddClient from "../../add-client";
+import { DataTableSkeleton } from "@/components/shared/data-table-skeleton";
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,7 +45,6 @@ declare module "@tanstack/react-table" {
 }
 
 interface ClientsTableProps {
-  // optional initial page/limit
   initialPage?: number;
   initialLimit?: number;
   columns?: ColumnDef<ClientNormalized>[];
@@ -69,10 +69,11 @@ export function ClientsTable({
   // fetch data from server using 1-based page param
   const {
     data: raw,
-    // isLoading,
+    isLoading,
     // isFetching,
-    // isError,
-    // error,
+    isError,
+    error,
+    refetch,
   } = useClients({
     page: pageIndex + 1,
     limit: pageSize,
@@ -91,7 +92,6 @@ export function ClientsTable({
 
   // keep pagination state in sync if server returns different page (e.g. after refresh)
   useEffect(() => {
-    // server might return currentPage as number/string, normalized ensures number
     if (normalized) {
       const serverPageIndex = Math.max(0, normalized.currentPage - 1);
       if (serverPageIndex !== pageIndex) {
@@ -115,10 +115,9 @@ export function ClientsTable({
         pageSize,
       } as PaginationState,
     },
-    manualPagination: true, // tell TanStack we are doing server-side pagination
-    pageCount: totalPages, // important: inform table how many pages total
+    manualPagination: true,
+    pageCount: totalPages,
     onPaginationChange: (updater) => {
-      // updater can be a function or object
       const newState =
         typeof updater === "function"
           ? updater({ pageIndex, pageSize })
@@ -144,15 +143,52 @@ export function ClientsTable({
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(), // still useful for table helpers
+    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  // --- Loading: show skeleton during initial load ---
+  if (isLoading) {
+    // pass columnCount and rowCount to match your columns
+    return (
+      <div className="space-y-4">
+        <DataTableSkeleton
+          columnCount={columns.length}
+          rowCount={8}
+          searchableColumnCount={1}
+          filterableColumnCount={1}
+          showViewOptions={true}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
+      {/* Error banner (visible when API returns error) */}
+      {isError && (
+        <div className="rounded-md border border-red-200 bg-red-50 p-3">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="font-medium text-red-800">Failed to load clients</p>
+              <p className="text-sm text-red-700">
+                {(error as any)?.message ??
+                  "An unexpected error occurred while fetching clients."}
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" onClick={() => refetch()}>
+                Retry
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <DataTableToolbar table={table} />
+
       <div>
         <Table>
           {table.getRowModel().rows?.length ? (
@@ -233,13 +269,16 @@ export function ClientsTable({
         </Table>
       </div>
 
-      {/* pagination: DataTablePagination will call table.setPageIndex / table.nextPage etc */}
-      {/* <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
-          {isLoading
-            ? "Loading clients…"
-            : `${resultCount} results — page ${currentServerPage} of ${totalPages}`}
-          {isFetching && !isLoading ? " — updating…" : ""}
+      {/* small updating indicator + result count */}
+      {/* <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <div>
+          {isFetching && !isLoading ? (
+            <span>Updating…</span>
+          ) : (
+            <span>
+              {resultCount} results — page {currentServerPage} of {totalPages}
+            </span>
+          )}
         </div>
       </div> */}
 

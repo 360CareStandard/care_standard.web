@@ -1,4 +1,4 @@
-import { ClientStatus } from "@/types/client";
+import { ClientStatus } from "@/types/client/client";
 import {
   Banknote,
   Shield,
