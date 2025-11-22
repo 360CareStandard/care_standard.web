@@ -12,6 +12,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "./spinner";
 
 type SheetFormProps = {
   /** Optional trigger button or custom element */
@@ -35,6 +36,7 @@ type SheetFormProps = {
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   submitLabel?: React.ReactNode;
   cancelLabel?: React.ReactNode;
+  submitLoading?: boolean;
   submitDisabled?: boolean;
   hideCancel?: boolean;
   /** Extra nodes */
@@ -66,6 +68,7 @@ export function SheetForm({
   submitLabel = "Save changes",
   cancelLabel = "Close",
   submitDisabled,
+  submitLoading,
   hideCancel = false,
   sheetContentRef,
   footerExtra,
@@ -113,6 +116,7 @@ export function SheetForm({
                 </SheetClose>
               )}
               <Button type="submit" disabled={submitDisabled}>
+                {submitLoading ? <Spinner size="sm" /> : null}
                 {submitLabel}
               </Button>
             </div>

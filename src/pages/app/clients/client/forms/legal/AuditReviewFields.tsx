@@ -1,5 +1,6 @@
 // components/legal/AuditReviewFields.tsx
 import * as React from "react";
+import { useFormContext, Controller, useWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +11,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { LegalForm } from "../../../schemas/legal-setup";
 
 const PEOPLE = [
   "Alice Brown (Manager)",
@@ -20,19 +22,42 @@ const PEOPLE = [
 const NOTES_MAX = 300;
 
 export function AuditReviewFields() {
-  const [reviewDate, setReviewDate] = React.useState("");
-  const [responsible, setResponsible] = React.useState<string | undefined>();
-  const [notes, setNotes] = React.useState("");
+  const { control, register, setValue } = useFormContext<LegalForm>();
 
+  // Watch the nested legalDocuments fields from the form
+  const reviewDueDate = useWatch({
+    control,
+    name: "reviewDueDate",
+  }) as string | undefined;
+
+  const responsiblePerson = useWatch({
+    control,
+    name: "responsiblePerson",
+  }) as string | undefined;
+
+  const notesSummary = useWatch({
+    control,
+    name: "notesSummary",
+  }) as string | undefined;
+
+  // Compute overdue flag from the watched date
   const isOverdue = React.useMemo(() => {
-    if (!reviewDate) return false;
+    if (!reviewDueDate) return false;
     const today = new Date();
-    const d = new Date(reviewDate);
-    // zero-out time for a simple date-only compare
+    const d = new Date(reviewDueDate);
     d.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
     return d < today;
-  }, [reviewDate]);
+  }, [reviewDueDate]);
+
+  // Ensure notes length limit is enforced in form state
+  React.useEffect(() => {
+    if (notesSummary && notesSummary.length > NOTES_MAX) {
+      setValue("notesSummary", notesSummary.slice(0, NOTES_MAX), {
+        shouldDirty: true,
+      });
+    }
+  }, [notesSummary, setValue]);
 
   return (
     <div className="space-y-6">
@@ -41,7 +66,7 @@ export function AuditReviewFields() {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Label>Review Due Date</Label>
-            {reviewDate && (
+            {reviewDueDate && (
               <span
                 className={[
                   "inline-flex items-center rounded-full px-2 py-0.5 text-[11px]",
@@ -54,34 +79,43 @@ export function AuditReviewFields() {
               </span>
             )}
           </div>
+
+          {/* date input bound to reviewDueDate */}
           <Input
             type="date"
-            value={reviewDate}
-            onChange={(e) => setReviewDate(e.target.value)}
             placeholder="mm/dd/yyyy"
+            {...register("reviewDueDate")}
+            value={reviewDueDate ?? ""}
+            onChange={(e) => {
+              setValue("reviewDueDate", e.target.value, {
+                shouldDirty: true,
+              });
+            }}
           />
-          {/* <p className="text-[11px] text-muted-foreground">
-            Set the next review date for legal information.
-          </p> */}
         </div>
 
         <div className="space-y-1">
           <Label>Responsible Person</Label>
-          <Select value={responsible} onValueChange={setResponsible}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select person" />
-            </SelectTrigger>
-            <SelectContent>
-              {PEOPLE.map((p) => (
-                <SelectItem key={p} value={p}>
-                  {p}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {/* <p className="text-[11px] text-muted-foreground">
-            Assigned owner who will oversee the review.
-          </p> */}
+
+          {/* select bound to responsiblePerson */}
+          <Controller
+            control={control}
+            name="responsiblePerson"
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select person" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PEOPLE.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
         </div>
       </div>
 
@@ -89,17 +123,22 @@ export function AuditReviewFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Notes / Summary</Label>
         <Textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value.slice(0, NOTES_MAX))}
           placeholder="Quick legal summary for frontline staff..."
           className="min-h-[96px] resize-y"
+          {...register("notesSummary")}
+          value={notesSummary ?? ""}
+          onChange={(e) =>
+            setValue("notesSummary", e.target.value.slice(0, NOTES_MAX), {
+              shouldDirty: true,
+            })
+          }
         />
         <div className="flex items-center justify-between">
           <p className="text-[11px] text-muted-foreground">
             Keep this concise; it’s shown to frontline staff.
           </p>
           <span className="text-[11px] text-muted-foreground">
-            {notes.length}/{NOTES_MAX}
+            {(notesSummary ?? "").length}/{NOTES_MAX}
           </span>
         </div>
       </div>

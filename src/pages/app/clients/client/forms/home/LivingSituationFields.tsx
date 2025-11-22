@@ -1,5 +1,6 @@
 // components/home/LivingSituationFields.tsx
 import * as React from "react";
+import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,18 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { X, Plus } from "lucide-react";
-
-type Member = {
-  id: string;
-  name: string;
-  relationship: string;
-};
-
-const makeBlank = (): Member => ({
-  id: crypto.randomUUID(),
-  name: "",
-  relationship: "",
-});
+import { HomeEnvironmentForm } from "../../../schemas/home-environment";
 
 const PROPERTY_TYPES = [
   "Flat",
@@ -32,55 +22,61 @@ const PROPERTY_TYPES = [
   "Residential Care",
 ] as const;
 const SUPPORT_TYPES = [
-  "Own Home",
-  "Sheltered Housing",
-  "Council House",
-  "Private Rented",
+  "Own House",
+  "Council Housing",
+  "Supported Living",
+  "Other",
 ] as const;
 
 export function LivingSituationFields() {
-  const [livesAlone, setLivesAlone] = React.useState(false);
+  const { control, register, watch, getValues, setValue } =
+    useFormContext<HomeEnvironmentForm>();
 
-  // seeded like your mock; remove seeds if you want to start empty
-  const [members, setMembers] = React.useState<Member[]>([
-    { id: crypto.randomUUID(), name: "Robert Wilson", relationship: "Spouse" },
-    { id: crypto.randomUUID(), name: "Max (Dog)", relationship: "Pet" },
-    makeBlank(),
-  ]);
+  // field array for livingSituation.householdMembers
+  const { fields, append, remove, replace } = useFieldArray({
+    control,
+    name: "livingSituation.householdMembers",
+  });
 
-  const [propertyType, setPropertyType] =
-    React.useState<(typeof PROPERTY_TYPES)[number]>("Flat");
-  const [supportType, setSupportType] =
-    React.useState<(typeof SUPPORT_TYPES)[number]>("Own Home");
+  // ensure at least one blank row on mount
+  React.useEffect(() => {
+    if (!fields || fields.length === 0) {
+      replace([{ name: "", relationship: "" }]);
+    }
+    // don't include replace/fields in deps intentionally (mount-only)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const isEmpty = (m: Member) => !m.name && !m.relationship;
+  // livesAlone switch from form
+  const livesAlone = watch("livingSituation.livesAlone");
 
-  const updateMember = (id: string, patch: Partial<Member>) =>
-    setMembers((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, ...patch } : m))
-    );
-
-  const addMember = () => setMembers((prev) => [...prev, makeBlank()]);
-
-  const clearMember = (id: string) =>
-    setMembers((prev) =>
-      prev.map((m) => (m.id === id ? { ...makeBlank(), id: m.id } : m))
-    );
-
-  const removeMember = (id: string) =>
-    setMembers((prev) => {
-      const out = prev.filter((m) => m.id !== id);
-      return out.length ? out : [makeBlank()];
-    });
-
-  // If Lives Alone is turned on, clear members and keep one blank row (disabled)
+  // when livesAlone turns on -> clear members and keep one blank
   React.useEffect(() => {
     if (livesAlone) {
-      setMembers([makeBlank()]);
+      replace([{ name: "", relationship: "" }]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [livesAlone]);
 
-  const lastIsBlank = isEmpty(members[members.length - 1]);
+  const isEmpty = (m: { name?: string; relationship?: string }) =>
+    !m?.name?.toString().trim() && !m?.relationship?.toString().trim();
+
+  // compute lastIsBlank from live form values (not the static fields snapshot)
+  const computeLastIsBlank = React.useCallback(() => {
+    const current = getValues("livingSituation.householdMembers") as
+      | { name?: string; relationship?: string }[]
+      | undefined;
+    if (!current || current.length === 0) return true;
+    const last = current[current.length - 1];
+    return isEmpty(last);
+  }, [getValues]);
+
+  // Local state so UI re-renders when inputs change — we watch the whole array for that
+  const watchedMembers = watch("livingSituation.householdMembers");
+  const lastIsBlank = React.useMemo(
+    () => computeLastIsBlank(),
+    [computeLastIsBlank, watchedMembers]
+  );
 
   return (
     <div className="space-y-4">
@@ -92,7 +88,14 @@ export function LivingSituationFields() {
             Does the client live by themselves?
           </p>
         </div>
-        <Switch checked={livesAlone} onCheckedChange={setLivesAlone} />
+        <Controller
+          control={control}
+          name="livingSituation.livesAlone"
+          defaultValue={false}
+          render={({ field }) => (
+            <Switch checked={field.value} onCheckedChange={field.onChange} />
+          )}
+        />
       </div>
 
       {/* Household Members */}
@@ -101,27 +104,27 @@ export function LivingSituationFields() {
           <Label className="font-medium">Household Members</Label>
 
           <div className="space-y-2">
-            {members.map((m) => (
+            {fields.map((m, idx) => (
               <div
                 key={m.id}
-                className="grid grid-cols-1 sm:grid-cols-[1fr_180px_auto] items-center gap-2  p-2 bg-[#F7F9FC] rounded-md"
+                className="grid grid-cols-1 sm:grid-cols-[1fr_180px_auto] items-center gap-2 p-2 bg-[#F7F9FC] rounded-md"
               >
                 {/* Name */}
                 <Input
                   placeholder="Name"
-                  value={m.name}
-                  onChange={(e) => updateMember(m.id, { name: e.target.value })}
-                  disabled={livesAlone}
+                  {...register(
+                    `livingSituation.householdMembers.${idx}.name` as const
+                  )}
+                  defaultValue={(m as any).name ?? ""}
                 />
 
-                {/* Relationship (free text, like your mock) */}
+                {/* Relationship */}
                 <Input
                   placeholder="Relationship"
-                  value={m.relationship}
-                  onChange={(e) =>
-                    updateMember(m.id, { relationship: e.target.value })
-                  }
-                  disabled={livesAlone}
+                  {...register(
+                    `livingSituation.householdMembers.${idx}.relationship` as const
+                  )}
+                  defaultValue={(m as any).relationship ?? ""}
                 />
 
                 {/* Remove */}
@@ -131,12 +134,13 @@ export function LivingSituationFields() {
                     variant="outline"
                     size="icon"
                     aria-label="Remove household member"
-                    onClick={() =>
-                      isEmpty(m) && members.length === 1
-                        ? clearMember(m.id)
-                        : removeMember(m.id)
-                    }
-                    disabled={livesAlone}
+                    onClick={() => {
+                      if (fields.length === 1) {
+                        replace([{ name: "", relationship: "" }]);
+                      } else {
+                        remove(idx);
+                      }
+                    }}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -149,8 +153,8 @@ export function LivingSituationFields() {
             type="button"
             variant="outline"
             className="mt-1 gap-2"
-            onClick={addMember}
-            disabled={livesAlone || lastIsBlank} // prevent stacking empties or adding when Lives Alone
+            onClick={() => append({ name: "", relationship: "" })}
+            disabled={lastIsBlank}
           >
             <Plus className="h-4 w-4" />
             Add Household Member
@@ -162,40 +166,48 @@ export function LivingSituationFields() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <Label>Property Type</Label>
-          <Select
-            value={propertyType}
-            onValueChange={(v) => setPropertyType(v as any)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              {PROPERTY_TYPES.map((p) => (
-                <SelectItem key={p} value={p}>
-                  {p}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Controller
+            control={control}
+            name="livingSituation.propertyType"
+            defaultValue={PROPERTY_TYPES[0]}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PROPERTY_TYPES.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
         </div>
 
         <div className="space-y-1.5">
           <Label>Support Type</Label>
-          <Select
-            value={supportType}
-            onValueChange={(v) => setSupportType(v as any)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              {SUPPORT_TYPES.map((p) => (
-                <SelectItem key={p} value={p}>
-                  {p}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Controller
+            control={control}
+            name="livingSituation.supportType"
+            defaultValue={SUPPORT_TYPES[0]}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SUPPORT_TYPES.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
         </div>
       </div>
     </div>

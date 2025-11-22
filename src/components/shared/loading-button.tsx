@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Spinner, SpinnerKey } from "./spinner";
 
 type BaseButtonProps = React.ComponentProps<typeof Button>;
 
@@ -15,26 +16,6 @@ export type LoadingButtonProps = Omit<BaseButtonProps, "children"> & {
   iconLeft?: React.ReactNode;
   iconRight?: React.ReactNode;
 };
-
-const SPINNER_SIZES = {
-  sm: "h-3.5 w-3.5",
-  md: "h-4 w-4",
-  lg: "h-5 w-5",
-  icon: "h-4 w-4",
-} as const;
-type SpinnerKey = keyof typeof SPINNER_SIZES;
-
-function Spinner({ size = "md" as SpinnerKey }) {
-  return (
-    <span
-      aria-hidden
-      className={cn(
-        "inline-block animate-spin rounded-full border-2 border-current/60 border-t-transparent",
-        SPINNER_SIZES[size]
-      )}
-    />
-  );
-}
 
 export function LoadingButton({
   children,

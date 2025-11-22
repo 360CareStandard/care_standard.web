@@ -1,6 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ClientClientCarePlan } from "@/types/client/care-plan";
 import { InfoRow } from "../client/components/info-row";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc"; // 👈 import the plugin
+
+dayjs.extend(utc); // 👈 register the plugin before using it
 
 interface Props {
   data: ClientClientCarePlan;
@@ -63,8 +67,14 @@ export const CareSetupDetails = ({ data }: Props) => {
                     plan.overnightCareType === "sleep-in"
                       ? "Sleep-in"
                       : "Waking night"
-                  } (${plan.overnightCareStartTime || "-"} - ${
-                    plan.overnightCareEndTime || "-"
+                  } (${
+                    dayjs(`1970-01-01T${plan.overnightCareStartTime}`).format(
+                      "hh:mm A"
+                    ) || "-"
+                  } - ${
+                    dayjs(`1970-01-01T${plan.overnightCareEndTime}`).format(
+                      "hh:mm A"
+                    ) || "-"
                   })`
                 : "-"}
             </InfoRow>
@@ -101,11 +111,11 @@ export const CareSetupDetails = ({ data }: Props) => {
             <InfoRow label="Time Windows">
               <div className="flex gap-2">
                 <span className="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded-full">
-                  PM
+                  {plan.visitPeriodPreset || "Not set"}
                 </span>
-                <span className="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded-full">
+                {/* <span className="px-3 py-1 bg-gray-200 text-gray-700 text-xs rounded-full">
                   Evening
-                </span>
+                </span> */}
               </div>
             </InfoRow>
 
@@ -148,7 +158,7 @@ export const CareSetupDetails = ({ data }: Props) => {
             </InfoRow>
 
             <InfoRow label="Language Requirement">
-              {plan.languageRequirements?.[0] || "English"}
+              {plan.languageRequirements?.join(", ") || "—"}
             </InfoRow>
 
             <InfoRow label="Required Skills">
@@ -240,7 +250,7 @@ export const CareSetupDetails = ({ data }: Props) => {
             <div className="space-y-4">
               <InfoRow label="Check-in Method">
                 <span className="inline-block px-3 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded uppercase">
-                  {plan.checkInMethod || "GPS"}
+                  {plan.checkInMethod || "Not set"}
                 </span>
               </InfoRow>
 

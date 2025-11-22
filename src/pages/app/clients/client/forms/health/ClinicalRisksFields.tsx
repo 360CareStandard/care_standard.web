@@ -1,8 +1,8 @@
 // components/health/ClinicalRisksFields.tsx
 import * as React from "react";
+import { useFormContext, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 import {
   Select,
   SelectTrigger,
@@ -10,11 +10,11 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
+import type { MedicalForm } from "../../../schemas/health";
 
-type RiskLevel = "Low" | "Medium" | "High";
 type RiskKey = "Falls" | "Pressure Ulcers" | "Choking" | "Behavioural";
-
 const RISK_KEYS: RiskKey[] = [
   "Falls",
   "Pressure Ulcers",
@@ -23,22 +23,35 @@ const RISK_KEYS: RiskKey[] = [
 ];
 
 export function ClinicalRisksFields() {
-  const [level, setLevel] = React.useState<RiskLevel>("Medium");
-  const [selected, setSelected] = React.useState<Record<RiskKey, boolean>>({
-    Falls: true,
-    "Pressure Ulcers": false,
-    Choking: true,
-    Behavioural: false,
-  });
-  const [notes, setNotes] = React.useState("");
+  const { control, watch, setValue } = useFormContext<MedicalForm>();
 
-  const toggle = (k: RiskKey) => setSelected((s) => ({ ...s, [k]: !s[k] }));
+  // watch the pieces we need from the form
+  const overallRiskLevel = watch("overallRiskLevel") ?? "medium";
+  const riskCategories =
+    (watch("riskCategories") as string[] | undefined) ?? [];
+  const mitigation = watch("mitigationStrategies") ?? "";
+
+  // ensure riskCategories is always an array in form state
+  React.useEffect(() => {
+    if (!Array.isArray(riskCategories)) {
+      setValue("riskCategories", [], { shouldDirty: false });
+    }
+    // run only once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const toggleCategory = (k: RiskKey) => {
+    const next = new Set(riskCategories);
+    if (next.has(k)) next.delete(k);
+    else next.add(k);
+    setValue("riskCategories", Array.from(next), { shouldDirty: true });
+  };
 
   const levelBadge = {
-    Low: "bg-primary-accent text-emerald-700",
-    Medium: "bg-amber-100 text-amber-800",
-    High: "bg-red-100 text-red-700",
-  }[level];
+    low: "bg-primary-accent text-emerald-700",
+    medium: "bg-amber-100 text-amber-800",
+    high: "bg-red-100 text-red-700",
+  }[overallRiskLevel as "low" | "medium" | "high"];
 
   return (
     <div className="space-y-6">
@@ -52,19 +65,31 @@ export function ClinicalRisksFields() {
               levelBadge
             )}
           >
-            {level}
+            {String(overallRiskLevel).charAt(0).toUpperCase() +
+              String(overallRiskLevel).slice(1)}
           </span>
         </div>
-        <Select value={level} onValueChange={(v: RiskLevel) => setLevel(v)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select level" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Low">Low</SelectItem>
-            <SelectItem value="Medium">Medium</SelectItem>
-            <SelectItem value="High">High</SelectItem>
-          </SelectContent>
-        </Select>
+
+        <Controller
+          control={control}
+          name="overallRiskLevel"
+          defaultValue={overallRiskLevel as any}
+          render={({ field }) => (
+            <Select
+              value={field.value}
+              onValueChange={(v) => field.onChange(v)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
       </div>
 
       {/* Risk Categories */}
@@ -72,12 +97,12 @@ export function ClinicalRisksFields() {
         <Label className="font-medium">Risk Categories</Label>
         <div className="flex flex-wrap gap-3">
           {RISK_KEYS.map((k) => {
-            const active = selected[k];
+            const active = riskCategories.includes(k);
             return (
               <button
                 key={k}
                 type="button"
-                onClick={() => toggle(k)}
+                onClick={() => toggleCategory(k)}
                 className={cn(
                   "group inline-flex items-center gap-2 rounded-md border p-2 text-sm",
                   active
@@ -107,13 +132,16 @@ export function ClinicalRisksFields() {
         <Label>Mitigation Notes</Label>
         <Textarea
           placeholder="Risk mitigation strategies and precautions..."
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
+          value={mitigation as string}
+          onChange={(e) =>
+            setValue("mitigationStrategies", e.target.value, {
+              shouldDirty: true,
+            })
+          }
           className="min-h-[96px] resize-y"
         />
         <p className="text-[11px] text-muted-foreground">
-          {Object.values(selected).filter(Boolean).length} of {RISK_KEYS.length}{" "}
-          risks selected
+          {riskCategories.length} of {RISK_KEYS.length} risks selected
         </p>
       </div>
     </div>

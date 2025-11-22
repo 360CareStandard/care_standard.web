@@ -1,9 +1,9 @@
-// components/preferences/FoodDietFields.tsx
-import * as React from "react";
+import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PreferencesForm } from "../../../schemas/preferences";
 
 function TogglePill({
   active,
@@ -44,21 +44,27 @@ type Diet = "Vegetarian" | "Halal" | "Diabetic" | "Allergies";
 const DIETS: Diet[] = ["Vegetarian", "Halal", "Diabetic", "Allergies"];
 
 export function FoodDietFields() {
-  // defaults to match your screenshot
-  const [restrictions, setRestrictions] = React.useState<Record<Diet, boolean>>(
-    {
-      Vegetarian: true,
-      Halal: false,
-      Diabetic: false,
-      Allergies: false,
+  const { register, watch, setValue } = useFormContext<PreferencesForm>(); // use PreferencesForm when available
+
+  // read array from form
+  const selected = watch("dietaryRestrictions") || [];
+
+  const toggle = (diet: Diet) => {
+    const exists = selected.includes(diet);
+
+    if (exists) {
+      setValue(
+        "dietaryRestrictions",
+        selected.filter((d: string) => d !== diet),
+        { shouldDirty: true, shouldValidate: true }
+      );
+    } else {
+      setValue("dietaryRestrictions", [...selected, diet], {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
     }
-  );
-
-  const [likes, setLikes] = React.useState("");
-  const [dislikes, setDislikes] = React.useState("");
-  const [favourites, setFavourites] = React.useState("");
-
-  const toggle = (k: Diet) => setRestrictions((s) => ({ ...s, [k]: !s[k] }));
+  };
 
   return (
     <div className="space-y-6">
@@ -69,7 +75,7 @@ export function FoodDietFields() {
           {DIETS.map((d) => (
             <TogglePill
               key={d}
-              active={restrictions[d]}
+              active={selected.includes(d)}
               label={d}
               onClick={() => toggle(d)}
             />
@@ -81,10 +87,9 @@ export function FoodDietFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Food Likes</Label>
         <Textarea
+          {...register("foodLikes")}
           placeholder="Favourite foods, drinks, snacks..."
-          value={likes}
-          onChange={(e) => setLikes(e.target.value)}
-          className="min-h-[84px] resize-y "
+          className="min-h-[84px] resize-y"
         />
       </div>
 
@@ -92,10 +97,9 @@ export function FoodDietFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Food Dislikes</Label>
         <Textarea
+          {...register("foodDislikes")}
           placeholder="Food to avoid, dislikes"
-          value={dislikes}
-          onChange={(e) => setDislikes(e.target.value)}
-          className="min-h-[84px] resize-y "
+          className="min-h-[84px] resize-y"
         />
       </div>
 
@@ -103,10 +107,9 @@ export function FoodDietFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Favourite Meals</Label>
         <Textarea
+          {...register("favouriteMeals")}
           placeholder="Special occasion meals, comfort foods..."
-          value={favourites}
-          onChange={(e) => setFavourites(e.target.value)}
-          className="min-h-[84px] resize-y "
+          className="min-h-[84px] resize-y"
         />
       </div>
     </div>

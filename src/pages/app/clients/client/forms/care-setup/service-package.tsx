@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/shared/text-field";
 import { RHFSelectField } from "@/components/shared/rhf-select-field";
-import { CareSetupForm, StatusEnum } from "../../schemas/care-setup";
+import { CareSetupForm, StatusEnum } from "../../../schemas/care-setup";
 import { Input } from "@/components/ui/input";
 import { TimePicker } from "@/components/ui/time-picker/time-picker";
 import React from "react";

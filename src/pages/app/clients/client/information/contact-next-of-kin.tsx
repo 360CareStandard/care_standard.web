@@ -38,6 +38,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Spinner } from "@/components/shared/spinner";
 
 type Props = {
   clientId: string;
@@ -265,11 +266,13 @@ const ContactNextOfKin: React.FC<Props> = ({ clientId }) => {
             : "Add a new contact."
         }
         submitLabel={
-          methods.formState.isSubmitting
-            ? "Saving..."
-            : editingContactId
-            ? "Save Changes"
-            : "Add Contact"
+          methods.formState.isSubmitting ? (
+            <Spinner size="sm" />
+          ) : editingContactId ? (
+            "Save Changes"
+          ) : (
+            "Add Contact"
+          )
         }
         submitDisabled={methods.formState.isSubmitting || isLoadingDetails}
         onSubmit={handleSheetSubmit}

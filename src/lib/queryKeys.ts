@@ -9,10 +9,16 @@ export const qk = {
   // unique key for a single contact
   clientContact: (clientId?: string, contactId?: string) =>
     ["client-contact", clientId, contactId] as const,
-  clientCares: (clientId?: string) => ["client-cares", clientId] as const,
   // unique key for a single contact
-  clientCare: (clientId?: string, contactId?: string) =>
-    ["client-care", clientId, contactId] as const,
+  clientCare: (clientId?: string) => ["client-care", clientId] as const,
+  clientLegal: (clientId?: string) => ["client-legal", clientId] as const,
+  clientHealth: (clientId?: string) => ["client-health", clientId] as const,
+  clientGpSupport: (clientId?: string) =>
+    ["client-gp-support", clientId] as const,
+  clientHomeEnvironment: (clientId?: string) =>
+    ["client-home-enviroment", clientId] as const,
+  clientPreferences: (clientId?: string) =>
+    ["client-preferences", clientId] as const,
 
   client: (id: string) => ["client", id] as const,
   workspace: ["workspace"] as const,

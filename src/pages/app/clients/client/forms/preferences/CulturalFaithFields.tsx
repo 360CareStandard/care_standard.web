@@ -1,13 +1,11 @@
-// components/preferences/CulturalFaithFields.tsx
-import * as React from "react";
+import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import type { PreferencesForm } from "../../../schemas/preferences"; // uncomment & fix path if you have the type
 
 export function CulturalFaithFields() {
-  const [religion, setReligion] = React.useState("");
-  const [practices, setPractices] = React.useState("");
-  const [considerations, setConsiderations] = React.useState("");
+  const { register } = useFormContext<PreferencesForm>(); // replace `any` with PreferencesForm if available
 
   return (
     <div className="space-y-6">
@@ -15,9 +13,8 @@ export function CulturalFaithFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Religion / Faith</Label>
         <Input
+          {...register("religionOrFaith")}
           placeholder="e.g., Christianity, Islam, Judaism, None"
-          value={religion}
-          onChange={(e) => setReligion(e.target.value)}
         />
       </div>
 
@@ -25,10 +22,9 @@ export function CulturalFaithFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Faith Practices</Label>
         <Textarea
+          {...register("faithPractices")}
           placeholder="Prayer times, dietary rules, festivals, religious observances"
-          value={practices}
-          onChange={(e) => setPractices(e.target.value)}
-          className="min-h-[84px] resize-y "
+          className="min-h-[84px] resize-y"
         />
       </div>
 
@@ -36,10 +32,9 @@ export function CulturalFaithFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Cultural Considerations</Label>
         <Textarea
+          {...register("culturalConsiderations")}
           placeholder="Cultural customs, greetings, traditions, language preferences..."
-          value={considerations}
-          onChange={(e) => setConsiderations(e.target.value)}
-          className="min-h-[84px] resize-y "
+          className="min-h-[84px] resize-y"
         />
       </div>
     </div>

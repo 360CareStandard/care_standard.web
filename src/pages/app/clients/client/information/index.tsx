@@ -122,20 +122,20 @@ export default function Information() {
         </TabsContent>
 
         <TabsContent value="legal" className="pt-4">
-          <Legal />
+          <Legal clientId={clientId as string} />
         </TabsContent>
         <TabsContent value="health" className="pt-4">
-          <Health />
+          <Health clientId={clientId as string} />
         </TabsContent>
         <TabsContent value="gp-support" className="pt-4">
-          <GPsupport />
+          <GPsupport clientId={clientId as string} />
         </TabsContent>
         <TabsContent value="home-environment" className="pt-4">
-          <HomeEnvironment />
+          <HomeEnvironment clientId={clientId as string} />
         </TabsContent>
 
         <TabsContent value="preferences" className="pt-4">
-          <Preferences />
+          <Preferences clientId={clientId as string} />
         </TabsContent>
       </Tabs>
     </div>

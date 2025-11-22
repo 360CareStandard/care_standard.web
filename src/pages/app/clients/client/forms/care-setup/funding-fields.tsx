@@ -2,7 +2,7 @@
 import { useFormContext } from "react-hook-form";
 import { RHFSelectField } from "@/components/shared/rhf-select-field";
 import { TextField } from "@/components/shared/text-field";
-import { CareSetupForm, FundingSourceEnum } from "../../schemas/care-setup";
+import { CareSetupForm, FundingSourceEnum } from "../../../schemas/care-setup";
 
 const fundingOptions = FundingSourceEnum.options.map((v) => ({
   value: v,

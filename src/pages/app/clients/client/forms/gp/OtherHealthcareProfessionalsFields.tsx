@@ -1,4 +1,6 @@
+// components/gp/OtherHealthcareProfessionalsFields.tsx
 import * as React from "react";
+import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +13,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Plus, Trash2 } from "lucide-react";
+import { GpSupportForm } from "../../../schemas/gp-support";
 
 type Role =
   | "Therapist"
@@ -18,6 +21,7 @@ type Role =
   | "Social Worker"
   | "Consultant"
   | "";
+
 const ROLES: Exclude<Role, "">[] = [
   "Therapist",
   "District Nurse",
@@ -25,67 +29,42 @@ const ROLES: Exclude<Role, "">[] = [
   "Consultant",
 ];
 
-type Row = {
-  id: string;
-  role: Role;
-  name: string;
-  phone: string;
-  email: string;
-  org: string;
-  notes: string;
-};
-
-const makeBlank = (): Row => ({
-  id: crypto.randomUUID(),
-  role: "",
-  name: "",
+const makeBlank = () => ({
+  role: "" as Role,
   phone: "",
   email: "",
-  org: "",
+  organisation: "",
   notes: "",
+  // name: "",
 });
 
 export function OtherHealthcareProfessionalsFields() {
-  const [rows, setRows] = React.useState<Row[]>([
-    {
-      id: crypto.randomUUID(),
-      role: "District Nurse",
-      name: "",
-      phone: "020 7777 8888",
-      email: "gp@practice.nhs.uk",
-      org: "",
-      notes: "",
-    },
-    makeBlank(), // you can remove this if you don't want a starting blank
-  ]);
+  const { control, register } = useFormContext<GpSupportForm>();
 
-  const isEmpty = (r: Row) =>
-    !r.role && !r.name && !r.phone && !r.email && !r.org && !r.notes;
+  const { fields, append, remove, replace } = useFieldArray({
+    control,
+    name: "otherHealthcareProfessionals",
+  });
 
-  // ⛔️ No auto-append here anymore
-  const update = (id: string, patch: Partial<Row>) =>
-    setRows((s) => s.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+  // ensure there's at least one row
+  React.useEffect(() => {
+    if (!fields || fields.length === 0) {
+      replace([makeBlank()]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const addRow = () => setRows((s) => [...s, makeBlank()]);
+  const isEmptyRow = (r: any) =>
+    !r.role && !r.name && !r.phone && !r.email && !r.organisation && !r.notes;
 
-  const clearRow = (id: string) =>
-    setRows((s) =>
-      s.map((r) => (r.id === id ? { ...makeBlank(), id: r.id } : r))
-    );
-
-  const removeRow = (id: string) =>
-    setRows((s) => {
-      const filtered = s.filter((r) => r.id !== id);
-      return filtered.length ? filtered : [makeBlank()];
-    });
-
-  const lastIsBlank = isEmpty(rows[rows.length - 1]);
+  const lastIsBlank = fields.length
+    ? isEmptyRow(fields[fields.length - 1])
+    : true;
 
   return (
     <div className="space-y-4">
-      {rows.map((r, idx) => (
-        <div key={r.id}>
-          {/* header */}
+      {fields.map((field, idx) => (
+        <div key={field.id} className="border-b pb-4">
           <div className="mb-3 flex items-center justify-between">
             <h4 className="text-lg font-medium">
               Healthcare Professional {idx + 1}
@@ -95,56 +74,63 @@ export function OtherHealthcareProfessionalsFields() {
               variant="outline"
               size="icon"
               aria-label="Remove professional"
-              onClick={() =>
-                isEmpty(r) && rows.length === 1
-                  ? clearRow(r.id)
-                  : removeRow(r.id)
-              }
+              onClick={() => {
+                if (fields.length === 1) {
+                  // replace with blank instead of removing all
+                  replace([makeBlank()]);
+                } else {
+                  remove(idx);
+                }
+              }}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
 
-          {/* row: role + name */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1">
               <Label>Role</Label>
-              <Select
-                value={r.role}
-                onValueChange={(v: Role) => update(r.id, { role: v })}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {ROLES.map((role) => (
-                    <SelectItem key={role} value={role}>
-                      {role}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                control={control}
+                name={`otherHealthcareProfessionals.${idx}.role` as const}
+                defaultValue={field.role ?? ""}
+                render={({ field: ctrl }) => (
+                  <Select value={ctrl.value} onValueChange={ctrl.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {ROLES.map((role) => (
+                        <SelectItem key={role} value={role}>
+                          {role}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
 
-            <div className="space-y-1">
+            {/* <div className="space-y-1">
               <Label>Full Name</Label>
               <Input
                 placeholder="Professional name"
-                value={r.name}
-                onChange={(e) => update(r.id, { name: e.target.value })}
+                {...register(`otherHealthcareProfessionals.${idx}.name` as const)}
+                defaultValue={field. ?? ""}
               />
-            </div>
+            </div> */}
           </div>
 
-          {/* row: phone + email */}
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1">
               <Label>Phone Number</Label>
               <Input
                 inputMode="tel"
-                placeholder="020 7777 8888"
-                value={r.phone}
-                onChange={(e) => update(r.id, { phone: e.target.value })}
+                placeholder="+234 801 234 5678"
+                {...register(
+                  `otherHealthcareProfessionals.${idx}.phone` as const
+                )}
+                defaultValue={field.phone ?? ""}
               />
             </div>
 
@@ -155,30 +141,34 @@ export function OtherHealthcareProfessionalsFields() {
               <Input
                 type="email"
                 inputMode="email"
-                placeholder="gp@practice.nhs.uk"
-                value={r.email}
-                onChange={(e) => update(r.id, { email: e.target.value })}
+                placeholder="clinician@org.com"
+                {...register(
+                  `otherHealthcareProfessionals.${idx}.email` as const
+                )}
+                defaultValue={field.email ?? ""}
               />
             </div>
           </div>
 
-          {/* organisation */}
           <div className="mt-3 space-y-1">
             <Label>Organisation</Label>
             <Input
               placeholder="Organisation name"
-              value={r.org}
-              onChange={(e) => update(r.id, { org: e.target.value })}
+              {...register(
+                `otherHealthcareProfessionals.${idx}.organisation` as const
+              )}
+              defaultValue={field.organisation ?? ""}
             />
           </div>
 
-          {/* notes */}
           <div className="mt-3 space-y-1">
             <Label>Notes</Label>
             <Textarea
               placeholder="Additional notes..."
-              value={r.notes}
-              onChange={(e) => update(r.id, { notes: e.target.value })}
+              {...register(
+                `otherHealthcareProfessionals.${idx}.notes` as const
+              )}
+              defaultValue={field.notes ?? ""}
               className="min-h-[84px] resize-y"
             />
           </div>
@@ -189,8 +179,8 @@ export function OtherHealthcareProfessionalsFields() {
         type="button"
         variant="outline"
         className="gap-2"
-        onClick={addRow}
-        disabled={lastIsBlank} // keep this if you want to prevent stacking empties
+        onClick={() => append(makeBlank())}
+        disabled={lastIsBlank}
       >
         <Plus className="h-4 w-4" />
         Add Healthcare Professional

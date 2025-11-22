@@ -1,5 +1,6 @@
 // components/home/AccessSecurityFields.tsx
 import * as React from "react";
+import { useFormContext, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
+import { HomeEnvironmentForm } from "../../../schemas/home-environment";
 
 type AccessMethod = "Key Safe" | "Careline" | "Family Opens Door" | "Other";
 
@@ -23,43 +25,69 @@ const METHODS: AccessMethod[] = [
 ];
 
 export function AccessSecurityFields() {
-  const [method, setMethod] = React.useState<AccessMethod>("Key Safe");
-  const [keySafeCode, setKeySafeCode] = React.useState("");
-  const [buzzerCode, setBuzzerCode] = React.useState("");
-  const [showBuzzer, setShowBuzzer] = React.useState(false); // eye icon in screenshot is on buzzer field
-  const [notes, setNotes] = React.useState("");
+  const { control, register, watch, setValue } =
+    useFormContext<HomeEnvironmentForm>();
+
+  // watch the method field inside form
+  const method = watch("accessAndSecurity.accessMethod") as
+    | AccessMethod
+    | undefined;
+
+  // watch values for inputs (so component is reactive)
+  const keySafeCode = watch("accessAndSecurity.keySafeCode") ?? "";
+  const buzzerCode = watch("accessAndSecurity.buzzerCode") ?? "";
+  const specialNotes = watch("accessAndSecurity.specialAccessNotes") ?? "";
+
+  // local UI state for showing buzzer code
+  const [showBuzzer, setShowBuzzer] = React.useState(false);
+
+  // if access method toggles away from Key Safe, clear keySafeCode in form
+  React.useEffect(() => {
+    if (method !== "Key Safe") {
+      // clear stored key safe code to avoid accidental leaks / stale values
+      setValue("accessAndSecurity.keySafeCode", "", { shouldDirty: true });
+    }
+  }, [method, setValue]);
 
   return (
     <div className="space-y-6">
       {/* Access Method */}
       <div className="space-y-1.5">
         <Label>Access Method</Label>
-        <Select
-          value={method}
-          onValueChange={(v: AccessMethod) => setMethod(v)}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select method" />
-          </SelectTrigger>
-          <SelectContent>
-            {METHODS.map((m) => (
-              <SelectItem key={m} value={m}>
-                {m}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Controller
+          control={control}
+          name="accessAndSecurity.accessMethod"
+          defaultValue={METHODS[0]}
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select method" />
+              </SelectTrigger>
+              <SelectContent>
+                {METHODS.map((m) => (
+                  <SelectItem key={m} value={m}>
+                    {m}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
       </div>
 
       {/* Key Safe Code (only when Key Safe selected) */}
       {method === "Key Safe" && (
         <div className="space-y-1.5">
           <Label>Key Safe Code</Label>
-          {/* screenshot shows masked value; keep it simple with password type */}
           <Input
             type="password"
+            {...register("accessAndSecurity.keySafeCode")}
             value={keySafeCode}
-            onChange={(e) => setKeySafeCode(e.target.value)}
+            onChange={(e) =>
+              setValue("accessAndSecurity.keySafeCode", e.target.value, {
+                shouldDirty: true,
+              })
+            }
             autoComplete="off"
           />
         </div>
@@ -74,9 +102,13 @@ export function AccessSecurityFields() {
         <div className="relative">
           <Input
             type={showBuzzer ? "text" : "password"}
+            {...register("accessAndSecurity.buzzerCode")}
             value={buzzerCode}
-            onChange={(e) => setBuzzerCode(e.target.value)}
-            placeholder=""
+            onChange={(e) =>
+              setValue("accessAndSecurity.buzzerCode", e.target.value, {
+                shouldDirty: true,
+              })
+            }
             autoComplete="off"
             className="pr-9"
           />
@@ -102,8 +134,13 @@ export function AccessSecurityFields() {
         <Label>Special Access Notes</Label>
         <Textarea
           placeholder="Any special instructions…"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
+          {...register("accessAndSecurity.specialAccessNotes")}
+          value={specialNotes}
+          onChange={(e) =>
+            setValue("accessAndSecurity.specialAccessNotes", e.target.value, {
+              shouldDirty: true,
+            })
+          }
           className="min-h-[88px] resize-y"
         />
       </div>

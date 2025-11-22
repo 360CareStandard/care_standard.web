@@ -11,7 +11,7 @@ export default function ClientProfileLayout() {
   return (
     <LayoutProvider>
       <SidebarProvider defaultOpen={defaultOpen}>
-        <div className="mx-auto w-full px-4  py-2  flex">
+        <div className="mx-auto w-full px-4  py-2  flex  ">
           <AppSidebar />
 
           <Main>

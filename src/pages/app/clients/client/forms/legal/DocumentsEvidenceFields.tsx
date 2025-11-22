@@ -4,31 +4,32 @@ import {
   UploadCloud,
   Eye,
   Trash2,
-  X,
-  RotateCcw,
-  AlertTriangle,
   FileText,
   Image as ImageIcon,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { CircularProgress } from "@/components/ui/circular-progress";
+import { useFormContext } from "react-hook-form";
+import type { LegalForm } from "../../../schemas/legal-setup";
+// import { CircularProgress } from "@/components/ui/circular-progress";
 
-type FileStatus = "uploading" | "done" | "error";
+type FileStatus = "done" | "error";
 type Item = {
   id: string;
+  // either file OR url is present
+  file?: File;
+  url?: string;
   name: string;
   sizeBytes: number;
   mime?: string;
   createdAt: Date;
   status: FileStatus;
-  progress: number; // 0..100
-  error?: string;
   previewUrl?: string;
 };
 
 function bytesToMB(b: number) {
-  return `${(b / (1024 * 1024)).toFixed(0)}MB`;
+  return `${Math.round((b / (1024 * 1024)) * 10) / 10}MB`;
 }
 function fmtDate(d: Date) {
   const months = [
@@ -54,122 +55,95 @@ function fmtDate(d: Date) {
   }, ${d.getFullYear()} | ${h12}:${mm}${ampm}`;
 }
 
+/**
+ * Helper to guess filename from a URL
+ */
+function nameFromUrl(url: string) {
+  try {
+    const u = new URL(url);
+    const parts = u.pathname.split("/");
+    return decodeURIComponent(parts[parts.length - 1] || url);
+  } catch {
+    // fallback
+    const parts = url.split("/");
+    return decodeURIComponent(parts[parts.length - 1] || url);
+  }
+}
+
+/**
+ * Try to detect mime from file or url extension
+ */
+function mimeFromName(name?: string, fileType?: string) {
+  if (fileType) return fileType;
+  if (!name) return undefined;
+  const n = name.toLowerCase();
+  if (n.endsWith(".pdf")) return "application/pdf";
+  if (n.match(/\.(png|jpg|jpeg|gif|svg)$/))
+    return "image/" + (n.split(".").pop() || "");
+  return undefined;
+}
+
 export function DocumentsEvidenceFields() {
+  const { setValue, getValues, watch } = useFormContext<LegalForm>();
+
+  // watch both arrays: server-provided URLs and client-chosen Files
+  const existingUrls = (watch("legalDocuments") as string[] | undefined) ?? [];
+  const formFiles = (watch("legalDocumentsFiles") as File[] | undefined) ?? [];
+
   const [items, setItems] = React.useState<Item[]>([]);
   const [isOver, setIsOver] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  // --- Demo seed to match your screenshot (runs once)
+  // Build items list when either existingUrls or formFiles change
   React.useEffect(() => {
-    const seed: Item[] = [
-      {
-        id: crypto.randomUUID(),
-        name: "Name of document.pdf",
-        sizeBytes: 13 * 1024 * 1024,
-        mime: "application/pdf",
-        createdAt: new Date("2025-09-11T12:24:00"),
-        status: "error",
-        progress: 0,
-        error: "Error message",
-      },
-      {
-        id: crypto.randomUUID(),
-        name: "Name of document.pdf",
-        sizeBytes: 13 * 1024 * 1024,
-        mime: "application/pdf",
-        createdAt: new Date("2025-09-11T12:24:00"),
-        status: "uploading",
-        progress: 25,
-      },
-      {
-        id: crypto.randomUUID(),
-        name: "Name of document.png",
-        sizeBytes: 13 * 1024 * 1024,
-        mime: "image/png",
-        createdAt: new Date("2025-09-11T12:24:00"),
-        status: "done",
-        progress: 100,
-      },
-      {
-        id: crypto.randomUUID(),
-        name: "Name of document.png",
-        sizeBytes: 13 * 1024 * 1024,
-        mime: "image/png",
-        createdAt: new Date("2025-09-11T12:24:00"),
-        status: "done",
-        progress: 100,
-      },
-    ];
-    setItems(seed);
-  }, []);
-
-  // Simulate upload for a specific item
-  const simulateUpload = React.useCallback((id: string) => {
-    setItems((s) =>
-      s.map((it) =>
-        it.id === id
-          ? { ...it, status: "uploading", progress: 0, error: undefined }
-          : it
-      )
-    );
-    const tick = () => {
-      setItems((prev) =>
-        prev.map((it) => {
-          if (it.id !== id || it.status !== "uploading") return it;
-          const next = Math.min(
-            100,
-            it.progress + Math.floor(8 + Math.random() * 15)
-          );
-          // Random demo failure around 20% chance between 35–90%
-          const shouldFail = next > 35 && Math.random() < 0.08;
-          if (shouldFail) {
-            return {
-              ...it,
-              status: "error",
-              error: "Network interruption in demo",
-              progress: 0,
-            };
-          }
-          if (next >= 100) return { ...it, progress: 100, status: "done" };
-          return { ...it, progress: next };
-        })
-      );
-    };
-    // Create a short-lived interval to simulate progress
-    const iv = setInterval(tick, 350);
-    // Stop interval when item reaches done or error
-    const stopWhenSettled = setInterval(() => {
-      const it = itemsRef.current.find((x) => x.id === id);
-      if (!it || it.status !== "uploading") {
-        clearInterval(iv);
-        clearInterval(stopWhenSettled);
+    // revoke previous previews that are object URLs and not present in new set
+    items.forEach((it) => {
+      if (it.previewUrl && it.file) {
+        URL.revokeObjectURL(it.previewUrl);
       }
-    }, 200);
-  }, []);
+    });
 
-  // Keep a ref of items so our interval can read latest state
-  const itemsRef = React.useRef<Item[]>(items);
-  React.useEffect(() => {
-    itemsRef.current = items;
-  }, [items]);
+    const urlItems: Item[] = (existingUrls || []).map((u) => {
+      const name = nameFromUrl(u);
+      const mime = mimeFromName(name);
+      return {
+        id: `url-${u}`,
+        url: u,
+        name,
+        sizeBytes: 0,
+        mime,
+        createdAt: new Date(),
+        status: "done" as FileStatus,
+        previewUrl: mime?.startsWith("image/") ? u : undefined,
+      };
+    });
 
-  const onChooseFiles = (files: FileList | null) => {
-    if (!files || !files.length) return;
-    const toAdd: Item[] = Array.from(files).map((f) => ({
-      id: crypto.randomUUID(),
+    const fileItems: Item[] = (formFiles || []).map((f) => ({
+      id: `${f.name}-${f.size}-${f.lastModified}`,
+      file: f,
       name: f.name,
       sizeBytes: f.size,
-      mime: f.type,
-      createdAt: new Date(),
-      status: "uploading",
-      progress: 0,
+      mime: f.type || mimeFromName(f.name),
+      createdAt: new Date(f.lastModified || Date.now()),
+      status: "done" as FileStatus,
       previewUrl: f.type?.startsWith("image/")
         ? URL.createObjectURL(f)
         : undefined,
     }));
-    setItems((s) => [...toAdd, ...s]);
-    toAdd.forEach((it) => simulateUpload(it.id));
-    if (inputRef.current) inputRef.current.value = ""; // reset
+
+    setItems([...urlItems, ...fileItems]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existingUrls?.length, formFiles?.length]);
+
+  // choose files from file input
+  const onChooseFiles = (files: FileList | null) => {
+    if (!files || !files.length) return;
+    const incoming = Array.from(files);
+    const existing =
+      (getValues("legalDocumentsFiles") as File[] | undefined) ?? [];
+    const merged = [...incoming, ...existing];
+    setValue("legalDocumentsFiles", merged, { shouldDirty: true });
+    if (inputRef.current) inputRef.current.value = "";
   };
 
   const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -178,16 +152,41 @@ export function DocumentsEvidenceFields() {
     onChooseFiles(e.dataTransfer.files);
   };
 
-  const removeItem = (id: string) =>
-    setItems((s) => s.filter((it) => it.id !== id));
-  const cancelUploading = (id: string) => removeItem(id);
-  const retryItem = (id: string) => simulateUpload(id);
+  // remove item by id — detect whether it's a URL or File and update the proper form field
+  const removeItem = (id: string) => {
+    const it = items.find((x) => x.id === id);
+    if (!it) return;
+
+    if (it.url) {
+      // remove URL from legalDocuments
+      const current =
+        (getValues("legalDocuments") as string[] | undefined) ?? [];
+      const next = current.filter((u) => u !== it.url);
+      setValue("legalDocuments", next, { shouldDirty: true });
+    } else if (it.file) {
+      const current =
+        (getValues("legalDocumentsFiles") as File[] | undefined) ?? [];
+      const next = current.filter(
+        (f) => `${f.name}-${f.size}-${f.lastModified}` !== id
+      );
+      setValue("legalDocumentsFiles", next, { shouldDirty: true });
+    }
+
+    // revoke preview if object URL
+    if (it.previewUrl && it.file) {
+      URL.revokeObjectURL(it.previewUrl);
+    }
+  };
+
   const previewItem = (it: Item) => {
     if (it.previewUrl) {
       window.open(it.previewUrl, "_blank", "noopener,noreferrer");
       return;
     }
-    // crude preview for demo: open a blank page with the filename
+    if (it.url) {
+      window.open(it.url, "_blank", "noopener,noreferrer");
+      return;
+    }
     const w = window.open("", "_blank", "noopener,noreferrer");
     if (w)
       w.document.write(
@@ -198,13 +197,21 @@ export function DocumentsEvidenceFields() {
   const renderIcon = (it: Item) => {
     if (it.status === "error")
       return <AlertTriangle className="h-5 w-5 text-red-500" />;
-    if (it.mime?.includes("pdf") || it.name.toLowerCase().endsWith(".pdf"))
-      return <FileText className="h-5 w-5 text-muted-foreground" />;
+
+    const mime = it.mime ?? mimeFromName(it.name);
+
     if (
-      it.mime?.startsWith("image/") ||
+      (mime && mime.includes("pdf")) ||
+      it.name.toLowerCase().endsWith(".pdf")
+    )
+      return <FileText className="h-5 w-5 text-muted-foreground" />;
+
+    if (
+      (mime && mime.startsWith("image/")) ||
       /\.(png|jpg|jpeg|gif|svg)$/i.test(it.name)
     )
       return <ImageIcon className="h-5 w-5 text-muted-foreground" />;
+
     return <FileText className="h-5 w-5 text-muted-foreground" />;
   };
 
@@ -212,7 +219,6 @@ export function DocumentsEvidenceFields() {
 
   return (
     <div className="space-y-6">
-      {/* Drop zone */}
       <div
         onDragEnter={(e) => {
           e.preventDefault();
@@ -227,7 +233,7 @@ export function DocumentsEvidenceFields() {
           setIsOver(false);
         }}
         onDrop={onDrop}
-        className={`rounded-2xl ${border} border p-8 text-center`}
+        className={`rounded-2xl ${border} border p-8 text-center documents-uploader`}
       >
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-foreground/5">
           <UploadCloud className="h-6 w-6 text-muted-foreground" />
@@ -239,7 +245,7 @@ export function DocumentsEvidenceFields() {
           </span>
         </p>
         <p className="mt-1 text-[11px] text-muted-foreground">
-          SVG, PNG, JPG or GIF (max. 800×400px)
+          SVG, PNG, JPG, PDF or GIF (max. 25MB per file)
         </p>
 
         <div className="relative mx-auto my-4 w-32">
@@ -252,7 +258,7 @@ export function DocumentsEvidenceFields() {
         <Button
           type="button"
           variant="secondary"
-          className="px-4 bg-[#262323] hover:bg-[#262323] "
+          className="px-4 bg-[#262323] hover:bg-[#262323]"
           onClick={() => inputRef.current?.click()}
         >
           Choose Files
@@ -266,97 +272,53 @@ export function DocumentsEvidenceFields() {
         />
       </div>
 
-      {/* List header */}
       <div className="flex items-center gap-2">
         <Label className="text-sm font-semibold">Uploaded Files</Label>
-        <span className="text-xs  bg-[#262323] w-5 h-5 text-white flex justify-center items-center rounded-full">
+        <span className="text-xs bg-[#262323] w-5 h-5 text-white flex justify-center items-center rounded-full">
           {items.length}
         </span>
       </div>
 
-      {/* Files list */}
-      <div className="space-y-4 ">
+      <div className="space-y-4">
         {items.map((it) => (
           <div
             key={it.id}
-            className="flex items-start justify-between py-2  bg-background "
+            className="flex items-start justify-between py-2 bg-background"
           >
             <div className="flex items-start gap-3">
               <div className="mt-0.5">{renderIcon(it)}</div>
               <div>
                 <div className="text-sm font-medium leading-5">{it.name}</div>
-
-                {it.status === "error" ? (
-                  <div className="mt-1 text-xs text-red-600">
-                    {it.error ?? "Upload failed"}
-                  </div>
-                ) : (
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {fmtDate(it.createdAt)} • {bytesToMB(it.sizeBytes)}
-                  </div>
-                )}
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {fmtDate(it.createdAt)} • {bytesToMB(it.sizeBytes)}
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center ">
-              {it.status === "error" && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => retryItem(it.id)}
-                  className="gap-1 text-xs text-muted-foreground hover:text-foreground"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  Try Again
-                </Button>
-              )}
-
-              {it.status === "uploading" && (
-                <div className="flex items-center gap-2">
-                  <CircularProgress
-                    value={it.progress}
-                    size={40}
-                    strokeWidth={5}
-                    aria-label={`Uploading ${it.name}`}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => cancelUploading(it.id)}
-                    aria-label="Cancel upload"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-
-              {it.status === "done" && (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => previewItem(it)}
-                    aria-label="Preview"
-                  >
-                    <Eye size={35} />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeItem(it.id)}
-                    aria-label="Delete"
-                  >
-                    <Trash2 size={35} />
-                  </Button>
-                </>
-              )}
+            <div className="flex items-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => previewItem(it)}
+                aria-label="Preview"
+              >
+                <Eye size={24} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeItem(it.id)}
+                aria-label="Delete"
+              >
+                <Trash2 size={24} />
+              </Button>
             </div>
           </div>
         ))}
 
         {items.length === 0 && (
           <div className="text-xs text-muted-foreground">
-            No files uploaded yet.
+            No files staged for upload yet.
           </div>
         )}
       </div>

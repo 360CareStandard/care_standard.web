@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useForm, FormProvider, useWatch } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,9 +17,10 @@ import {
 } from "@/hooks/client/useClientCarePlan";
 import toast from "react-hot-toast";
 import { formatUpdatedAt } from "@/helpers/last-updated";
-import { CareSetupSkeleton } from "../../components/setup-skeleton";
 import { CareSetupDetails } from "../../components/care-setup-details";
 import { ClientClientCarePlan } from "@/types/client/care-plan";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/shared/spinner";
 
 // in CareSetup component when creating `useForm`
 const initialFormValues: Partial<CareSetupForm> = {
@@ -72,12 +73,20 @@ const CareSetup = ({ clientId }: Props) => {
   });
   // agencyId: undefined, // undefined is allowed for input
   // 👇 Watch all values
-  const formValues = useWatch({ control: methods.control });
+  // const formValues = useWatch({ control: methods.control });
   const openForAdd = () => {
     methods.reset(initialFormValues as any);
     setEditingSetupId(null);
     setOpen(true);
   };
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   // inside CareSetup component (above return or near top)
   function mapApiToFormValues(
     apiData: ClientClientCarePlan
@@ -86,7 +95,7 @@ const CareSetup = ({ clientId }: Props) => {
     const plan = apiData ?? {};
     return {
       packageId: plan.packageId ?? undefined,
-      startDate: plan.startDate ? String(plan.startDate) : "",
+      startDate: plan.startDate ? formatDate(plan.startDate) : "",
       status: plan.status ?? "active",
       visitDurationPreset: plan.visitDurationPreset ?? undefined,
       doubleUpVisitRequired: !!plan.doubleUpVisitRequired,
@@ -137,7 +146,7 @@ const CareSetup = ({ clientId }: Props) => {
         await updateCareSetup.mutateAsync({
           body: values,
         });
-        toast.success("Contact updated");
+        toast.success("Care Setup updated");
       } else {
         await createCareSetup.mutateAsync(values);
         toast.success("Care Setup created");
@@ -149,7 +158,7 @@ const CareSetup = ({ clientId }: Props) => {
       console.error(err);
       toast.error("Save failed, try again");
     }
-    console.log("submit:", values);
+    // console.log("submit:", values);
     // setOpen(false);
     // methods.reset();
   };
@@ -158,7 +167,7 @@ const CareSetup = ({ clientId }: Props) => {
     e.preventDefault();
 
     void methods.handleSubmit(onSubmit)();
-    console.log(1);
+    // console.log(1);
   };
 
   return (
@@ -169,7 +178,7 @@ const CareSetup = ({ clientId }: Props) => {
             clientSetupDetails ? "gap-8" : "sm:grid-cols-2 gap-16"
           } `}
         >
-          {clientSetupDetails ? (
+          {!isLoading && clientSetupDetails ? (
             <div className="flex justify-between items-center gap-4">
               <div className=" space-y-1">
                 <h2 className="font-bold text-xl">Care Setup</h2>
@@ -246,12 +255,16 @@ const CareSetup = ({ clientId }: Props) => {
               </div>
             </div>
           )}
-          {isLoading && (
-            <div className="col-span-2 sm:col-span-2">
-              <CareSetupSkeleton />
+          {isLoading ? (
+            // <div className="col-span-2 sm:col-span-2">
+            //   <CareSetupSkeleton />
+            // </div>
+            <div className="space-y-4 p-4">
+              <Skeleton className="h-6 w-1/2" />
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-6 w-1/3" />
             </div>
-          )}
-          {clientSetupDetails ? (
+          ) : clientSetupDetails ? (
             <div className="col-span-1 sm:col-span-1">
               <CareSetupDetails data={clientSetupDetails} />
             </div>
@@ -281,12 +294,15 @@ const CareSetup = ({ clientId }: Props) => {
         description="Configure the care package, scheduling preferences, and safety settings."
         headerClassName="bg-[#E4E7EC] py-2.5"
         submitLabel={
-          methods.formState.isSubmitting
-            ? "Saving..."
-            : editingSetupId
-            ? "Save Changes"
-            : "Save Care Setup"
+          methods.formState.isSubmitting ? (
+            <Spinner size="sm" />
+          ) : editingSetupId ? (
+            "Save Changes"
+          ) : (
+            "Save Care Setup"
+          )
         }
+        submitLoading={methods.formState.isSubmitting}
         submitDisabled={methods.formState.isSubmitting}
         onSubmit={handleSheetSubmit}
         bodyClassName="space-y-4"

@@ -1,45 +1,30 @@
+// components/health/ConditionHistoryFields.tsx
 import * as React from "react";
+import { useFormContext, useFieldArray } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Plus, X } from "lucide-react";
-
-type Condition = {
-  id: string;
-  name: string;
-  date: string; // mm/dd/yyyy (UI only)
-  note: string; // short chip note, e.g. "Well controlled…"
-};
+import type { MedicalForm } from "../../../schemas/health";
 
 export function ConditionHistoryFields() {
-  const [rows, setRows] = React.useState<Condition[]>([
-    {
-      id: crypto.randomUUID(),
-      name: "Diabetes Type 2",
-      date: "2024-05-23", // HTML date input uses yyyy-mm-dd; display matches your screenshot
-      note: "Well controlled…",
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "",
-      date: "",
-      note: "",
-    },
-  ]);
+  const { register, control } = useFormContext<MedicalForm>();
 
-  const [clinicalNotes, setClinicalNotes] = React.useState("");
+  // Manage array of diagnosedConditions from the form
+  const { fields, append, remove, update } = useFieldArray({
+    control,
+    name: "diagnosedConditions",
+  });
 
-  const update = (id: string, patch: Partial<Condition>) =>
-    setRows((s) => s.map((r) => (r.id === id ? { ...r, ...patch } : r)));
-
-  const remove = (id: string) => setRows((s) => s.filter((r) => r.id !== id));
-
-  const addRow = () =>
-    setRows((s) => [
-      ...s,
-      { id: crypto.randomUUID(), name: "", date: "", note: "" },
-    ]);
+  // Ensure there's always at least one empty row when form is initially blank
+  React.useEffect(() => {
+    if (!fields || fields.length === 0) {
+      append({ name: "", diagnosisDate: "", notes: "" });
+    }
+    // we intentionally want to run this only on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -47,38 +32,38 @@ export function ConditionHistoryFields() {
         <Label className="font-medium">Diagnosed Conditions</Label>
 
         <div className="space-y-1">
-          {rows.map((r) => (
+          {fields.map((field, index) => (
             <div
-              key={r.id}
+              key={field.id}
               className="flex flex-wrap items-center gap-2 p-2 bg-[#F7F9FC] rounded-md"
             >
               {/* condition name */}
-              <div className=" flex-1">
+              <div className="flex-1">
                 <Input
                   placeholder="Condition name"
-                  value={r.name}
-                  onChange={(e) => update(r.id, { name: e.target.value })}
+                  {...register(`diagnosedConditions.${index}.name` as const)}
+                  defaultValue={field.name ?? ""}
                 />
               </div>
 
-              {/* date with calendar icon */}
-              <div className="relative flex-1 ">
+              {/* date */}
+              <div className="relative flex-1">
                 <Input
                   type="date"
-                  value={r.date}
-                  onChange={(e) => update(r.id, { date: e.target.value })}
-                  placeholder="mm/dd/yyyy"
-                  className=" "
+                  placeholder="yyyy-mm-dd"
+                  {...register(
+                    `diagnosedConditions.${index}.diagnosisDate` as const
+                  )}
+                  defaultValue={field.diagnosisDate ?? ""}
                 />
-                {/* <CalendarIcon className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /> */}
               </div>
 
-              {/* short note chip */}
-              <div className="flex-1 ">
+              {/* short note */}
+              <div className="flex-1">
                 <Input
                   placeholder="Notes"
-                  value={r.note}
-                  onChange={(e) => update(r.id, { note: e.target.value })}
+                  {...register(`diagnosedConditions.${index}.notes` as const)}
+                  defaultValue={field.notes ?? ""}
                 />
               </div>
 
@@ -88,7 +73,7 @@ export function ConditionHistoryFields() {
                 variant="outline"
                 size="icon"
                 aria-label="Remove condition"
-                onClick={() => remove(r.id)}
+                onClick={() => remove(index)}
                 className="shrink-0"
               >
                 <X className="h-4 w-4" />
@@ -101,7 +86,7 @@ export function ConditionHistoryFields() {
           type="button"
           variant="outline"
           className="mt-1 gap-2"
-          onClick={addRow}
+          onClick={() => append({ name: "", diagnosisDate: "", notes: "" })}
         >
           <Plus className="h-4 w-4" />
           Add Condition
@@ -113,8 +98,7 @@ export function ConditionHistoryFields() {
         <Label className="font-medium">Clinical Notes</Label>
         <Textarea
           placeholder="Notes for clinical context…"
-          value={clinicalNotes}
-          onChange={(e) => setClinicalNotes(e.target.value)}
+          {...register("clinicalNotes")}
           className="min-h-[76px] resize-y rounded-xl"
         />
       </div>

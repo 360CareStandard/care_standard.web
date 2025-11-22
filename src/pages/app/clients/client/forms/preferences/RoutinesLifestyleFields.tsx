@@ -1,9 +1,9 @@
-// components/preferences/RoutinesLifestyleFields.tsx
-import * as React from "react";
+import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { PreferencesForm } from "../../../schemas/preferences"; // adjust path
 
 function TogglePill({
   active,
@@ -40,19 +40,23 @@ function TogglePill({
   );
 }
 
+const VISIT_TIMES = ["Morning", "Afternoon", "Evening"] as const;
+
 export function RoutinesLifestyleFields() {
-  const [morningRoutine, setMorningRoutine] = React.useState("");
-  const [sleepingHabits, setSleepingHabits] = React.useState("");
-  const [dailyActivities, setDailyActivities] = React.useState("");
+  const { register, watch, setValue } = useFormContext<PreferencesForm>();
 
-  const [prefTimes, setPrefTimes] = React.useState({
-    Morning: true,
-    Afternoon: false,
-    Evening: false,
-  });
+  const selectedTimes = watch("preferredVisitTimes") || [];
 
-  const toggleTime = (k: keyof typeof prefTimes) =>
-    setPrefTimes((s) => ({ ...s, [k]: !s[k] }));
+  const toggleTime = (time: (typeof VISIT_TIMES)[number]) => {
+    if (selectedTimes.includes(time)) {
+      setValue(
+        "preferredVisitTimes",
+        selectedTimes.filter((t) => t !== time)
+      );
+    } else {
+      setValue("preferredVisitTimes", [...selectedTimes, time]);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -60,9 +64,8 @@ export function RoutinesLifestyleFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Morning Routine</Label>
         <Textarea
-          placeholder="Describe typical morning routine, wake-up time, preferences..."
-          value={morningRoutine}
-          onChange={(e) => setMorningRoutine(e.target.value)}
+          {...register("morningRoutine")}
+          placeholder="Describe typical morning routine..."
           className="min-h-[84px] resize-y"
         />
       </div>
@@ -71,20 +74,18 @@ export function RoutinesLifestyleFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Sleeping Habits</Label>
         <Textarea
-          placeholder="Bedtime, napping habits, sleep environment preferences..."
-          value={sleepingHabits}
-          onChange={(e) => setSleepingHabits(e.target.value)}
+          {...register("sleepingHabits")}
+          placeholder="Bedtime, napping habits..."
           className="min-h-[84px] resize-y"
         />
       </div>
 
-      {/* Daily Activities & Hobbies */}
+      {/* Daily Activities */}
       <div className="space-y-1.5">
         <Label className="font-medium">Daily Activities & Hobbies</Label>
         <Textarea
-          placeholder="Favourite activities, hobbies, social interest..."
-          value={dailyActivities}
-          onChange={(e) => setDailyActivities(e.target.value)}
+          {...register("dailyActivities")}
+          placeholder="Favourite activities and hobbies..."
           className="min-h-[84px] resize-y"
         />
       </div>
@@ -92,17 +93,16 @@ export function RoutinesLifestyleFields() {
       {/* Preferred Visit Times */}
       <div className="space-y-2">
         <Label className="font-medium">Preferred Visit Times</Label>
+
         <div className="flex flex-wrap gap-3">
-          {(Object.keys(prefTimes) as Array<keyof typeof prefTimes>).map(
-            (k) => (
-              <TogglePill
-                key={k}
-                active={prefTimes[k]}
-                label={k}
-                onClick={() => toggleTime(k)}
-              />
-            )
-          )}
+          {VISIT_TIMES.map((time) => (
+            <TogglePill
+              key={time}
+              active={selectedTimes.includes(time)}
+              label={time}
+              onClick={() => toggleTime(time)}
+            />
+          ))}
         </div>
       </div>
     </div>

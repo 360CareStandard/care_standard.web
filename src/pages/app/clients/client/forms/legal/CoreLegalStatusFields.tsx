@@ -1,5 +1,5 @@
 // components/legal/CoreLegalStatusFields.tsx
-import * as React from "react";
+import { useFormContext, Controller, useWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -11,57 +11,74 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { LegalForm } from "../../../schemas/legal-setup";
 
-type OrderKey = "DoLS" | "LPS" | "Court Order" | "Guardianship";
+// type OrderKey = "DoLS" | "LPS" | "Court Order" | "Guardianship";
 
 export function CoreLegalStatusFields() {
-  const [poa, setPoa] = React.useState<
-    "None" | "Health" | "Finance" | "Health & Finance"
-  >("None");
-  const [capacity, setCapacity] = React.useState<
-    "Has Capacity" | "Lacks Capacity" | "Under Assessment"
-  >("Has Capacity");
-  const [dnr, setDnr] = React.useState(false);
-  const [orders, setOrders] = React.useState<Record<OrderKey, boolean>>({
-    DoLS: false,
-    LPS: false,
-    "Court Order": false,
-    Guardianship: false,
-  });
+  const { control, register } = useFormContext<LegalForm>();
 
-  // simple helpers
-  const setOrder = (k: OrderKey, v: boolean) =>
-    setOrders((s) => ({ ...s, [k]: v }));
+  // Watch values we care about for conditional UI
+  const powerOfAttorney = useWatch({ control, name: "powerOfAttorney" });
+  const dnarActive = useWatch({ control, name: "dnarActive" });
+  const hasCourtOrder = useWatch({ control, name: "hasCourtOrder" });
+
+  // options (values match the schema)
+  const poaOptions = [
+    { label: "None", value: "none" },
+    { label: "Health", value: "health" },
+    { label: "Finance", value: "finance" },
+    { label: "Health & Finance", value: "health-finance" },
+  ];
+
+  const capacityOptions = [
+    { label: "Has Capacity", value: "has-capacity" },
+    { label: "Lacks Capacity", value: "lacks-capacity" },
+    { label: "Under Assessment", value: "under-assessment" },
+  ];
 
   return (
     <div className="space-y-4">
       {/* Power of Attorney */}
       <div className="space-y-2">
         <Label>Power of Attorney</Label>
-        <Select value={poa} onValueChange={(v: any) => setPoa(v)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select POA" />
-          </SelectTrigger>
-          <SelectContent>
-            {["None", "Health", "Finance", "Health & Finance"].map((o) => (
-              <SelectItem key={o} value={o}>
-                {o}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Controller
+          control={control}
+          name="powerOfAttorney"
+          defaultValue="none"
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select POA" />
+              </SelectTrigger>
+              <SelectContent>
+                {poaOptions.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
       </div>
+
       {/* Conditional POA details */}
-      {poa !== "None" && (
+      {powerOfAttorney !== "none" && (
         <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4 bg-emerald-50 p-4 rounded-xl">
           <div className="absolute inset-y-0 left-0 w-1.5 bg-primary rounded-l-xl" />
           <div className="sm:col-span-2">
             <Label className="mb-1 block">POA Holder Name</Label>
-            <Input placeholder="Full Name" className="bg-white text-xs" />
+            <Input
+              {...register("poaHolderName")}
+              placeholder="Full Name"
+              className="bg-white text-xs"
+            />
           </div>
           <div className="sm:col-span-1">
             <Label className="mb-1 block">POA Contact</Label>
             <Input
+              {...register("poaContact")}
               placeholder="Email/phone number"
               className="bg-white text-xs"
             />
@@ -69,6 +86,7 @@ export function CoreLegalStatusFields() {
           <div className="sm:col-span-1">
             <Label className="mb-1 block">Valid From</Label>
             <Input
+              {...register("poaValidFrom")}
               type="date"
               placeholder="mm/dd/yyyy"
               className="bg-white text-xs"
@@ -80,18 +98,25 @@ export function CoreLegalStatusFields() {
       {/* Mental Capacity */}
       <div className="space-y-2">
         <Label>Mental Capacity</Label>
-        <Select value={capacity} onValueChange={(v: any) => setCapacity(v)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select capacity" />
-          </SelectTrigger>
-          <SelectContent>
-            {["Has Capacity", "Lacks Capacity", "Under Assessment"].map((o) => (
-              <SelectItem key={o} value={o}>
-                {o}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Controller
+          control={control}
+          name="mentalCapacity"
+          defaultValue="has-capacity"
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select capacity" />
+              </SelectTrigger>
+              <SelectContent>
+                {capacityOptions.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
       </div>
 
       {/* DNAR */}
@@ -105,19 +130,35 @@ export function CoreLegalStatusFields() {
               Legal directive for emergency care
             </p>
           </div>
-          <Switch checked={dnr} onCheckedChange={setDnr} />
+
+          <Controller
+            control={control}
+            name="dnarActive"
+            defaultValue={false}
+            render={({ field }) => (
+              <Switch
+                checked={Boolean(field.value)}
+                onCheckedChange={(v: boolean) => field.onChange(Boolean(v))}
+              />
+            )}
+          />
         </div>
 
-        {dnr && (
+        {dnarActive && (
           <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4 bg-emerald-50 p-4 rounded-xl">
             <div className="absolute inset-y-0 left-0 w-1.5 bg-primary rounded-l-xl" />
             <div>
               <Label className="mb-1 block">Reason</Label>
-              <Input placeholder="Medical reason" className="bg-white" />
+              <Input
+                {...register("dnarReason")}
+                placeholder="Medical reason"
+                className="bg-white"
+              />
             </div>
             <div>
               <Label className="mb-1 block">Signed Date</Label>
               <Input
+                {...register("dnarSignedDate")}
                 type="date"
                 placeholder="mm/dd/yyyy"
                 className="bg-white"
@@ -131,37 +172,95 @@ export function CoreLegalStatusFields() {
       <div className="space-y-3">
         <Label className="mb-1 block">LPS / DoLS / Court Orders</Label>
         <div className="flex flex-wrap gap-6 mt-1">
-          {(["DoLS", "LPS", "Court Order", "Guardianship"] as OrderKey[]).map(
-            (k) => (
-              <label
-                key={k}
-                className="flex items-center gap-2 text-sm text-muted-foreground"
-              >
+          {/* DoLS */}
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Controller
+              control={control}
+              name="hasDoLS"
+              defaultValue={false}
+              render={({ field }) => (
                 <Checkbox
-                  checked={orders[k]}
-                  onCheckedChange={(v) => setOrder(k, Boolean(v))}
+                  checked={Boolean(field.value)}
+                  onCheckedChange={(v: boolean) => field.onChange(Boolean(v))}
                 />
-                {k}
-              </label>
-            )
-          )}
+              )}
+            />
+            DoLS
+          </label>
+
+          {/* LPS */}
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Controller
+              control={control}
+              name="hasLPS"
+              defaultValue={false}
+              render={({ field }) => (
+                <Checkbox
+                  checked={Boolean(field.value)}
+                  onCheckedChange={(v: boolean) => field.onChange(Boolean(v))}
+                />
+              )}
+            />
+            LPS
+          </label>
+
+          {/* Court Order */}
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Controller
+              control={control}
+              name="hasCourtOrder"
+              defaultValue={false}
+              render={({ field }) => (
+                <Checkbox
+                  checked={Boolean(field.value)}
+                  onCheckedChange={(v: boolean) => field.onChange(Boolean(v))}
+                />
+              )}
+            />
+            Court Order
+          </label>
+
+          {/* Guardianship */}
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Controller
+              control={control}
+              name="hasGuardianship"
+              defaultValue={false}
+              render={({ field }) => (
+                <Checkbox
+                  checked={Boolean(field.value)}
+                  onCheckedChange={(v: boolean) => field.onChange(Boolean(v))}
+                />
+              )}
+            />
+            Guardianship
+          </label>
         </div>
 
-        {/* Example: show details when "Court Order" is checked */}
-        {orders["Court Order"] && (
+        {/* show details when "Court Order" is checked */}
+        {hasCourtOrder && (
           <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4 bg-emerald-50 p-4 rounded-xl">
             <div className="absolute inset-y-0 left-0 w-1.5 bg-primary rounded-l-xl" />
             <div>
               <Label className="mb-1 block">Reference Number</Label>
-              <Input className="bg-white" placeholder="Legal reference" />
+              <Input
+                {...register("legalReferenceNumber")}
+                className="bg-white"
+                placeholder="Legal reference"
+              />
             </div>
             <div>
               <Label className="mb-1 block">Responsible Authority</Label>
-              <Input className="bg-white" placeholder="Legal reference" />
+              <Input
+                {...register("legalResponsibleAuthority")}
+                className="bg-white"
+                placeholder="Responsible authority"
+              />
             </div>
             <div>
               <Label className="mb-1 block">Started Date</Label>
               <Input
+                {...register("legalStartDate")}
                 className="bg-white"
                 type="date"
                 placeholder="mm/dd/yyyy"
@@ -170,6 +269,7 @@ export function CoreLegalStatusFields() {
             <div>
               <Label className="mb-1 block">End Date</Label>
               <Input
+                {...register("legalEndDate")}
                 className="bg-white"
                 type="date"
                 placeholder="mm/dd/yyyy"

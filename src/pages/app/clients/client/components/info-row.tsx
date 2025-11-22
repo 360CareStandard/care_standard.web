@@ -20,7 +20,9 @@ export function InfoRow({
       ) : null}
       <div>
         <span className="text-muted-foreground text-xs">{label}</span>
-        <div className={cn("text-sm font-medium", className)}>{children}</div>
+        <div className={cn("text-[12.36px] font-medium text-black", className)}>
+          {children}
+        </div>
       </div>
     </div>
   );

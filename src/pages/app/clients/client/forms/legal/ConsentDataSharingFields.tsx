@@ -1,5 +1,6 @@
 // components/legal/ConsentDataSharingFields.tsx
 import * as React from "react";
+import { useFormContext, Controller, useWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -11,29 +12,109 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import type { LegalForm } from "../../../schemas/legal-setup";
 
 export function ConsentDataSharingFields() {
-  const [dataSharingOn, setDataSharingOn] = React.useState(false);
-  const [mediaConsentOn, setMediaConsentOn] = React.useState(false);
-  const [familyAppAllowed, setFamilyAppAllowed] = React.useState(false);
+  const { control, register, setValue, getValues, trigger } =
+    useFormContext<LegalForm>();
 
-  const [signedBy, setSignedBy] = React.useState<string | undefined>();
-  const [scope, setScope] = React.useState({
-    family: false,
-    clinicians: false,
-    external: false,
+  // watch the form-backed values we care about
+  const dataSharingOn = useWatch({
+    control,
+    name: "dataSharingConsent",
+    defaultValue: false,
   });
 
-  const [contactConsent, setContactConsent] = React.useState({
-    email: false,
-    sms: false,
-    phone: false,
+  const mediaConsentOn = useWatch({
+    control,
+    name: "photoConsent",
+    defaultValue: false,
   });
 
-  const setScopeKey = (k: keyof typeof scope, v: boolean) =>
-    setScope((s) => ({ ...s, [k]: v }));
-  const setContactKey = (k: keyof typeof contactConsent, v: boolean) =>
-    setContactConsent((s) => ({ ...s, [k]: v }));
+  const familyAppAllowed = useWatch({
+    control,
+    name: "familyAppPermission",
+    defaultValue: false,
+  });
+
+  // dataSharingScope is stored as a comma separated string in the schema.
+  // Provide helpers to toggle individual scope bits.
+  const currentScope =
+    (useWatch({
+      control,
+      name: "dataSharingScope",
+    }) as string | undefined) ?? "";
+
+  const scopeSet = React.useMemo(() => {
+    const parts = currentScope
+      ? currentScope.split(",").map((s) => s.trim())
+      : [];
+    return {
+      family: parts.includes("Family"),
+      clinicians: parts.includes("Clinicians"),
+      external: parts.includes("External"),
+    };
+  }, [currentScope]);
+
+  const toggleScopeKey = (k: keyof typeof scopeSet, v: boolean) => {
+    const s = { ...scopeSet, [k]: v };
+    const chosen: string[] = [];
+    if (s.family) chosen.push("Family");
+    if (s.clinicians) chosen.push("Clinicians");
+    if (s.external) chosen.push("External");
+    setValue("dataSharingScope", chosen.join(","), { shouldDirty: true });
+    void trigger("dataSharingScope");
+  };
+
+  // contact consent booleans are direct fields
+  const contactEmail = useWatch({
+    control,
+    name: "contactConsentEmail",
+    defaultValue: false,
+  });
+  const contactSMS = useWatch({
+    control,
+    name: "contactConsentSMS",
+    defaultValue: false,
+  });
+  const contactPhone = useWatch({
+    control,
+    name: "contactConsentPhone",
+    defaultValue: false,
+  });
+
+  // SignedBy (string)
+  const signedBy = useWatch({
+    control,
+    name: "dataSharingConsentSignedBy",
+  });
+
+  // Auto-clear dependent fields when toggles switch off
+  React.useEffect(() => {
+    if (!dataSharingOn) {
+      setValue("dataSharingConsentDate", "");
+      setValue("dataSharingConsentSignedBy", "");
+      setValue("dataSharingScope", "");
+      void trigger([
+        "dataSharingConsentDate",
+        "dataSharingConsentSignedBy",
+        "dataSharingScope",
+      ]);
+    }
+  }, [dataSharingOn, setValue, trigger]);
+
+  const photoConsentDate = useWatch({
+    control,
+    name: "metadata.photoConsentDate",
+    defaultValue: "",
+  });
+
+  React.useEffect(() => {
+    if (!mediaConsentOn) {
+      setValue("metadata.photoConsentDate", "", { shouldDirty: true });
+      void trigger("metadata.photoConsentDate");
+    }
+  }, [mediaConsentOn, setValue, trigger]);
 
   return (
     <div className="space-y-8">
@@ -43,61 +124,90 @@ export function ConsentDataSharingFields() {
           <div>
             <Label className="font-medium mb-1">Data Sharing Consent</Label>
             <p className="text-xs text-muted-foreground">
-              Permission to sharing information with authorised parties
+              Permission to share information with authorised parties
             </p>
           </div>
-          <Switch checked={dataSharingOn} onCheckedChange={setDataSharingOn} />
+
+          {/* Switch bound to dataSharingConsent boolean */}
+          <Controller
+            control={control}
+            name="dataSharingConsent"
+            render={({ field }) => (
+              <Switch
+                checked={Boolean(field.value)}
+                onCheckedChange={(v: boolean) => field.onChange(Boolean(v))}
+              />
+            )}
+          />
         </div>
 
         {dataSharingOn && (
           <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4 bg-emerald-50 p-4 rounded-xl">
             <div className="absolute inset-y-0 left-0 w-1.5 bg-primary rounded-l-xl" />
+
             <div>
               <Label className="mb-1 block">Consent Date</Label>
               <Input
+                {...register("dataSharingConsentDate")}
                 type="date"
                 placeholder="mm/dd/yyyy"
                 className="bg-white"
               />
             </div>
+
             <div>
               <Label className="mb-1 block">Signed By</Label>
-              <Select value={signedBy} onValueChange={setSignedBy}>
-                <SelectTrigger className="w-full bg-white">
-                  <SelectValue placeholder="Select signatory" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Client">Client</SelectItem>
-                  <SelectItem value="Power of Attorney">
-                    Power of Attorney
-                  </SelectItem>
-                  <SelectItem value="Family Member">Family Member</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                control={control}
+                name="dataSharingConsentSignedBy"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full bg-white">
+                      <SelectValue placeholder="Select signatory" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Client">Client</SelectItem>
+                      <SelectItem value="Power of Attorney">
+                        Power of Attorney
+                      </SelectItem>
+                      <SelectItem value="Family Member">
+                        Family Member
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
+
             <div className="col-span-2">
               <Label className="mb-1 block">Data Sharing Scope</Label>
               <div className="flex flex-wrap gap-6 pt-2">
                 <Label className="flex items-center gap-2 bg-white py-1.5 px-2 rounded-md text-sm text-muted-foreground">
                   <Checkbox
-                    checked={scope.family}
-                    onCheckedChange={(v) => setScopeKey("family", Boolean(v))}
+                    checked={scopeSet.family}
+                    onCheckedChange={(v) =>
+                      toggleScopeKey("family", Boolean(v))
+                    }
                   />
                   Family
                 </Label>
+
                 <Label className="flex items-center gap-2 bg-white py-1.5 px-2 rounded-md text-sm text-muted-foreground">
                   <Checkbox
-                    checked={scope.clinicians}
+                    checked={scopeSet.clinicians}
                     onCheckedChange={(v) =>
-                      setScopeKey("clinicians", Boolean(v))
+                      toggleScopeKey("clinicians", Boolean(v))
                     }
                   />
                   Clinicians
                 </Label>
+
                 <Label className="flex items-center gap-2 bg-white py-1.5 px-2 rounded-md text-sm text-muted-foreground">
                   <Checkbox
-                    checked={scope.external}
-                    onCheckedChange={(v) => setScopeKey("external", Boolean(v))}
+                    checked={scopeSet.external}
+                    onCheckedChange={(v) =>
+                      toggleScopeKey("external", Boolean(v))
+                    }
                   />
                   External Services
                 </Label>
@@ -116,21 +226,40 @@ export function ConsentDataSharingFields() {
               Permission for photos and media usage
             </p>
           </div>
-          <Switch
-            checked={mediaConsentOn}
-            onCheckedChange={setMediaConsentOn}
+
+          <Controller
+            control={control}
+            name="photoConsent"
+            render={({ field }) => (
+              <Switch
+                checked={Boolean(field.value)}
+                onCheckedChange={(v: boolean) => field.onChange(Boolean(v))}
+              />
+            )}
           />
         </div>
 
         {mediaConsentOn && (
           <div className="relative grid grid-cols-2 sm:grid-cols-2 gap-4 bg-emerald-50 p-4 rounded-xl">
             <div className="absolute inset-y-0 left-0 w-1.5 bg-primary rounded-l-xl" />
+
             <div>
               <Label className="mb-1 block">Photo Consent Date</Label>
-              <Input
-                type="date"
-                placeholder="mm/dd/yyyy"
-                className="bg-white"
+              {/* Persist this date into metadata.photoConsentDate because schema doesn't include an explicit photoConsentDate */}
+              <Controller
+                control={control}
+                name="metadata.photoConsentDate"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="date"
+                    placeholder="mm/dd/yyyy"
+                    className="bg-white"
+                    // coerce unknown -> string (empty string when undefined/null)
+                    value={field.value ? String(field.value) : ""}
+                    onChange={(e) => field.onChange(e.target.value)}
+                  />
+                )}
               />
             </div>
           </div>
@@ -141,27 +270,47 @@ export function ConsentDataSharingFields() {
       <div className="space-y-2">
         <Label className="font-medium">Contact Consent for Notifications</Label>
         <div className="flex flex-wrap gap-6">
-          <Label className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Checkbox
-              checked={contactConsent.email}
-              onCheckedChange={(v) => setContactKey("email", Boolean(v))}
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Controller
+              control={control}
+              name="contactConsentEmail"
+              render={({ field }) => (
+                <Checkbox
+                  checked={Boolean(field.value)}
+                  onCheckedChange={(v: boolean) => field.onChange(Boolean(v))}
+                />
+              )}
             />
             Email
-          </Label>
-          <Label className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Checkbox
-              checked={contactConsent.sms}
-              onCheckedChange={(v) => setContactKey("sms", Boolean(v))}
+          </label>
+
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Controller
+              control={control}
+              name="contactConsentSMS"
+              render={({ field }) => (
+                <Checkbox
+                  checked={Boolean(field.value)}
+                  onCheckedChange={(v: boolean) => field.onChange(Boolean(v))}
+                />
+              )}
             />
             SMS
-          </Label>
-          <Label className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Checkbox
-              checked={contactConsent.phone}
-              onCheckedChange={(v) => setContactKey("phone", Boolean(v))}
+          </label>
+
+          <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Controller
+              control={control}
+              name="contactConsentPhone"
+              render={({ field }) => (
+                <Checkbox
+                  checked={Boolean(field.value)}
+                  onCheckedChange={(v: boolean) => field.onChange(Boolean(v))}
+                />
+              )}
             />
             Phone
-          </Label>
+          </label>
         </div>
       </div>
 
@@ -176,9 +325,16 @@ export function ConsentDataSharingFields() {
               Allowed to grant family app access if consent present
             </p>
           </div>
-          <Switch
-            checked={familyAppAllowed}
-            onCheckedChange={setFamilyAppAllowed}
+
+          <Controller
+            control={control}
+            name="familyAppPermission"
+            render={({ field }) => (
+              <Switch
+                checked={Boolean(field.value)}
+                onCheckedChange={(v: boolean) => field.onChange(Boolean(v))}
+              />
+            )}
           />
         </div>
       </div>

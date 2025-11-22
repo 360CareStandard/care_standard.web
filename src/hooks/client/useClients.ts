@@ -27,7 +27,7 @@ export function useCreateClient(params?: {
   return useMutation({
     mutationFn: (body: ClientFormData) => ClientsApi.post(body),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: qk.clients(params) });
+      return qc.invalidateQueries({ queryKey: qk.clients(params) });
     },
   });
 }

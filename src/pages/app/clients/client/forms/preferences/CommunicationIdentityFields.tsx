@@ -1,15 +1,12 @@
-// components/preferences/CommunicationIdentityFields.tsx
-import * as React from "react";
+import { useFormContext, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { PreferencesForm } from "../../../schemas/preferences";
 
 export function CommunicationIdentityFields() {
-  const [language, setLanguage] = React.useState("");
-  const [needsInterpreter, setNeedsInterpreter] = React.useState(false);
-  const [aids, setAids] = React.useState("");
-  const [respectNotes, setRespectNotes] = React.useState("");
+  const { register, control } = useFormContext<PreferencesForm>(); // replace with PreferencesForm type when available
 
   return (
     <div className="space-y-6">
@@ -17,10 +14,8 @@ export function CommunicationIdentityFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Preferred Language</Label>
         <Input
+          {...register("preferredLanguage")}
           placeholder="e.g., English, Welsh, Urdu"
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          className=""
         />
       </div>
 
@@ -32,9 +27,14 @@ export function CommunicationIdentityFields() {
             Professional interpreter required
           </p>
         </div>
-        <Switch
-          checked={needsInterpreter}
-          onCheckedChange={setNeedsInterpreter}
+
+        <Controller
+          name="interpreterNeeded"
+          control={control}
+          defaultValue={false}
+          render={({ field }) => (
+            <Switch checked={field.value} onCheckedChange={field.onChange} />
+          )}
         />
       </div>
 
@@ -42,10 +42,9 @@ export function CommunicationIdentityFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Communication Aids</Label>
         <Textarea
+          {...register("communicationAids")}
           placeholder="Hearing aids, visual cards, communication devices…."
-          value={aids}
-          onChange={(e) => setAids(e.target.value)}
-          className="min-h-[84px] resize-y "
+          className="min-h-[84px] resize-y"
         />
       </div>
 
@@ -53,10 +52,9 @@ export function CommunicationIdentityFields() {
       <div className="space-y-1.5">
         <Label className="font-medium">Notes for Respectful Interaction</Label>
         <Textarea
+          {...register("interactionNotes")}
           placeholder="Communication style, sensitive topics, interaction preferences…"
-          value={respectNotes}
-          onChange={(e) => setRespectNotes(e.target.value)}
-          className="min-h-[84px] resize-y "
+          className="min-h-[84px] resize-y"
         />
       </div>
     </div>

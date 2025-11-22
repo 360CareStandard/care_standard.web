@@ -12,18 +12,6 @@ export function useClientContacts(clientId: string) {
     enabled: Boolean(clientId),
   });
 }
-// export function useClientContact(
-//   id: string,
-//   contactId: string,
-//   enabled = false
-// ) {
-//   return useQuery({
-//     queryKey: id ? qk.clientContacts(id) : [contactId],
-//     queryFn: () => ClientContactApi.get(id!, contactId),
-//     enabled: Boolean(id) && enabled,
-//     staleTime: 60_000,
-//   });
-// }
 export function useClientContact(
   clientId: string,
   contactId: string,
@@ -37,7 +25,6 @@ export function useClientContact(
         : ["client-contact-temp", contactId],
     queryFn: () => ClientContactApi.get(clientId, contactId),
     enabled: Boolean(clientId && contactId && enabled),
-    staleTime: 60_000,
   });
 }
 /**
@@ -54,7 +41,7 @@ export function useCreateClientContact(clientId: string) {
       // adapt ClientsApi function name to your implementation
       return ClientContactApi.post(clientId, body);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       // optionally update client query detail cache if needed
       qc.invalidateQueries({ queryKey: qk.client(clientId) });
       return qc.invalidateQueries({ queryKey: qk.clientContacts(clientId) });

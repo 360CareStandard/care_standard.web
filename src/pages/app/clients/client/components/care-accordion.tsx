@@ -3,10 +3,10 @@ import * as React from "react";
 import { Accordion } from "@/components/ui/accordion";
 import { Package, CalendarClock, Wallet2, ShieldCheck } from "lucide-react";
 import { CareAccordionSection } from "./wrapper/care-accordion";
-import { ServicePackageFields } from "../forms/service-package";
-import { SchedulingPreferencesFields } from "../forms/scheduling-preferences";
-import { FundingFields } from "../forms/funding-fields";
-import { SafetyCheckinFields } from "../forms/safety-checkin-fields";
+import { ServicePackageFields } from "../forms/care-setup/service-package";
+import { SchedulingPreferencesFields } from "../forms/care-setup/scheduling-preferences";
+import { FundingFields } from "../forms/care-setup/funding-fields";
+import { SafetyCheckinFields } from "../forms/care-setup/safety-checkin-fields";
 
 export function CareSetupAccordion({ clientId }: { clientId: string }) {
   // optional: control which is open
@@ -53,15 +53,7 @@ export function CareSetupAccordion({ clientId }: { clientId: string }) {
         title="Safety & Check-in"
         // subtitle="Lone worker risk, key safe, access notes"
       >
-        <SafetyCheckinFields
-          contacts={[
-            { id: "none", label: "No escalation contact" }, // optional; we already inject "None" in the field component
-            { id: "a2f8…", label: "Elizabeth Wilson (Daughter)" },
-            { id: "b933…", label: "David Wilson (Son)" },
-            { id: "c1aa…", label: "Sarah Johnson (Daughter)" },
-          ]}
-          clientId={clientId}
-        />
+        <SafetyCheckinFields clientId={clientId} />
       </CareAccordionSection>
     </Accordion>
   );

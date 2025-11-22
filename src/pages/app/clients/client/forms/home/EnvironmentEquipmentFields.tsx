@@ -5,6 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useFormContext, useWatch } from "react-hook-form";
+import { HomeEnvironmentForm } from "../../../schemas/home-environment";
 
 type EquipmentKey = "Hospital Bed" | "CPAP Machine" | "Hoist" | "Wheelchair";
 type AssistiveKey = "Fall Alarm" | "Telecare" | "Pendant Alarm";
@@ -60,42 +62,85 @@ function ToggleChip({
 }
 
 export function EnvironmentEquipmentFields() {
-  // Defaults to match your screenshot
-  const [equipment, setEquipment] = React.useState<
-    Record<EquipmentKey, boolean>
-  >({
-    "Hospital Bed": true,
-    "CPAP Machine": false,
-    Hoist: true,
-    Wheelchair: false,
-  });
+  const { control, setValue, getValues } =
+    useFormContext<HomeEnvironmentForm>();
 
-  const [assistive, setAssistive] = React.useState<
-    Record<AssistiveKey, boolean>
-  >({
-    "Fall Alarm": true,
-    Telecare: false,
-    "Pendant Alarm": false,
-  });
+  // watch the nested environmentAndEquipment object
+  const env = useWatch({
+    control,
+    name: "environmentAndEquipment",
+    defaultValue: {
+      equipmentPresent: [],
+      assistiveTechnology: [],
+      pets: "",
+      knownHazards: [],
+      hazardNotes: "",
+    } as any,
+  }) as {
+    equipmentPresent?: string[];
+    assistiveTechnology?: string[];
+    pets?: string;
+    knownHazards?: string[];
+    hazardNotes?: string;
+  };
 
-  const [petsAtHome, setPetsAtHome] = React.useState<boolean>(true);
-  const [petDetails, setPetDetails] = React.useState<string>("");
+  const equipmentPresent = React.useMemo(
+    () => new Set(env?.equipmentPresent ?? []),
+    [env]
+  );
+  const assistiveSet = React.useMemo(
+    () => new Set(env?.assistiveTechnology ?? []),
+    [env]
+  );
+  const hazardsSet = React.useMemo(
+    () => new Set(env?.knownHazards ?? []),
+    [env]
+  );
 
-  const [hazards, setHazards] = React.useState<Record<HazardKey, boolean>>({
-    Clutter: true,
-    Stairs: false,
-    "Fire Risk": false,
-    "Aggressive pets": false,
-  });
+  // helpers to update nested arrays safely
+  const toggleArrayValue = (
+    key: keyof NonNullable<typeof env>,
+    value: string
+  ) => {
+    const current = getValues("environmentAndEquipment") ?? {};
+    const arr: string[] = Array.isArray(current[key]) ? current[key]! : [];
+    const next = arr.includes(value)
+      ? arr.filter((a) => a !== value)
+      : [...arr, value];
+    setValue(
+      "environmentAndEquipment",
+      { ...current, [key]: next },
+      { shouldDirty: true }
+    );
+  };
 
-  const [hazardNotes, setHazardNotes] = React.useState<string>("");
+  const setPets = (v: string) => {
+    const current = getValues("environmentAndEquipment") ?? {};
+    setValue(
+      "environmentAndEquipment",
+      { ...current, pets: v },
+      { shouldDirty: true }
+    );
+  };
 
-  const toggleEquipment = (k: EquipmentKey) =>
-    setEquipment((s) => ({ ...s, [k]: !s[k] }));
-  const toggleAssistive = (k: AssistiveKey) =>
-    setAssistive((s) => ({ ...s, [k]: !s[k] }));
-  const toggleHazard = (k: HazardKey) =>
-    setHazards((s) => ({ ...s, [k]: !s[k] }));
+  const setPetsToggle = (on: boolean) => {
+    const current = getValues("environmentAndEquipment") ?? {};
+    // when switching off, clear pet details
+    setValue(
+      "environmentAndEquipment",
+      { ...current, pets: on ? current.pets ?? "" : "" },
+      { shouldDirty: true }
+    );
+  };
+
+  const setHazardNotes = (v: string) => {
+    const current = getValues("environmentAndEquipment") ?? {};
+    setValue(
+      "environmentAndEquipment",
+      { ...current, hazardNotes: v },
+      { shouldDirty: true }
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -106,9 +151,9 @@ export function EnvironmentEquipmentFields() {
           {EQUIPMENT.map((k) => (
             <ToggleChip
               key={k}
-              active={equipment[k]}
+              active={equipmentPresent.has(k)}
               label={k}
-              onClick={() => toggleEquipment(k)}
+              onClick={() => toggleArrayValue("equipmentPresent", k)}
             />
           ))}
         </div>
@@ -121,9 +166,9 @@ export function EnvironmentEquipmentFields() {
           {ASSISTIVE.map((k) => (
             <ToggleChip
               key={k}
-              active={assistive[k]}
+              active={assistiveSet.has(k)}
               label={k}
-              onClick={() => toggleAssistive(k)}
+              onClick={() => toggleArrayValue("assistiveTechnology", k)}
             />
           ))}
         </div>
@@ -138,16 +183,22 @@ export function EnvironmentEquipmentFields() {
               Are there any pets at the property?
             </p>
           </div>
-          <Switch checked={petsAtHome} onCheckedChange={setPetsAtHome} />
+          <Switch
+            checked={Boolean(env?.pets && env.pets.trim() !== "")}
+            onCheckedChange={(v) => setPetsToggle(Boolean(v))}
+          />
         </div>
 
         <div className="space-y-1.5">
           <Label>Pet Details</Label>
           <Textarea
             placeholder="Describe pets (type, temperament, any special considerations)…"
-            value={petDetails}
-            onChange={(e) => setPetDetails(e.target.value)}
-            disabled={!petsAtHome}
+            value={env?.pets ?? ""}
+            onChange={(e) => setPets(e.target.value)}
+            disabled={
+              !Boolean(env?.pets && env.pets.trim() !== "") &&
+              !(env?.pets ?? "")
+            }
             className="min-h-[84px] resize-y"
           />
         </div>
@@ -160,9 +211,9 @@ export function EnvironmentEquipmentFields() {
           {HAZARDS.map((k) => (
             <ToggleChip
               key={k}
-              active={hazards[k]}
+              active={hazardsSet.has(k)}
               label={k}
-              onClick={() => toggleHazard(k)}
+              onClick={() => toggleArrayValue("knownHazards", k)}
             />
           ))}
         </div>
@@ -171,7 +222,7 @@ export function EnvironmentEquipmentFields() {
           <Label>Hazards Notes</Label>
           <Textarea
             placeholder="Additional details about hazards and mitigation strategies…"
-            value={hazardNotes}
+            value={env?.hazardNotes ?? ""}
             onChange={(e) => setHazardNotes(e.target.value)}
             className="min-h-[84px] resize-y"
           />

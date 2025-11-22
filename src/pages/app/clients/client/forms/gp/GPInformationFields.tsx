@@ -1,15 +1,12 @@
 // components/gp/GPInformationFields.tsx
-import * as React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { GpSupportForm } from "../../../schemas/gp-support";
+import { useFormContext } from "react-hook-form";
 
 export function GPInformationFields() {
-  const [gpName, setGpName] = React.useState("");
-  const [practiceName, setPracticeName] = React.useState("");
-  const [phone, setPhone] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [address, setAddress] = React.useState("");
+  const { register, formState } = useFormContext<GpSupportForm>();
 
   return (
     <div className="space-y-4">
@@ -19,17 +16,20 @@ export function GPInformationFields() {
           <Label>GP Name</Label>
           <Input
             placeholder="e.g., Dr. Smith"
-            value={gpName}
-            onChange={(e) => setGpName(e.target.value)}
+            {...register("gpDetails.gpName")}
           />
+          {formState.errors?.gpDetails?.gpName && (
+            <p className="text-xs text-red-600 mt-1">
+              {(formState.errors.gpDetails as any).gpName?.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-1.5">
           <Label>Practice Name</Label>
           <Input
             placeholder="Medical Practice Name"
-            value={practiceName}
-            onChange={(e) => setPracticeName(e.target.value)}
+            {...register("gpDetails.practiceName")}
           />
         </div>
       </div>
@@ -40,10 +40,14 @@ export function GPInformationFields() {
           <Label>Phone Number</Label>
           <Input
             inputMode="tel"
-            placeholder="020 7777 8888"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+234 801 234 5678"
+            {...register("gpDetails.phone")}
           />
+          {formState.errors?.gpDetails?.phone && (
+            <p className="text-xs text-red-600 mt-1">
+              {(formState.errors.gpDetails as any).phone?.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-1.5">
@@ -54,9 +58,13 @@ export function GPInformationFields() {
             type="email"
             inputMode="email"
             placeholder="gp@practice.nhs.uk"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register("gpDetails.email")}
           />
+          {formState.errors?.gpDetails?.email && (
+            <p className="text-xs text-red-600 mt-1">
+              {(formState.errors.gpDetails as any).email?.message}
+            </p>
+          )}
         </div>
       </div>
 
@@ -65,8 +73,7 @@ export function GPInformationFields() {
         <Label>Practice Address</Label>
         <Textarea
           placeholder="Practice address..."
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
+          {...register("gpDetails.practiceAddress")}
           className="min-h-[88px] resize-y "
         />
       </div>

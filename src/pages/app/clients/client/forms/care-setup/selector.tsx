@@ -5,9 +5,9 @@ import Select, {
   StylesConfig,
 } from "react-select";
 import { useFormContext, Controller, useWatch } from "react-hook-form";
-import { CareSetupForm } from "../../schemas/care-setup";
+import { CareSetupForm } from "../../../schemas/care-setup";
 import { customSelectStyles as userCustomStyles } from "@/styles/react-select";
-import { Carer } from "../components/carer-selection";
+import { Carer } from "../../components/carer-selection";
 import { Search, User, X } from "lucide-react";
 
 /**

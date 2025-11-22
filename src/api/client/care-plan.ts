@@ -8,14 +8,6 @@ import {
 import type { UpdateClientBody } from "@/types/client/client";
 
 export const ClientCarePlanApi = {
-  //   list: async (id: string) => {
-  //     return api
-  //       .get<ClientContactsResponse>(`/client/${id}/contacts`)
-  //       .then((r) => r?.data.data?.contacts);
-  //   },
-
-  // src/api/clients.ts (or src/api/client/contact.ts)
-
   get: (id: string) =>
     api.get<ClientCarePlanResponse>(`/client/${id}/care-plan`).then((r) => {
       const payload = r?.data?.data;
@@ -35,9 +27,4 @@ export const ClientCarePlanApi = {
     api
       .post<{ status: "success" }>(`/client/${id}/care-plan`, body)
       .then((r) => r.data), // ← FIXED
-
-  delete: (id: string, contactId: string) =>
-    api
-      .delete<{ status: "success" }>(`/client/${id}/contacts/${contactId}`)
-      .then((r) => r.data),
 };

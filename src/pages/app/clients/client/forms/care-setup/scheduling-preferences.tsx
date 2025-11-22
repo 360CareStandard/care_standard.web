@@ -7,7 +7,7 @@ import {
   SkillEnum,
   CareSetupForm,
   VisitPresetEnum,
-} from "../../schemas/care-setup";
+} from "../../../schemas/care-setup";
 import z from "zod";
 import { customSelectStyles } from "@/styles/react-select";
 import React from "react";

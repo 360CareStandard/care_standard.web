@@ -4,19 +4,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/shared/text-field";
 import { RHFSelectField } from "@/components/shared/rhf-select-field";
-import { CareSetupForm, CheckInMethodEnum } from "../../schemas/care-setup";
+import { CareSetupForm, CheckInMethodEnum } from "../../../schemas/care-setup";
 import { useClientContacts } from "@/hooks/client/useClientContacts";
 
 // shape you pass in from parent (client’s contacts)
 export type EscalationOption = { id: string; label: string };
 
-export function SafetyCheckinFields({
-  contacts = [],
-  clientId,
-}: {
-  contacts: EscalationOption[]; // e.g. [{id:'uuid', label:'Elizabeth Wilson (Daughter)'}]
-  clientId: string;
-}) {
+export function SafetyCheckinFields({ clientId }: { clientId: string }) {
   const { data } = useClientContacts(clientId);
   const contactData = Array.isArray(data) ? data : [];
   const contactOptions = contactData?.map((v) => ({
