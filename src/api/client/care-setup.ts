@@ -4,7 +4,7 @@ import { CareSetupForm } from "@/pages/app/clients/schemas/care-setup";
 import {
   ClientCarePlanResponse,
   ClientClientCarePlan,
-} from "@/types/client/care-plan";
+} from "@/types/client/care-setup";
 import type { UpdateClientBody } from "@/types/client/client";
 
 export const ClientCarePlanApi = {

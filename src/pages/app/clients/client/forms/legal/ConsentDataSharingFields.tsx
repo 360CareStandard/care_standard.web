@@ -105,14 +105,14 @@ export function ConsentDataSharingFields() {
 
   const photoConsentDate = useWatch({
     control,
-    name: "metadata.photoConsentDate",
+    name: "photoConsentDate",
     defaultValue: "",
   });
 
   React.useEffect(() => {
     if (!mediaConsentOn) {
-      setValue("metadata.photoConsentDate", "", { shouldDirty: true });
-      void trigger("metadata.photoConsentDate");
+      setValue("photoConsentDate", "", { shouldDirty: true });
+      void trigger("photoConsentDate");
     }
   }, [mediaConsentOn, setValue, trigger]);
 
@@ -244,23 +244,15 @@ export function ConsentDataSharingFields() {
             <div className="absolute inset-y-0 left-0 w-1.5 bg-primary rounded-l-xl" />
 
             <div>
-              <Label className="mb-1 block">Photo Consent Date</Label>
-              {/* Persist this date into metadata.photoConsentDate because schema doesn't include an explicit photoConsentDate */}
-              <Controller
-                control={control}
-                name="metadata.photoConsentDate"
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="date"
-                    placeholder="mm/dd/yyyy"
-                    className="bg-white"
-                    // coerce unknown -> string (empty string when undefined/null)
-                    value={field.value ? String(field.value) : ""}
-                    onChange={(e) => field.onChange(e.target.value)}
-                  />
-                )}
-              />
+              <div>
+                <Label className="mb-1 block">Photo Consent Date</Label>
+                <Input
+                  {...register("photoConsentDate")}
+                  type="date"
+                  placeholder="mm/dd/yyyy"
+                  className="bg-white"
+                />
+              </div>
             </div>
           </div>
         )}

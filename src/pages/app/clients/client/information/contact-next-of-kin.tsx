@@ -172,6 +172,7 @@ const ContactNextOfKin: React.FC<Props> = ({ clientId }) => {
                   onClick={openForAdd}
                   variant="outline"
                   className="gap-2"
+                  disabled={isLoading}
                 >
                   <PlusIcon />
                   Add Contact

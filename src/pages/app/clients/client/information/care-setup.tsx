@@ -8,7 +8,7 @@ import { PlusIcon } from "lucide-react";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { EmptyStateCard } from "../components/empty-state";
 import { BoxIcon } from "../icons/box";
-import { CareSetupAccordion } from "../components/care-accordion";
+import { CareSetupAccordion } from "../components/accordion/care-accordion";
 import { CareSetupApiSchema, CareSetupForm } from "../../schemas/care-setup";
 import {
   useClientCareSetup,
@@ -18,9 +18,10 @@ import {
 import toast from "react-hot-toast";
 import { formatUpdatedAt } from "@/helpers/last-updated";
 import { CareSetupDetails } from "../../components/care-setup-details";
-import { ClientClientCarePlan } from "@/types/client/care-plan";
+import { ClientClientCarePlan } from "@/types/client/care-setup";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/shared/spinner";
+import { Edit } from "iconsax-react";
 
 // in CareSetup component when creating `useForm`
 const initialFormValues: Partial<CareSetupForm> = {
@@ -42,10 +43,11 @@ const initialFormValues: Partial<CareSetupForm> = {
   fundingSource: "private",
   funder: "",
   authorizationNumber: "",
+  authorisedHoursPerWeek: 0,
   budgetCap: 0,
   checkInMethod: "gps",
   lateVisitAlertThreshold: 10,
-  escalationContact: undefined,
+  escalationContactId: undefined,
   loneWorkerAlertEnabled: false,
 };
 type Props = {
@@ -129,8 +131,12 @@ const CareSetup = ({ clientId }: Props) => {
             plan.lateVisitAlertThreshold === undefined
           ? undefined
           : Number(plan.lateVisitAlertThreshold) || undefined,
-      escalationContact: plan.escalationContact ?? undefined,
+      escalationContactId: plan.escalationContactId ?? undefined,
       loneWorkerAlertEnabled: !!plan.loneWorkerAlertEnabled,
+      authorisedHoursPerWeek:
+        typeof plan.authorisedHoursPerWeek === "number"
+          ? plan.authorisedHoursPerWeek
+          : 0,
       // add other fields if needed
     } as Partial<CareSetupForm>;
   }
@@ -202,37 +208,7 @@ const CareSetup = ({ clientId }: Props) => {
                   variant="outline"
                   className="gap-2"
                 >
-                  <svg
-                    width={20}
-                    height={20}
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M9.16699 1.66602H7.50033C3.33366 1.66602 1.66699 3.33268 1.66699 7.49935V12.4993C1.66699 16.666 3.33366 18.3327 7.50033 18.3327H12.5003C16.667 18.3327 18.3337 16.666 18.3337 12.4993V10.8327"
-                      stroke="#61779C"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M13.3666 2.51639L6.7999 9.08306C6.5499 9.33306 6.2999 9.82472 6.2499 10.1831L5.89157 12.6914C5.75823 13.5997 6.3999 14.2331 7.30823 14.1081L9.81657 13.7497C10.1666 13.6997 10.6582 13.4497 10.9166 13.1997L17.4832 6.63306C18.6166 5.49972 19.1499 4.18306 17.4832 2.51639C15.8166 0.849722 14.4999 1.38306 13.3666 2.51639Z"
-                      stroke="#61779C"
-                      strokeWidth="1.5"
-                      strokeMiterlimit={10}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M12.4248 3.45898C12.9831 5.45065 14.5415 7.00898 16.5415 7.57565"
-                      stroke="#61779C"
-                      strokeWidth="1.5"
-                      strokeMiterlimit={10}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <Edit size={20} />
                   Update Setup
                 </Button>
               </div>
@@ -248,6 +224,7 @@ const CareSetup = ({ clientId }: Props) => {
                   onClick={openForAdd}
                   variant="outline"
                   className="gap-2"
+                  disabled={isLoading}
                 >
                   <PlusIcon />
                   Add Care Setup

@@ -44,6 +44,7 @@ export const legalFormSchema = z.object({
   dataSharingConsentSignedBy: z.string().optional().or(z.literal("")),
   dataSharingScope: z.string().optional().or(z.literal("")),
   photoConsent: z.boolean().optional(),
+  photoConsentDate: z.string().optional().or(z.literal("")),
   contactConsentEmail: z.boolean().optional(),
   contactConsentSMS: z.boolean().optional(),
   contactConsentPhone: z.boolean().optional(),

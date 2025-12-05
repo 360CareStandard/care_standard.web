@@ -2,10 +2,10 @@
 import * as React from "react";
 import { Accordion } from "@/components/ui/accordion";
 import { FileHeart, FileWarning, TriangleAlert } from "lucide-react";
-import { CareAccordionSection } from "./wrapper/care-accordion";
-import { ConditionHistoryFields } from "../forms/health/ConditionHistoryFields";
-import { AllergiesIntolerancesFields } from "../forms/health/AllergiesIntolerancesFields";
-import { ClinicalRisksFields } from "../forms/health/ClinicalRisksFields";
+import { CareAccordionSection } from "../wrapper/care-accordion";
+import { ConditionHistoryFields } from "../../forms/health/ConditionHistoryFields";
+import { AllergiesIntolerancesFields } from "../../forms/health/AllergiesIntolerancesFields";
+import { ClinicalRisksFields } from "../../forms/health/ClinicalRisksFields";
 
 export function HealthSetupAccordion() {
   // optional: control which is open

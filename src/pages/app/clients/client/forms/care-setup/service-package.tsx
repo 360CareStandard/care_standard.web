@@ -9,7 +9,7 @@ import { TimePicker } from "@/components/ui/time-picker/time-picker";
 import React from "react";
 import { getDateFromMinutes } from "@/lib/utils";
 import { earliestTime, latestTime } from "@/utils/data";
-import { useCarePlan } from "@/hooks/agency/care-plan";
+import { useCarePackage } from "@/hooks/agency/care-package";
 import { formatTimeHHMMSS, parseHHMMSSToDate } from "@/utils/time";
 
 const statusOptions = StatusEnum.options.map((v) => ({ value: v, label: v }));
@@ -22,7 +22,7 @@ const durations = [
 ];
 
 export function ServicePackageFields() {
-  const { data } = useCarePlan();
+  const { data } = useCarePackage();
   const packagedata = Array.isArray(data) ? data : [];
   const { register, control, formState, watch, setValue } =
     useFormContext<CareSetupForm>();
@@ -172,13 +172,13 @@ export function ServicePackageFields() {
           placeholder="Select status"
           options={statusOptions}
         />
-        {/* <TextField
+        <TextField
           type="number"
           label="Authorised Hr/Wk"
           min={0}
-          {...register("authorisedHours", { valueAsNumber: true })}
-          error={errors.authorisedHours?.message}
-        /> */}
+          {...register("authorisedHoursPerWeek", { valueAsNumber: true })}
+          error={errors.authorisedHoursPerWeek?.message}
+        />
       </div>
 
       {/* Visit durations (checkbox UI, single select) */}

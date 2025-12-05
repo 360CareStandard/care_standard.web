@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Accordion } from "@/components/ui/accordion";
-import { CareAccordionSection } from "./wrapper/care-accordion";
-import { RoutinesLifestyleFields } from "../forms/preferences/RoutinesLifestyleFields";
-import { CulturalFaithFields } from "../forms/preferences/CulturalFaithFields";
-import { FoodDietFields } from "../forms/preferences/FoodDietFields";
-import { CommunicationIdentityFields } from "../forms/preferences/CommunicationIdentityFields";
+import { CareAccordionSection } from "../wrapper/care-accordion";
+import { RoutinesLifestyleFields } from "../../forms/preferences/RoutinesLifestyleFields";
+import { CulturalFaithFields } from "../../forms/preferences/CulturalFaithFields";
+import { FoodDietFields } from "../../forms/preferences/FoodDietFields";
+import { CommunicationIdentityFields } from "../../forms/preferences/CommunicationIdentityFields";
 
 export function PreferenceAccordion() {
   // optional: control which is open

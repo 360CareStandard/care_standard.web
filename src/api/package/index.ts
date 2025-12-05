@@ -1,8 +1,8 @@
 // src/api/clients.ts
 import { api } from "@/lib/axios";
-import { CarePlanResponse } from "@/types/care-plan";
+import { CarePackageResponse } from "@/types/care-package";
 
-export const CarePlanApi = {
+export const CarePackageApi = {
   list: async (params?: { q?: string; page?: number; limit?: number }) => {
     const safe = {
       page: Number(params?.page ?? 1),
@@ -10,7 +10,7 @@ export const CarePlanApi = {
       q: params?.q ?? undefined,
     };
     return api
-      .get<CarePlanResponse>(`/care-plan`, { params: safe })
-      .then((r) => r?.data.data?.carePlans);
+      .get<CarePackageResponse>(`/care-package`, { params: safe })
+      .then((r) => r?.data.data?.carePackages);
   },
 };

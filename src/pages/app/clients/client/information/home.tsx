@@ -11,16 +11,21 @@ import { PlusIcon } from "lucide-react";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { EmptyStateCard } from "../components/empty-state";
 import { HomeHastagIcon } from "../icons/home-hashtag";
-import { HomeSetupAccordion } from "../components/home-accordion";
+import { HomeSetupAccordion } from "../components/accordion/home-accordion";
 
 import homeEnvironmentSchema, {
   type HomeEnvironmentForm,
 } from "../../schemas/home-environment";
 import {
   useCreateHomeEnvironment,
+  useHomeEnvironment,
   useUpdateHomeEnvironment,
 } from "@/hooks/client/useHomeEnvironment";
 import { Spinner } from "@/components/shared/spinner";
+import { formatUpdatedAt } from "@/helpers/last-updated";
+import { Skeleton } from "@/components/ui/skeleton";
+import { HomeEnvironmentDetails } from "../../components/home-environment";
+import { Edit } from "iconsax-react";
 
 const initialFormValues: Partial<HomeEnvironmentForm> = {
   livingSituation: {
@@ -39,9 +44,10 @@ const initialFormValues: Partial<HomeEnvironmentForm> = {
     equipmentPresent: [],
     pets: "",
     knownHazards: [],
+    petsPresent: false,
     // new fields added to match schema
-    assistiveTechnology: [],
-    hazardNotes: "",
+    // assistiveTechnology: [],
+    // hazardNotes: "",
   },
   metadata: {},
   status: "active",
@@ -56,10 +62,10 @@ export default function HomeEnvironment({ clientId }: Props) {
   const createHomeEnvironment = useCreateHomeEnvironment(clientId);
   const updateHomeEnvironment = useUpdateHomeEnvironment(clientId);
 
-  // const { data: clientGpSupport, isLoading } = useClientGpSupport(
-  //   clientId,
-  //   Boolean(clientId)
-  // );
+  const { data: clientHomeEnvironment, isLoading } = useHomeEnvironment(
+    clientId,
+    Boolean(clientId)
+  );
 
   const methods = useForm<HomeEnvironmentForm>({
     resolver: zodResolver(homeEnvironmentSchema) as unknown as Resolver<
@@ -103,17 +109,17 @@ export default function HomeEnvironment({ clientId }: Props) {
         )
           ? api.environmentAndEquipment.equipmentPresent
           : [],
+        petsPresent: Boolean(api.environmentAndEquipment?.pets), // new
         pets: api.environmentAndEquipment?.pets ?? "",
         knownHazards: Array.isArray(api.environmentAndEquipment?.knownHazards)
           ? api.environmentAndEquipment.knownHazards
           : [],
-        // new mappings
-        assistiveTechnology: Array.isArray(
-          api.environmentAndEquipment?.assistiveTechnology
-        )
-          ? api.environmentAndEquipment.assistiveTechnology
-          : [],
-        hazardNotes: api.environmentAndEquipment?.hazardNotes ?? "",
+        // assistiveTechnology: Array.isArray(
+        //   api.environmentAndEquipment?.assistiveTechnology
+        // )
+        //   ? api.environmentAndEquipment.assistiveTechnology
+        //   : [],
+        // hazardNotes: api.environmentAndEquipment?.hazardNotes ?? "",
       },
       metadata: api.metadata ?? {},
       status: api.status ?? "active",
@@ -131,17 +137,24 @@ export default function HomeEnvironment({ clientId }: Props) {
     methods.reset(mapped as any);
     setEditingId(apiRecord?.id ?? null);
     setOpen(true);
-    toast("Editing home & environment", { icon: "✏️" });
   };
 
   // onSubmit should call your create/update hooks — replace with your hooks as needed
   const onSubmit = async (values: HomeEnvironmentForm) => {
+    const payload = {
+      ...values,
+      environmentAndEquipment: {
+        ...values.environmentAndEquipment,
+        // optionally omit petsPresent if backend doesn't expect it:
+        petsPresent: undefined,
+      },
+    };
     try {
       if (editingId) {
-        await updateHomeEnvironment.mutateAsync({ body: values });
+        await updateHomeEnvironment.mutateAsync({ body: payload });
         toast.success("Home environment updated");
       } else {
-        await createHomeEnvironment.mutateAsync(values);
+        await createHomeEnvironment.mutateAsync(payload);
         toast.success("Home environment created");
       }
       setOpen(false);
@@ -161,28 +174,73 @@ export default function HomeEnvironment({ clientId }: Props) {
   return (
     <>
       <Card>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-16">
-          <div className="flex flex-col gap-4">
-            <h2 className="font-bold text-xl"> Home & Environment </h2>
-            <p className="text-sm text-muted-foreground">
-              Record access, equipment and environment details for this client.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Button onClick={openForAdd} variant="outline" className="gap-2">
-                <PlusIcon />
-                Add Home Info
-              </Button>
+        <CardContent
+          className={`grid grid-cols-1 ${
+            clientHomeEnvironment ? "gap-8" : "sm:grid-cols-2 gap-16"
+          } `}
+        >
+          {!isLoading && clientHomeEnvironment ? (
+            <div className="flex justify-between items-center gap-4">
+              <div className=" space-y-1">
+                <h2 className="font-bold text-xl">Home & Environment</h2>
+                <p className="text-xs text-muted-foreground">
+                  {formatUpdatedAt(clientHomeEnvironment.updatedAt)}
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
+                            {clientHomeEnvironment?.status.charAt(0).toUpperCase() +
+                              clientHomeEnvironment.status.slice(1)}
+                          </span> */}
+                <Button
+                  onClick={() => openForEdit(clientHomeEnvironment)}
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <Edit size={20} />
+                  Update Home Info
+                </Button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <h2 className="font-bold text-xl"> Home & Environment</h2>
+              <p className="text-sm text-muted-foreground">
+                Record access, equipment and environment details for this
+                client.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={openForAdd}
+                  variant="outline"
+                  className="gap-2"
+                  disabled={isLoading}
+                >
+                  <PlusIcon />
+                  Add Home Info
+                </Button>
+              </div>
+            </div>
+          )}
 
-          <EmptyStateCard
-            icon={<HomeHastagIcon />}
-            title="No home info have been added yet"
-            description="Record access, equipment and environment details for this client."
-            btnText="Add Home Info"
-            button
-            onClick={openForAdd}
-          />
+          {isLoading ? (
+            <div className="space-y-4 p-4">
+              <Skeleton className="h-6 w-1/2" />
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-6 w-1/3" />
+            </div>
+          ) : clientHomeEnvironment ? (
+            <HomeEnvironmentDetails data={clientHomeEnvironment} />
+          ) : (
+            <EmptyStateCard
+              icon={<HomeHastagIcon />}
+              title="No home info have been added yet"
+              description="Record access, equipment and environment details for this client."
+              btnText="Add Home Info"
+              button
+              onClick={openForAdd}
+            />
+          )}
         </CardContent>
       </Card>
 

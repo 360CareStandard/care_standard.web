@@ -15,6 +15,7 @@ export const gpDetailsSchema = z.object({
 });
 
 export const healthcareProfessionalSchema = z.object({
+  name: z.string().min(1, "Name is required"),
   role: z.string().min(1, "Role is required"),
   phone: z
     .string()

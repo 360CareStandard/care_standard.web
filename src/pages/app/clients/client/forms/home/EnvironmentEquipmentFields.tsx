@@ -65,33 +65,34 @@ export function EnvironmentEquipmentFields() {
   const { control, setValue, getValues } =
     useFormContext<HomeEnvironmentForm>();
 
-  // watch the nested environmentAndEquipment object
   const env = useWatch({
     control,
     name: "environmentAndEquipment",
     defaultValue: {
       equipmentPresent: [],
-      assistiveTechnology: [],
+      // assistiveTechnology: [],
+      petsPresent: false,
       pets: "",
       knownHazards: [],
-      hazardNotes: "",
+      // hazardNotes: "",
     } as any,
   }) as {
     equipmentPresent?: string[];
-    assistiveTechnology?: string[];
+    // assistiveTechnology?: string[];
+    petsPresent?: boolean;
     pets?: string;
     knownHazards?: string[];
-    hazardNotes?: string;
+    // hazardNotes?: string;
   };
 
   const equipmentPresent = React.useMemo(
     () => new Set(env?.equipmentPresent ?? []),
     [env]
   );
-  const assistiveSet = React.useMemo(
-    () => new Set(env?.assistiveTechnology ?? []),
-    [env]
-  );
+  // const assistiveSet = React.useMemo(
+  //   () => new Set(env?.assistiveTechnology ?? []),
+  //   [env]
+  // );
   const hazardsSet = React.useMemo(
     () => new Set(env?.knownHazards ?? []),
     [env]
@@ -113,7 +114,19 @@ export function EnvironmentEquipmentFields() {
       { shouldDirty: true }
     );
   };
-
+  const togglePetsPresent = (on: boolean) => {
+    const current = getValues("environmentAndEquipment") ?? {};
+    // when switching off, clear pet details
+    setValue(
+      "environmentAndEquipment",
+      {
+        ...current,
+        petsPresent: Boolean(on),
+        pets: on ? current.pets ?? "" : "",
+      },
+      { shouldDirty: true }
+    );
+  };
   const setPets = (v: string) => {
     const current = getValues("environmentAndEquipment") ?? {};
     setValue(
@@ -133,14 +146,14 @@ export function EnvironmentEquipmentFields() {
     );
   };
 
-  const setHazardNotes = (v: string) => {
-    const current = getValues("environmentAndEquipment") ?? {};
-    setValue(
-      "environmentAndEquipment",
-      { ...current, hazardNotes: v },
-      { shouldDirty: true }
-    );
-  };
+  // const setHazardNotes = (v: string) => {
+  //   const current = getValues("environmentAndEquipment") ?? {};
+  //   setValue(
+  //     "environmentAndEquipment",
+  //     { ...current, hazardNotes: v },
+  //     { shouldDirty: true }
+  //   );
+  // };
 
   return (
     <div className="space-y-6">
@@ -160,7 +173,7 @@ export function EnvironmentEquipmentFields() {
       </div>
 
       {/* Assistive Technology */}
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <Label className="font-medium">Assistive Technology</Label>
         <div className="flex flex-wrap gap-3">
           {ASSISTIVE.map((k) => (
@@ -172,33 +185,29 @@ export function EnvironmentEquipmentFields() {
             />
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Pets at home */}
       <div className="space-y-2">
         <div className="flex items-start justify-between">
           <div>
             <Label className="font-medium">Pets at home</Label>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1">
               Are there any pets at the property?
             </p>
           </div>
           <Switch
-            checked={Boolean(env?.pets && env.pets.trim() !== "")}
-            onCheckedChange={(v) => setPetsToggle(Boolean(v))}
+            checked={Boolean(env?.petsPresent)}
+            onCheckedChange={(v) => togglePetsPresent(Boolean(v))}
           />
         </div>
-
         <div className="space-y-1.5">
           <Label>Pet Details</Label>
           <Textarea
             placeholder="Describe pets (type, temperament, any special considerations)…"
             value={env?.pets ?? ""}
             onChange={(e) => setPets(e.target.value)}
-            disabled={
-              !Boolean(env?.pets && env.pets.trim() !== "") &&
-              !(env?.pets ?? "")
-            }
+            disabled={!Boolean(env?.petsPresent)}
             className="min-h-[84px] resize-y"
           />
         </div>
@@ -218,7 +227,7 @@ export function EnvironmentEquipmentFields() {
           ))}
         </div>
 
-        <div className="mt-2 space-y-1.5">
+        {/* <div className="mt-2 space-y-1.5">
           <Label>Hazards Notes</Label>
           <Textarea
             placeholder="Additional details about hazards and mitigation strategies…"
@@ -226,7 +235,7 @@ export function EnvironmentEquipmentFields() {
             onChange={(e) => setHazardNotes(e.target.value)}
             className="min-h-[84px] resize-y"
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );

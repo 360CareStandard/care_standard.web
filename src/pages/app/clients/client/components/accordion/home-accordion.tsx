@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Accordion } from "@/components/ui/accordion";
-import { CareAccordionSection } from "./wrapper/care-accordion";
-import { LivingSituationFields } from "../forms/home/LivingSituationFields";
-import { AccessSecurityFields } from "../forms/home/AccessSecurityFields";
-import { EnvironmentEquipmentFields } from "../forms/home/EnvironmentEquipmentFields";
+import { CareAccordionSection } from "../wrapper/care-accordion";
+import { LivingSituationFields } from "../../forms/home/LivingSituationFields";
+import { AccessSecurityFields } from "../../forms/home/AccessSecurityFields";
+import { EnvironmentEquipmentFields } from "../../forms/home/EnvironmentEquipmentFields";
 
 export function HomeSetupAccordion() {
   // optional: control which is open

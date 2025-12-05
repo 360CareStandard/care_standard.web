@@ -23,7 +23,7 @@ export const LanguageEnum = z.enum(["No requirement", "English", "Spanish"]);
  */
 export const StatusEnum = z.enum(["active", "paused", "ended"]);
 export const VisitPresetEnum = z.enum(["AM", "PM", "Evening", "Custom"]);
-export const CheckInMethodEnum = z.enum(["GPS", "NFC", "QR Code"]);
+export const CheckInMethodEnum = z.enum(["gps", "nfc", "qr code"]);
 export const FundingSourceEnum = z.enum([
   "NHS",
   "local authority",
@@ -74,6 +74,7 @@ export const CareSetupApiSchema = z.object({
   startDate: z.string().trim().min(1, "Please enter a date"),
   status: StatusEnum,
   visitDurationPreset: VisitDurationEnum.optional(),
+  authorisedHoursPerWeek: NumberLike.optional(),
 
   // Booleans
   doubleUpVisitRequired: z.boolean().default(false).optional(),
@@ -108,7 +109,7 @@ export const CareSetupApiSchema = z.object({
     )
     .optional(),
   lateVisitAlertThreshold: NumberLike.optional(),
-  escalationContact: z.string().uuid().optional(), // name matches API field in example: null
+  escalationContactId: z.string().uuid().optional(), // name matches API field in example: null
   loneWorkerAlertEnabled: z.boolean().default(false),
 });
 // export type CareSetupForm = z.infer<typeof CareSetupApiSchema>;

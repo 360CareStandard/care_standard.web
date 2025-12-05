@@ -76,22 +76,22 @@ export function AccessSecurityFields() {
       </div>
 
       {/* Key Safe Code (only when Key Safe selected) */}
-      {method === "Key Safe" && (
-        <div className="space-y-1.5">
-          <Label>Key Safe Code</Label>
-          <Input
-            type="password"
-            {...register("accessAndSecurity.keySafeCode")}
-            value={keySafeCode}
-            onChange={(e) =>
-              setValue("accessAndSecurity.keySafeCode", e.target.value, {
-                shouldDirty: true,
-              })
-            }
-            autoComplete="off"
-          />
-        </div>
-      )}
+      {/* {method === "Key Safe" && (
+      )} */}
+      <div className="space-y-1.5">
+        <Label>Key Safe Code</Label>
+        <Input
+          type="password"
+          {...register("accessAndSecurity.keySafeCode")}
+          value={keySafeCode}
+          onChange={(e) =>
+            setValue("accessAndSecurity.keySafeCode", e.target.value, {
+              shouldDirty: true,
+            })
+          }
+          autoComplete="off"
+        />
+      </div>
 
       {/* Buzzer / Gate Code (Optional) */}
       <div className="space-y-1.5">

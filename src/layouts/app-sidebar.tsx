@@ -12,13 +12,15 @@ import { NavLink, useParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 // import { NavUser } from "./nav-user";
 
-import { ShieldAlert, Settings, Download } from "lucide-react";
+import { Settings } from "lucide-react";
 import {
   HomeIcon,
   UserSquareIcon,
   CalendarCircleIcon,
   NoteIcon,
-  HashtagIcon,
+  CapsuleIcon,
+  PeopleIcon,
+  DocumentDownloadIcon,
 } from "@/assets/icons";
 import { ClientQuickSwitcher } from "@/components/nav/ClientQuickSwitcher";
 
@@ -47,18 +49,18 @@ const NAV: Group[] = [
   {
     heading: "Health & Care",
     items: [
-      { title: "Health & Meds", slug: "health", icon: HashtagIcon },
-      { title: "Notes Media", slug: "notes", icon: HashtagIcon },
-      { title: "Care Circle", slug: "circle", icon: HashtagIcon },
-      { title: "Safety Risks", slug: "risks", icon: ShieldAlert },
+      { title: "Health & Meds", slug: "health", icon: CapsuleIcon },
+      // { title: "Notes Media", slug: "notes", icon: HashtagIcon },
+      { title: "Care Circle", slug: "circle", icon: PeopleIcon },
+      // { title: "Safety Risks", slug: "risks", icon: ShieldAlert },
     ],
   },
   {
     heading: "More Actions",
     items: [
-      { title: "Clients Docs", slug: "docs", icon: HashtagIcon },
+      // { title: "Clients Docs", slug: "docs", icon: HashtagIcon },
       { title: "Settings", slug: "settings", icon: Settings },
-      { title: "Download Info", slug: "download", icon: Download },
+      { title: "Download Info", slug: "download", icon: DocumentDownloadIcon },
     ],
   },
 ];

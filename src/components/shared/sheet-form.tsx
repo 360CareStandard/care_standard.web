@@ -12,7 +12,6 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "./spinner";
 
 type SheetFormProps = {
   /** Optional trigger button or custom element */
@@ -68,7 +67,7 @@ export function SheetForm({
   submitLabel = "Save changes",
   cancelLabel = "Close",
   submitDisabled,
-  submitLoading,
+  // submitLoading,
   hideCancel = false,
   sheetContentRef,
   footerExtra,
@@ -116,7 +115,7 @@ export function SheetForm({
                 </SheetClose>
               )}
               <Button type="submit" disabled={submitDisabled}>
-                {submitLoading ? <Spinner size="sm" /> : null}
+                {/* {submitLoading ? <Spinner size="sm" /> : null} */}
                 {submitLabel}
               </Button>
             </div>

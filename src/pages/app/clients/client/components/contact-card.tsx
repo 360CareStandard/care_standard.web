@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { InfoRow } from "./info-row"; // <- your InfoRow from the prompt
 import { ClientContact } from "@/types/client/contact";
+import { Edit, Trash } from "iconsax-react";
 
 type Props = {
   contact: ClientContact;
@@ -84,37 +85,7 @@ export function ContactDetailsCard({
               onClick={onEdit}
               aria-label="Edit contact"
             >
-              <svg
-                width={20}
-                height={20}
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M9.16675 1.66699H7.50008C3.33341 1.66699 1.66675 3.33366 1.66675 7.50033V12.5003C1.66675 16.667 3.33341 18.3337 7.50008 18.3337H12.5001C16.6667 18.3337 18.3334 16.667 18.3334 12.5003V10.8337"
-                  stroke="#667185"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M13.3666 2.51639L6.7999 9.08306C6.5499 9.33306 6.2999 9.82472 6.2499 10.1831L5.89157 12.6914C5.75823 13.5997 6.3999 14.2331 7.30823 14.1081L9.81657 13.7497C10.1666 13.6997 10.6582 13.4497 10.9166 13.1997L17.4832 6.63306C18.6166 5.49972 19.1499 4.18306 17.4832 2.51639C15.8166 0.849722 14.4999 1.38306 13.3666 2.51639Z"
-                  stroke="#667185"
-                  strokeWidth="1.5"
-                  strokeMiterlimit={10}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M12.425 3.45801C12.9834 5.44967 14.5417 7.00801 16.5417 7.57467"
-                  stroke="#667185"
-                  strokeWidth="1.5"
-                  strokeMiterlimit={10}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <Edit size={20} color="#667185" />
             </Button>
           ) : null}
           {onDelete ? (
@@ -124,49 +95,7 @@ export function ContactDetailsCard({
               onClick={onDelete}
               aria-label="Delete contact"
             >
-              <svg
-                width={20}
-                height={20}
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M17.5 4.98307C14.725 4.70807 11.9333 4.56641 9.15 4.56641C7.5 4.56641 5.85 4.64974 4.2 4.81641L2.5 4.98307"
-                  stroke="#E26E6A"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M7.08325 4.14199L7.26659 3.05033C7.39992 2.25866 7.49992 1.66699 8.90825 1.66699H11.0916C12.4999 1.66699 12.6083 2.29199 12.7333 3.05866L12.9166 4.14199"
-                  stroke="#E26E6A"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M15.7084 7.61621L15.1667 16.0079C15.0751 17.3162 15.0001 18.3329 12.6751 18.3329H7.32508C5.00008 18.3329 4.92508 17.3162 4.83341 16.0079L4.29175 7.61621"
-                  stroke="#E26E6A"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M8.6084 13.75H11.3834"
-                  stroke="#E26E6A"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M7.91675 10.417H12.0834"
-                  stroke="#E26E6A"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <Trash color="#E26E6A" size={20} />
             </Button>
           ) : null}
         </div>

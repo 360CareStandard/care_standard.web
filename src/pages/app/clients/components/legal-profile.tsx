@@ -88,7 +88,7 @@ export const LegalProfile = ({ data }: Props) => {
             <InfoRow label="Power of Attorney">
               <div>
                 <p className="capitalize">{data.powerOfAttorney || "-"}</p>
-                <p className="font-normal text-xs">
+                {/* <p className="font-normal text-xs">
                   Holder: {data.poaHolderName || "-"}
                 </p>
                 <p className="font-normal text-xs">
@@ -96,7 +96,7 @@ export const LegalProfile = ({ data }: Props) => {
                 </p>
                 <p className="font-normal text-xs">
                   Valid from: {formatDate(data.poaValidFrom)}
-                </p>
+                </p> */}
               </div>
             </InfoRow>
 
@@ -106,11 +106,11 @@ export const LegalProfile = ({ data }: Props) => {
                 <p className="font-normal text-xs">
                   Signed: {formatDate(data.dnarSignedDate)}
                 </p>
-                {data.dnarReason ? (
+                {/* {data.dnarReason ? (
                   <p className="font-normal text-xs">
                     Reason: {data.dnarReason}
                   </p>
-                ) : null}
+                ) : null} */}
               </div>
             </InfoRow>
 
@@ -127,24 +127,24 @@ export const LegalProfile = ({ data }: Props) => {
                   <span className="text-xs">LPS</span>
                 </div>
 
-                <p className="font-normal text-xs mt-1">
+                {/* <p className="font-normal text-xs mt-1">
                   Court Order: {data.hasCourtOrder ? "Yes" : "No"}
-                </p>
+                </p> */}
 
-                <p className="font-normal text-xs">
+                {/* <p className="font-normal text-xs">
                   Guardianship: {data.hasGuardianship ? "Yes" : "No"}
-                </p>
+                </p> */}
 
                 <p className="font-normal text-xs">
                   Ref: {data.legalReferenceNumber || "-"}
                 </p>
-                <p className="font-normal text-xs">
+                {/* <p className="font-normal text-xs">
                   Authority: {data.legalResponsibleAuthority || "-"}
                 </p>
                 <p className="font-normal text-xs">
                   From: {formatDate(data.legalStartDate)} — To:{" "}
                   {formatDate(data.legalEndDate)}
-                </p>
+                </p> */}
               </div>
             </InfoRow>
           </div>
@@ -206,30 +206,44 @@ export const LegalProfile = ({ data }: Props) => {
                     </span>
                   </div>
 
-                  <p className="font-normal text-xs mt-1">
+                  <p className="font-normal text-xs my-1">
                     Date: {formatDate(data.dataSharingConsentDate)}
                   </p>
-                  <p className="font-normal text-xs">
+                  {/* <p className="font-normal text-xs">
                     Signed by: {data.dataSharingConsentSignedBy || "-"}
-                  </p>
-                  <p className="font-normal text-xs">
-                    Scope: {data.dataSharingScope || "-"}
-                  </p>
+                  </p> */}
+                  {data.dataSharingScope && (
+                    <p className="font-normal text-xs">
+                      Scope:
+                      {data.dataSharingScope?.split(",").map((d, i) => (
+                        <span
+                          className="py-0.5 px-2 bg-gray-200 mx-1 text-xs rounded-full"
+                          key={i}
+                        >
+                          {d}
+                        </span>
+                      ))}
+                    </p>
+                  )}
                 </div>
               </InfoRow>
 
               <InfoRow label="Photo / Media Consent">
                 <div className="flex items-center gap-2">
                   <BoolBadge value={!!data.photoConsent} />
+
                   <span className="text-xs">
                     {data.photoConsent ? "Allowed" : "Not allowed"}
                   </span>
                 </div>
+                <p className="font-normal text-xs my-1">
+                  Date: {formatDate(data.photoConsentDate)}
+                </p>
               </InfoRow>
 
               <InfoRow label="Contact Methods">
                 <div>
-                  <p className="text-sm">{contactMethods || "None selected"}</p>
+                  <p>{contactMethods || "None selected"}</p>
                   <p className="font-normal text-xs mt-1">
                     Family app access:{" "}
                     <BoolBadge value={!!data.familyAppPermission} />
@@ -293,7 +307,7 @@ export const LegalProfile = ({ data }: Props) => {
                   data.legalDocuments.length > 0 ? (
                     <ul className="space-y-1">
                       {data.legalDocuments.map((doc: any, idx: number) => (
-                        <li key={idx} className="text-sm">
+                        <li key={idx}>
                           <span className="font-medium">
                             {doc.name || `Document ${idx + 1}`}
                           </span>
@@ -315,29 +329,34 @@ export const LegalProfile = ({ data }: Props) => {
 
               <InfoRow label="Review Due">
                 <div>
-                  <p className="text-sm">{formatDate(data.reviewDueDate)}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {daysUntil(data.reviewDueDate)}
+                  <p>
+                    {formatDate(data.reviewDueDate)}{" "}
+                    <span className="text-xs">
+                      ( {daysUntil(data.reviewDueDate)})
+                    </span>
                   </p>
+                  {/* <p className="text-xs text-muted-foreground">
+                   
+                  </p> */}
                 </div>
               </InfoRow>
 
               <InfoRow label="Responsible Person">
                 <div>
-                  <p className="text-sm">{data.responsiblePerson || "-"}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p>{data.responsiblePerson || "-"}</p>
+                  {/* <p className="text-xs text-muted-foreground">
                     Status: {data.status || "unknown"}
-                  </p>
+                  </p> */}
                 </div>
               </InfoRow>
 
               <InfoRow label="Notes / Summary">
                 <div>
-                  <p className="text-sm">{data.notesSummary || "-"}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p>{data.notesSummary || "-"}</p>
+                  {/* <p className="text-xs text-muted-foreground mt-1">
                     Created: {formatDate(data.createdAt)} • Updated:{" "}
                     {formatDate(data.updatedAt)}
-                  </p>
+                  </p> */}
                 </div>
               </InfoRow>
             </div>

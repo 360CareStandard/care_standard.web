@@ -48,6 +48,8 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.19",
+    "iconsax-react": "^0.0.8",
+    "install": "^0.13.0",
     "leaflet": "1.9.4",
     "lucide-react": "^0.542.0",
     "radix-ui": "^1.4.3",

@@ -112,10 +112,7 @@ export function LivingSituationFields() {
                 {/* Name */}
                 <Input
                   placeholder="Name"
-                  {...register(
-                    `livingSituation.householdMembers.${idx}.name` as const
-                  )}
-                  defaultValue={(m as any).name ?? ""}
+                  {...register(`livingSituation.householdMembers.${idx}.name`)}
                 />
 
                 {/* Relationship */}
@@ -124,7 +121,6 @@ export function LivingSituationFields() {
                   {...register(
                     `livingSituation.householdMembers.${idx}.relationship` as const
                   )}
-                  defaultValue={(m as any).relationship ?? ""}
                 />
 
                 {/* Remove */}

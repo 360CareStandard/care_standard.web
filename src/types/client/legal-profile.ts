@@ -38,6 +38,7 @@ export interface ClientLegalProfile {
   dataSharingConsentSignedBy: string | null;
   dataSharingScope: string | null;
   photoConsent: boolean;
+  photoConsentDate: string | null;
   contactConsentEmail: boolean;
   contactConsentSMS: boolean;
   contactConsentPhone: boolean;

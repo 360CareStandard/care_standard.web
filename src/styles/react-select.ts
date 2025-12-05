@@ -1,7 +1,7 @@
 export const customSelectStyles = {
   control: (provided: any, state: any) => ({
     ...provided,
-    minHeight: "48px",
+    minHeight: "38px",
     borderColor: state.isFocused ? "#d1d5db" : "#d1d5db", // Green on focus
     borderRadius: "0.5rem",
     boxShadow: state.isFocused ? "0 0 0 1px #d1d5db" : "none", // Outline effect with green

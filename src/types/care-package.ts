@@ -1,6 +1,6 @@
 import { Workspace } from "./workspace";
 
-export interface CarePlan {
+export interface CarePackage {
   id: string;
   agencyId: string;
   name: string;
@@ -10,14 +10,14 @@ export interface CarePlan {
   agency: Workspace;
 }
 
-export interface CarePlanData {
+export interface CarePackageData {
   result: number;
-  carePlans: CarePlan[];
+  carePackages: CarePackage[];
   totalPages: number;
   currentPage: number | string;
 }
-export interface CarePlanResponse {
+export interface CarePackageResponse {
   status: "success" | "error" | string;
   message?: string;
-  data?: CarePlanData;
+  data?: CarePackageData;
 }

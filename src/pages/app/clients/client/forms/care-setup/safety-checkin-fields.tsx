@@ -36,6 +36,7 @@ export function SafetyCheckinFields({ clientId }: { clientId: string }) {
           label="Check-in Method"
           placeholder="Select method"
           options={methodOptions}
+          triggerClassName="uppercase"
         />
 
         <TextField
@@ -57,7 +58,7 @@ export function SafetyCheckinFields({ clientId }: { clientId: string }) {
 
       <RHFSelectField
         control={control}
-        name="escalationContact"
+        name="escalationContactId"
         label="Escalation Contact"
         placeholder="No escalation contact"
         options={contactOptions}

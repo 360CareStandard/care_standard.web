@@ -18,6 +18,7 @@ export interface ClientClientCarePlan {
   clientId: string;
   agencyId: string;
   packageId: string;
+  authorisedHoursPerWeek: number;
   authorizationNumber: string;
   avoidedCarers: string[];
   budgetCap: number | null;
@@ -42,6 +43,7 @@ export interface ClientClientCarePlan {
   startDate: string; // ISO date string, e.g. "2025-11-01T00:00:00.000Z"
   status: "active" | "paused" | "ended";
   updatedAt: string; // ISO datetime
+  escalationContactId: string; // UUID
   visitDurationPreset?: "15" | "30" | "45" | "60";
   visitPeriodPreset?: string;
 }

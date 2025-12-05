@@ -1,7 +1,7 @@
 // src/hooks/useClientContacts.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/queryKeys";
-import { ClientCarePlanApi } from "@/api/client/care-plan";
+import { ClientCarePlanApi } from "@/api/client/care-setup";
 import { CareSetupForm } from "@/pages/app/clients/schemas/care-setup";
 
 export function useClientCareSetup(clientId: string, enabled = false) {

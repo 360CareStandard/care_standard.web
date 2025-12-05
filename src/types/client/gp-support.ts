@@ -58,5 +58,5 @@ export interface OtherHealthcareProfessional {
   // NOTE: Backend returned no "name", but your UI expects `name`
   // If it truly doesn't exist, remove name from UI.
   // If you want it optional:
-  name?: string;
+  name: string;
 }

@@ -35,7 +35,7 @@ const makeBlank = () => ({
   email: "",
   organisation: "",
   notes: "",
-  // name: "",
+  name: "",
 });
 
 export function OtherHealthcareProfessionalsFields() {
@@ -111,14 +111,16 @@ export function OtherHealthcareProfessionalsFields() {
               />
             </div>
 
-            {/* <div className="space-y-1">
+            <div className="space-y-1">
               <Label>Full Name</Label>
               <Input
                 placeholder="Professional name"
-                {...register(`otherHealthcareProfessionals.${idx}.name` as const)}
-                defaultValue={field. ?? ""}
+                {...register(
+                  `otherHealthcareProfessionals.${idx}.name` as const
+                )}
+                defaultValue={field.name ?? ""}
               />
-            </div> */}
+            </div>
           </div>
 
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">

@@ -35,12 +35,11 @@ const accessAndSecuritySchema = z.object({
 
 const environmentAndEquipmentSchema = z.object({
   equipmentPresent: z.array(z.string()).optional().default([]),
+  petsPresent: z.boolean().optional().default(false), // <- new
   pets: optionalString,
   knownHazards: z.array(z.string()).optional().default([]),
-
-  // explicitly typed extras to keep UI state mapped cleanly
-  assistiveTechnology: z.array(z.string()).optional().default([]),
-  hazardNotes: optionalString,
+  // assistiveTechnology: z.array(z.string()).optional().default([]),
+  // hazardNotes: optionalString,
 });
 
 // Top-level schema with typed defaults to avoid the TS overload error
@@ -61,10 +60,11 @@ export const homeEnvironmentSchema = z.object({
 
   environmentAndEquipment: environmentAndEquipmentSchema.optional().default({
     equipmentPresent: [],
+    petsPresent: false,
     pets: undefined,
     knownHazards: [],
-    assistiveTechnology: [],
-    hazardNotes: undefined,
+    // assistiveTechnology: [],
+    // hazardNotes: undefined,
   } as z.infer<typeof environmentAndEquipmentSchema>),
 
   metadata: z.record(z.string(), z.unknown()).optional().default({}),

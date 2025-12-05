@@ -2,11 +2,11 @@
 import * as React from "react";
 import { Accordion } from "@/components/ui/accordion";
 import { Package, CalendarClock, Wallet2, ShieldCheck } from "lucide-react";
-import { CareAccordionSection } from "./wrapper/care-accordion";
-import { ServicePackageFields } from "../forms/care-setup/service-package";
-import { SchedulingPreferencesFields } from "../forms/care-setup/scheduling-preferences";
-import { FundingFields } from "../forms/care-setup/funding-fields";
-import { SafetyCheckinFields } from "../forms/care-setup/safety-checkin-fields";
+import { CareAccordionSection } from "../wrapper/care-accordion";
+import { ServicePackageFields } from "../../forms/care-setup/service-package";
+import { SchedulingPreferencesFields } from "../../forms/care-setup/scheduling-preferences";
+import { FundingFields } from "../../forms/care-setup/funding-fields";
+import { SafetyCheckinFields } from "../../forms/care-setup/safety-checkin-fields";
 
 export function CareSetupAccordion({ clientId }: { clientId: string }) {
   // optional: control which is open

@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlusIcon } from "lucide-react";
-import * as React from "react";
 
 export default function VisitSchedule() {
   return (
@@ -12,8 +11,8 @@ export default function VisitSchedule() {
           Manage care visits and Scheduling
         </p>
       </div>
-
-      <Card className="flex-1 mt-12  mx-auto w-[1118px]">
+      {/* w-[1118px] */}
+      <Card className="flex-1 mt-12  mx-auto w-full">
         <CardContent className="flex justify-center items-center flex-col py-8 gap-2 w-full">
           <svg
             width={31}

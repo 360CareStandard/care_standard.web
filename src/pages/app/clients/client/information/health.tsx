@@ -11,7 +11,7 @@ import { PlusIcon } from "lucide-react";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { EmptyStateCard } from "../components/empty-state";
 import { HealthIcon } from "../icons/health";
-import { HealthSetupAccordion } from "../components/health-accordion";
+import { HealthSetupAccordion } from "../components/accordion/health-accordion";
 import medicalFormSchema, { type MedicalForm } from "../../schemas/health";
 import {
   useClientHealthDetails,
@@ -23,6 +23,7 @@ import { ClientHealthDetails } from "@/types/client/health";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatUpdatedAt } from "@/helpers/last-updated";
 import { HealthInfo } from "../../components/health-info";
+import { Edit } from "iconsax-react";
 
 const initialFormValues: Partial<MedicalForm> = {
   diagnosedConditions: [],
@@ -154,46 +155,23 @@ const Health = ({ clientId }: Props) => {
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-                  {/* {clientLegalProfile?.status.charAt(0).toUpperCase() +
-                                      clientLegalProfile.status.slice(1)} */}
+                <span
+                  className={`inline-block px-3 py-1  text-sm  font-medium rounded-full capitalize ${
+                    clientHealthDetails.overallRiskLevel === "high"
+                      ? "bg-red-100 text-red-800"
+                      : clientHealthDetails.overallRiskLevel === "medium"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-green-100 text-green-800"
+                  }`}
+                >
+                  {clientHealthDetails.overallRiskLevel || "-"}
                 </span>
                 <Button
                   onClick={() => openForEdit(clientHealthDetails)}
                   variant="outline"
                   className="gap-2"
                 >
-                  <svg
-                    width={20}
-                    height={20}
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M9.16699 1.66602H7.50033C3.33366 1.66602 1.66699 3.33268 1.66699 7.49935V12.4993C1.66699 16.666 3.33366 18.3327 7.50033 18.3327H12.5003C16.667 18.3327 18.3337 16.666 18.3337 12.4993V10.8327"
-                      stroke="#61779C"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M13.3666 2.51639L6.7999 9.08306C6.5499 9.33306 6.2999 9.82472 6.2499 10.1831L5.89157 12.6914C5.75823 13.5997 6.3999 14.2331 7.30823 14.1081L9.81657 13.7497C10.1666 13.6997 10.6582 13.4497 10.9166 13.1997L17.4832 6.63306C18.6166 5.49972 19.1499 4.18306 17.4832 2.51639C15.8166 0.849722 14.4999 1.38306 13.3666 2.51639Z"
-                      stroke="#61779C"
-                      strokeWidth="1.5"
-                      strokeMiterlimit={10}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M12.4248 3.45898C12.9831 5.45065 14.5415 7.00898 16.5415 7.57565"
-                      stroke="#61779C"
-                      strokeWidth="1.5"
-                      strokeMiterlimit={10}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <Edit size={20} />
                   Update Health Info
                 </Button>
               </div>
@@ -213,6 +191,7 @@ const Health = ({ clientId }: Props) => {
                   }}
                   variant="outline"
                   className="gap-2"
+                  disabled={isLoading}
                 >
                   <PlusIcon />
                   Add Health Info

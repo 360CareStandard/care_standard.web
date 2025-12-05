@@ -2,7 +2,7 @@
 export const qk = {
   me: ["me"] as const,
   menu: (p?: any) => ["menu", p] as const,
-  carePlan: (p?: any) => ["care-plan", p] as const,
+  carePackage: (p?: any) => ["care-package", p] as const,
   clients: (params?: Record<string, unknown>) => ["clients", params] as const,
 
   clientContacts: (clientId?: string) => ["client-contacts", clientId] as const,
@@ -21,5 +21,7 @@ export const qk = {
     ["client-preferences", clientId] as const,
 
   client: (id: string) => ["client", id] as const,
+  carePlan: (clientId?: string, carePlanId?: string) =>
+    ["care-plan", clientId, carePlanId] as const,
   workspace: ["workspace"] as const,
 };

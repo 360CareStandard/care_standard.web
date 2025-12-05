@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { ClientClientCarePlan } from "@/types/client/care-plan";
+import { ClientClientCarePlan } from "@/types/client/care-setup";
 import { InfoRow } from "../client/components/info-row";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc"; // 👈 import the plugin
@@ -59,7 +59,9 @@ export const CareSetupDetails = ({ data }: Props) => {
                 : "Not required"}
             </InfoRow>
             <InfoRow label="Authorised Hours">
-              {plan.budgetCap ? `${plan.budgetCap} hours per week` : "-"}
+              {plan.authorisedHoursPerWeek
+                ? `${plan.authorisedHoursPerWeek} hours per week`
+                : "-"}
             </InfoRow>
             <InfoRow label="Overnight Care">
               {plan.overnightCareRequired

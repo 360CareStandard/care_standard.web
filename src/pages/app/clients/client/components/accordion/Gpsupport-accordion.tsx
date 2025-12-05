@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Accordion } from "@/components/ui/accordion";
-import { CareAccordionSection } from "./wrapper/care-accordion";
-import { GPInformationFields } from "../forms/gp/GPInformationFields";
-import { OtherHealthcareProfessionalsFields } from "../forms/gp/OtherHealthcareProfessionalsFields";
+import { CareAccordionSection } from "../wrapper/care-accordion";
+import { GPInformationFields } from "../../forms/gp/GPInformationFields";
+import { OtherHealthcareProfessionalsFields } from "../../forms/gp/OtherHealthcareProfessionalsFields";
 
 export function GPsupportAccordion() {
   // optional: control which is open
