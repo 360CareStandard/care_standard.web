@@ -16,6 +16,8 @@ const VisitSchedule = lazy(
   () => import("@/pages/app/clients/client/visit-schedule")
 );
 const CarePlan = lazy(() => import("@/pages/app/clients/client/care-plan"));
+const Medication = lazy(() => import("@/pages/app/clients/client/medications"));
+const CareCircle = lazy(() => import("@/pages/app/clients/client/care-circle"));
 
 const appChildRoutes = (
   <>
@@ -34,6 +36,8 @@ const appChildRoutes = (
       <Route path="info" element={<ClientInformation />} />
       <Route path="visit-schedule" element={<VisitSchedule />} />
       <Route path="care-plan" element={<CarePlan />} />
+      <Route path="medication" element={<Medication />} />
+      <Route path="care-circle" element={<CareCircle />} />
     </Route>
 
     <Route path="*" element={<Navigate to="/app/clients" replace />} />

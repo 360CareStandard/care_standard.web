@@ -15,7 +15,7 @@ const Clients = () => {
         </div>
         <div
           className="-mx-4 mt-20 flex-1 overflow-auto px-4 py-4 lg:flex-row lg:space-y-0 lg:space-x-12 bg-white shadow
-      rounded-2xl
+      rounded-lg
       "
         >
           <ClientsTable initialPage={1} initialLimit={10} />

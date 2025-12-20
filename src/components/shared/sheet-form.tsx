@@ -114,10 +114,12 @@ export function SheetForm({
                   </Button>
                 </SheetClose>
               )}
-              <Button type="submit" disabled={submitDisabled}>
-                {/* {submitLoading ? <Spinner size="sm" /> : null} */}
-                {submitLabel}
-              </Button>
+              {submitLabel && (
+                <Button type="submit" disabled={submitDisabled}>
+                  {/* {submitLoading ? <Spinner size="sm" /> : null} */}
+                  {submitLabel}
+                </Button>
+              )}
             </div>
           </SheetFooter>
         </form>

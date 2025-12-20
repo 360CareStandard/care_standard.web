@@ -24,7 +24,7 @@ import {
 import { Spinner } from "@/components/shared/spinner";
 import { formatUpdatedAt } from "@/helpers/last-updated";
 import { Skeleton } from "@/components/ui/skeleton";
-import { HomeEnvironmentDetails } from "../../components/home-environment";
+import { HomeEnvironmentDetails } from "./components/details/home-environment";
 import { Edit } from "iconsax-react";
 
 const initialFormValues: Partial<HomeEnvironmentForm> = {

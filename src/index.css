@@ -368,3 +368,10 @@
     font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   }
 }
+.form-label {
+  @apply text-sm font-medium mb-1 block;
+}
+
+.form-error {
+  @apply text-xs text-red-500 mt-1;
+}

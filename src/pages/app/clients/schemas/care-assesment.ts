@@ -76,7 +76,9 @@ export const assessmentSchema = z.object({
 
   metadata: z.record(z.string(), z.unknown()).optional().default({}),
 
-  status: z.enum(["active", "inactive", "archived"]).default("active"),
+  status: z
+    .enum(["active", "inactive", "archived", "completed"])
+    .default("active"),
 });
 
 export type AssessmentForm = z.infer<typeof assessmentSchema>;

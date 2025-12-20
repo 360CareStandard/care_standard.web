@@ -3,10 +3,10 @@ import * as React from "react";
 import { Accordion } from "@/components/ui/accordion";
 import { Award, Shield, FileUp, Clock } from "lucide-react";
 import { CareAccordionSection } from "../wrapper/care-accordion";
-import { CoreLegalStatusFields } from "../../forms/legal/CoreLegalStatusFields";
-import { ConsentDataSharingFields } from "../../forms/legal/ConsentDataSharingFields";
-import { DocumentsEvidenceFields } from "../../forms/legal/DocumentsEvidenceFields";
-import { AuditReviewFields } from "../../forms/legal/AuditReviewFields";
+import { CoreLegalStatusFields } from "../../information/components/forms/legal/CoreLegalStatusFields";
+import { ConsentDataSharingFields } from "../../information/components/forms/legal/ConsentDataSharingFields";
+import { DocumentsEvidenceFields } from "../../information/components/forms/legal/DocumentsEvidenceFields";
+import { AuditReviewFields } from "../../information/components/forms/legal/AuditReviewFields";
 import { useFormContext, useWatch } from "react-hook-form";
 
 export function LegalSetupAccordion() {

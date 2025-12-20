@@ -22,7 +22,7 @@ import {
 import { Spinner } from "@/components/shared/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatUpdatedAt } from "@/helpers/last-updated";
-import { GPSupportDetails } from "../../components/gp-support";
+import { GPSupportDetails } from "./components/details/gp-support";
 import { ClientGPAndSupport } from "@/types/client/gp-support";
 import { Edit } from "iconsax-react";
 

@@ -49,9 +49,9 @@ const NAV: Group[] = [
   {
     heading: "Health & Care",
     items: [
-      { title: "Health & Meds", slug: "health", icon: CapsuleIcon },
+      { title: "Health & Meds", slug: "medication", icon: CapsuleIcon },
       // { title: "Notes Media", slug: "notes", icon: HashtagIcon },
-      { title: "Care Circle", slug: "circle", icon: PeopleIcon },
+      { title: "Care Circle", slug: "care-circle", icon: PeopleIcon },
       // { title: "Safety Risks", slug: "risks", icon: ShieldAlert },
     ],
   },

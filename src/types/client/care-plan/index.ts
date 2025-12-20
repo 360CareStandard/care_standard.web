@@ -2,7 +2,7 @@
 
 export type CarePlanOutcomeStatus = "not-started" | "in-progress" | "achieved";
 
-export type CarePlanStatus = "active" | "inactive" | "archived";
+export type CarePlanStatus = "active" | "inactive" | "archived" | "completed";
 
 export type CarePlanSeverity = "low" | "medium" | "high";
 

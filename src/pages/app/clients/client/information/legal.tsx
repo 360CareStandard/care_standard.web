@@ -19,7 +19,7 @@ import {
 } from "@/hooks/client/useClientLegalProfile";
 import toast from "react-hot-toast";
 import { ClientLegalProfile } from "@/types/client/legal-profile";
-import { LegalProfile } from "../../components/legal-profile";
+import { LegalProfile } from "./components/details/legal-profile";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatUpdatedAt } from "@/helpers/last-updated";
 import { Spinner } from "@/components/shared/spinner";

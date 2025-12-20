@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ContactNextOfKin from "./contact-next-of-kin";
+import ContactNextOfKin from "./contact";
 import CareSetup from "./care-setup";
 import Legal from "./legal";
 import Health from "./health";
@@ -10,7 +10,7 @@ import HomeEnvironment from "./home";
 import Preferences from "./preferences";
 
 const TAB_KEYS = [
-  "contact-next-of-kin",
+  "contact",
   "care-setup",
   "legal",
   "health",
@@ -25,10 +25,10 @@ export default function Information() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // read from url, validate, fallback
-  const raw = searchParams.get("tab") ?? "contact-next-of-kin";
+  const raw = searchParams.get("tab") ?? "contact";
   const currentTab: TabKey = (TAB_KEYS as readonly string[]).includes(raw)
     ? (raw as TabKey)
-    : "contact-next-of-kin";
+    : "contact";
 
   // Change handler updates only the 'tab' param, preserves the rest
   const onTabChange = (next: string) => {
@@ -45,7 +45,7 @@ export default function Information() {
       setSearchParams(
         (prev) => {
           const sp = new URLSearchParams(prev);
-          sp.set("tab", "contact-next-of-kin");
+          sp.set("tab", "contact");
           return sp;
         },
         { replace: true }
@@ -70,10 +70,10 @@ export default function Information() {
       >
         <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
           <TabsTrigger
-            value="contact-next-of-kin"
+            value="contact"
             className="relative rounded-none border-b-2 border-b-transparent !bg-transparent px-4 pb-3 pt-2 text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
           >
-            Contacts & Next of Kin
+            Contacts
           </TabsTrigger>
           <TabsTrigger
             value="care-setup"
@@ -113,7 +113,7 @@ export default function Information() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="contact-next-of-kin" className="space-y-5 pt-4">
+        <TabsContent value="contact" className="space-y-5 pt-4">
           <ContactNextOfKin clientId={clientId as string} />
         </TabsContent>
 

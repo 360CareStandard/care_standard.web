@@ -6,6 +6,9 @@ import { CarePlan } from "@/types/client/care-plan";
 import { cn } from "@/lib/utils";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { InfoRow } from "../../components/info-row";
+import { Edit } from "iconsax-react";
+import { Badge } from "@/components/ui/badge";
+import { callTypes } from "../../../components/data/data";
 
 type Props = {
   open: boolean;
@@ -50,35 +53,12 @@ export function CarePlanDetailsSheet({
 
   const outcomeLabel = OUTCOME_LABELS[plan.outcomeStatus] ?? plan.outcomeStatus;
 
-  const firstRisk = plan.risks?.[0];
-
-  const statusPill = (() => {
-    if (plan.status === "archived") {
-      return (
-        <span className="inline-flex items-center rounded-full bg-slate-100 text-slate-700 text-xs px-3 py-1">
-          Archived
-        </span>
-      );
-    }
-    if (plan.status === "completed") {
-      return (
-        <span className="inline-flex items-center rounded-full bg-emerald-100 text-emerald-800 text-xs px-3 py-1">
-          Completed
-        </span>
-      );
-    }
-    return (
-      <span className="inline-flex items-center rounded-full bg-blue-50 text-blue-700 text-xs px-3 py-1">
-        Active
-      </span>
-    );
-  })();
-
   const createdDate = new Date(plan.createdAt).toLocaleDateString();
 
   const reviewDate = plan.reviewDueDate
     ? new Date(plan.reviewDueDate).toLocaleDateString()
     : "—";
+  const badgeColor = callTypes.get(plan.status);
 
   return (
     <SheetForm
@@ -93,8 +73,11 @@ export function CarePlanDetailsSheet({
       <div className="flex-1 overflow-y-auto py-5 space-y-6">
         {/* top row: status + actions */}
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">{statusPill}</div>
-
+          <div className="flex space-x-2">
+            <Badge variant="outline" className={cn("capitalize", badgeColor)}>
+              {plan.status ?? "—"}
+            </Badge>
+          </div>
           <div className="flex gap-2">
             <Button
               type="button"
@@ -102,6 +85,7 @@ export function CarePlanDetailsSheet({
               size="sm"
               onClick={() => onEdit?.(plan)}
             >
+              <Edit />
               Update
             </Button>
             <Button

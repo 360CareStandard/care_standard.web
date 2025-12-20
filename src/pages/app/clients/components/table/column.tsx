@@ -59,12 +59,12 @@ export const clientsColumns: ColumnDef<ClientNormalized>[] = [
         </Link>
       );
     },
-    meta: {
-      className: cn(
-        "sticky left-0 z-10 rounded-tl",
-        "bg-background transition-colors duration-200 group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted"
-      ),
-    },
+    // meta: {
+    //   className: cn(
+    //     "sticky left-0 z-10 rounded-tl",
+    //     "bg-background transition-colors duration-200 group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted"
+    //   ),
+    // },
     enableHiding: false,
   },
 

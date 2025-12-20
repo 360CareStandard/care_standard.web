@@ -17,7 +17,7 @@ import {
 } from "@/hooks/client/useClientCarePlan";
 import toast from "react-hot-toast";
 import { formatUpdatedAt } from "@/helpers/last-updated";
-import { CareSetupDetails } from "../../components/care-setup-details";
+import { CareSetupDetails } from "./components/details/care-setup-details";
 import { ClientClientCarePlan } from "@/types/client/care-setup";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/shared/spinner";

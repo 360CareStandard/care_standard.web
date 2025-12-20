@@ -1,6 +1,6 @@
 // src/api/clients.ts
 import { api } from "@/lib/axios";
-import { AddContactForm } from "@/pages/app/clients/schemas/add-contact-form";
+import { AddContactForm } from "@/pages/app/clients/schemas/contact";
 import type { UpdateClientBody } from "@/types/client/client";
 import {
   ClientContact,

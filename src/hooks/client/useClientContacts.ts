@@ -1,7 +1,7 @@
 // src/hooks/useClientContacts.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/queryKeys";
-import type { AddContactForm } from "@/pages/app/clients/schemas/add-contact-form";
+import type { AddContactForm } from "@/pages/app/clients/schemas/contact";
 import { ClientContactApi } from "@/api/client/contact";
 
 export function useClientContacts(clientId: string) {

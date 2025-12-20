@@ -18,7 +18,7 @@ import {
 } from "@/hooks/client/usePreferences";
 import { formatUpdatedAt } from "@/helpers/last-updated";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ClientPreferencesDetails } from "../../components/preference";
+import { ClientPreferencesDetails } from "./components/details/preference";
 import { Edit } from "iconsax-react";
 
 export const initialPreferencesValues: Partial<PreferencesForm> = {

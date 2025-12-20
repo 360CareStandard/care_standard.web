@@ -34,7 +34,7 @@ export function useCreateCarePlan(clientId: string) {
   return useMutation({
     mutationFn: (body: AssessmentForm) => {
       if (!clientId)
-        throw new Error("clientId is required to create a contact");
+        throw new Error("clientId is required to create a care plan");
       // adapt ClientsApi function name to your implementation
       return CarePlanApi.post(clientId, body);
     },

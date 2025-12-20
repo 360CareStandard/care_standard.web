@@ -109,7 +109,6 @@ export default function VisitSchedule() {
               // onClick={onClick}
 
               className="text-xs"
-              size={"sm"}
             >
               <PlusIcon />
               Add Visit

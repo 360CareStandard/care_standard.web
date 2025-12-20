@@ -24,9 +24,10 @@ import {
 import type { CarePlan } from "@/types/client/care-plan";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CarePlanCard } from "./components/care-plan-card";
-import { AssessmentFormFields } from "../forms/care-plan/assessment-fields";
+import { AssessmentFormFields } from "./forms/care-plan/assessment-fields";
 import { Spinner } from "@/components/shared/spinner";
 import { CarePlanDetailsSheet } from "./components/care-plan-details-sheet";
+import { CarePlanCardSkeleton } from "./components/care-plan-skeleton";
 
 const initialFormValues: Partial<AssessmentForm> = {
   assessmentType: "personal-care",
@@ -68,13 +69,6 @@ export default function CarePlan() {
     mode: "onChange",
     defaultValues: initialFormValues as AssessmentForm,
   });
-
-  // React.useEffect(() => {
-  //   const sub = methods.watch((v) => {
-  //     console.log("ASSESSMENT FORM (live):", v);
-  //   });
-  //   return () => sub.unsubscribe();
-  // }, [methods]);
 
   const openForAdd = () => {
     methods.reset(initialFormValues as any);
@@ -180,7 +174,7 @@ export default function CarePlan() {
               Care plans capture assessments, goals and tasks that guide
               day-to-day visits.
             </p>
-            <Button onClick={openForAdd} className="text-xs mt-1" size="sm">
+            <Button onClick={openForAdd} className="text-xs mt-1">
               <PlusIcon className="w-4 h-4" />
               Add Assessment
             </Button>
@@ -189,8 +183,8 @@ export default function CarePlan() {
       )}
 
       {/* Tabs + list when we have plans */}
-      {hasPlans && (
-        <Tabs defaultValue="active" className="mt-12 ">
+      <Tabs defaultValue="active" className="mt-12 ">
+        {hasPlans && (
           <TabsList className=" justify-start rounded-none border-b bg-transparent p-0">
             <TabsTrigger
               value="active"
@@ -211,52 +205,62 @@ export default function CarePlan() {
               Archived
             </TabsTrigger>
           </TabsList>
+        )}
+        {isLoading && (
+          <>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <CarePlanCardSkeleton key={i} />
+            ))}
+          </>
+        )}
+        {hasPlans && (
+          <>
+            {/* Active */}
+            <TabsContent value="active" className="space-y-4 mt-4">
+              {carePlans
+                .filter((p) => p.status === "active")
+                .map((plan) => (
+                  <CarePlanCard
+                    key={plan.id}
+                    plan={plan}
+                    onEdit={openForEdit}
+                    onArchive={handleDelete}
+                    onView={handleView}
+                  />
+                ))}
+            </TabsContent>
 
-          {/* Active */}
-          <TabsContent value="active" className="space-y-4 mt-4">
-            {carePlans
-              .filter((p) => p.status === "active")
-              .map((plan) => (
-                <CarePlanCard
-                  key={plan.id}
-                  plan={plan}
-                  onEdit={openForEdit}
-                  onArchive={handleDelete}
-                  onView={handleView}
-                  // onView could open a read-only sheet/page if you want
-                />
-              ))}
-          </TabsContent>
+            {/* Completed */}
+            <TabsContent value="completed" className="space-y-4">
+              {carePlans
+                .filter((p) => p.status === "inactive")
+                .map((plan) => (
+                  <CarePlanCard
+                    key={plan.id}
+                    plan={plan}
+                    onEdit={openForEdit}
+                    onArchive={handleDelete}
+                  />
+                ))}
+            </TabsContent>
 
-          {/* Completed */}
-          <TabsContent value="completed" className="space-y-4">
-            {carePlans
-              .filter((p) => p.status === "inactive")
-              .map((plan) => (
-                <CarePlanCard
-                  key={plan.id}
-                  plan={plan}
-                  onEdit={openForEdit}
-                  onArchive={handleDelete}
-                />
-              ))}
-          </TabsContent>
+            {/* Archived */}
+            <TabsContent value="archived" className="space-y-4">
+              {carePlans
+                .filter((p) => p.status === "archived")
+                .map((plan) => (
+                  <CarePlanCard
+                    key={plan.id}
+                    plan={plan}
+                    onEdit={openForEdit}
+                    onArchive={handleDelete}
+                  />
+                ))}
+            </TabsContent>
+          </>
+        )}
+      </Tabs>
 
-          {/* Archived */}
-          <TabsContent value="archived" className="space-y-4">
-            {carePlans
-              .filter((p) => p.status === "archived")
-              .map((plan) => (
-                <CarePlanCard
-                  key={plan.id}
-                  plan={plan}
-                  onEdit={openForEdit}
-                  onArchive={handleDelete}
-                />
-              ))}
-          </TabsContent>
-        </Tabs>
-      )}
       <CarePlanDetailsSheet
         open={detailOpen}
         onOpenChange={(open) => {

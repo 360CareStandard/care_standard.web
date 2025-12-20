@@ -23,5 +23,7 @@ export const qk = {
   client: (id: string) => ["client", id] as const,
   carePlan: (clientId?: string, carePlanId?: string) =>
     ["care-plan", clientId, carePlanId] as const,
+  medication: (clientId?: string, medicationId?: string, status?: string) =>
+    ["medication", status, clientId, medicationId] as const,
   workspace: ["workspace"] as const,
 };

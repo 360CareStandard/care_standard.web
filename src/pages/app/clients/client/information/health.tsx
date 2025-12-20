@@ -22,7 +22,7 @@ import { Spinner } from "@/components/shared/spinner";
 import { ClientHealthDetails } from "@/types/client/health";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatUpdatedAt } from "@/helpers/last-updated";
-import { HealthInfo } from "../../components/health-info";
+import { HealthInfo } from "./components/details/health-info";
 import { Edit } from "iconsax-react";
 
 const initialFormValues: Partial<MedicalForm> = {

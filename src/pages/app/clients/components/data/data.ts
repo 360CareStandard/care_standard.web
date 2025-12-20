@@ -14,6 +14,10 @@ export const callTypes = new Map<ClientStatus, string>([
     "paused",
     "bg-destructive/10 dark:bg-destructive/50 text-destructive dark:text-primary border-destructive/10",
   ],
+  [
+    "stopped",
+    "bg-destructive/10 dark:bg-destructive/50 text-destructive dark:text-primary border-destructive/10",
+  ],
 ]);
 
 export const userTypes = [
