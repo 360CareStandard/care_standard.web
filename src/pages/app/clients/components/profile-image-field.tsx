@@ -3,12 +3,11 @@ import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trash, Edit } from "lucide-react";
-import type { UseFormSetValue, UseFormWatch } from "react-hook-form";
-import { ClientFormData } from "../schemas/add-client";
+import type { UseFormSetValue } from "react-hook-form";
 import { Label } from "@/components/ui/label";
+import { ClientFormData } from "../schemas/add-client";
 
 type Props = {
-  watch: UseFormWatch<ClientFormData>;
   setValue: UseFormSetValue<ClientFormData>;
   initials: string;
   label?: string;
@@ -16,29 +15,35 @@ type Props = {
 };
 
 export function ProfileImageField({
-  watch,
   setValue,
   initials,
   label = "Profile Image",
   maxSizeMB = 5,
 }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
-  const src = watch("profileImage"); // <-- typed as string | undefined
 
+  const [preview, setPreview] = React.useState<string | null>(null);
   const openPicker = () => fileRef.current?.click();
-  const onRemove = () => setValue("profileImage", "");
+  const onRemove = () => {
+    setValue("profileImage", "");
+    setPreview(null);
+  };
 
   const onPick: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     if (file.size > maxSizeMB * 1024 * 1024) {
       alert(`Please choose an image under ${maxSizeMB}MB.`);
       e.currentTarget.value = "";
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => setValue("profileImage", String(reader.result ?? ""));
-    reader.readAsDataURL(file);
+
+    setValue("profileImage", file, { shouldDirty: true });
+
+    // create preview only
+    const preview = URL.createObjectURL(file);
+    setPreview(preview);
   };
 
   return (
@@ -46,7 +51,7 @@ export function ProfileImageField({
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex gap-2 items-center">
           <Avatar className="h-16 w-16 ring-2 ring-white shadow">
-            <AvatarImage src={src || ""} className="object-cover" />
+            <AvatarImage src={preview || ""} className="object-cover" />
             <AvatarFallback className="text-base">{initials}</AvatarFallback>
           </Avatar>
 
@@ -60,9 +65,9 @@ export function ProfileImageField({
 
         <div className="flex gap-2">
           <Button type="button" variant="outline" onClick={openPicker}>
-            <Edit className="mr-2 h-4 w-4" /> Update
+            <Edit className="mr-2 h-4 w-4" /> Upload
           </Button>
-          {src && (
+          {preview && (
             <Button type="button" variant="outline" onClick={onRemove}>
               <Trash className="mr-2 h-4 w-4" /> Remove
             </Button>

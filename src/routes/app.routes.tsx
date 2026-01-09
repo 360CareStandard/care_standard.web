@@ -3,6 +3,7 @@ import { lazy } from "react";
 import { Route, Navigate } from "react-router-dom";
 import ContainerLayout from "@/layouts/container-layout";
 import ClientProfileLayout from "@/layouts/client-profile-layout";
+import StaffProfileLayout from "@/layouts/staff-profile-layout";
 
 const Clients = lazy(() => import("@/pages/app/clients"));
 const Staff = lazy(() => import("@/pages/app/staff"));
@@ -38,6 +39,9 @@ const appChildRoutes = (
       <Route path="care-plan" element={<CarePlan />} />
       <Route path="medication" element={<Medication />} />
       <Route path="care-circle" element={<CareCircle />} />
+    </Route>
+    <Route path="staff/:staffId" element={<StaffProfileLayout />}>
+      <Route index element={<Navigate to="overview" replace />} />
     </Route>
 
     <Route path="*" element={<Navigate to="/app/clients" replace />} />

@@ -11,6 +11,7 @@ import WellbeingOverview from "./wellbeing-overview";
 import { StepperHeader } from "../components/stepper-header";
 import { useCreateClient } from "@/hooks/client/useClients";
 import toast from "react-hot-toast";
+import { Spinner } from "@/components/shared/spinner";
 
 interface Props {
   open: boolean;
@@ -24,6 +25,11 @@ const AddClient = ({ open, setOpen }: Props) => {
   const methods = useForm<ClientFormData>({
     resolver,
     defaultValues: {
+      firstname: "",
+      lastname: "",
+      middlename: "",
+      preferredname: "",
+      title: "",
       status: "active",
       dob: "",
       latitude: 51.5074,
@@ -64,12 +70,6 @@ const AddClient = ({ open, setOpen }: Props) => {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [isStepValidating, setIsStepValidating] = useState(false);
   const [attemptedNext, setAttemptedNext] = useState(false); // gate error display
-
-  // helper: show error only when the field was touched/dirty OR user tried Next
-  const fieldHasError = (name: FieldPath<ClientFormData>) => {
-    const state = methods.getFieldState(name, methods.formState);
-    return state.invalid && (state.isTouched || state.isDirty || attemptedNext);
-  };
 
   // auto-clear stale errors for fields in the current step as the user types
   const watchValues = methods.watch(stepFields[currentStep]);
@@ -170,18 +170,6 @@ const AddClient = ({ open, setOpen }: Props) => {
     return methods.handleSubmit(onValidSubmit)(e);
   };
 
-  const { register, setValue, watch, formState, control } = methods;
-  const errors = formState.errors;
-
-  //   React.useEffect(() => {
-  //     const sub = methods.watch((value, info) => {
-  //       console.log("WATCH change:", { name: info.name, type: info.type, value });
-  //     });
-  //     return () => sub.unsubscribe();
-  //   }, [methods]);
-
-  // --- render
-
   return (
     <SheetForm
       open={open}
@@ -192,11 +180,13 @@ const AddClient = ({ open, setOpen }: Props) => {
       headerClassName="bg-[#E4E7EC] py-2.5"
       onSubmit={onFormSubmit}
       submitLabel={
-        currentStep < lastStep
-          ? "Next"
-          : isSubmitting
-          ? "Submitting…"
-          : "Create New Client"
+        currentStep < lastStep ? (
+          "Next"
+        ) : isSubmitting ? (
+          <Spinner size="sm" />
+        ) : (
+          "Create New Client"
+        )
       }
       footerExtra={
         currentStep > firstStep ? (
@@ -227,88 +217,14 @@ const AddClient = ({ open, setOpen }: Props) => {
       />
 
       <FormProvider {...methods}>
-        {currentStep === 1 && (
-          <PersonalDetails
-            FieldError={({ message }) =>
-              fieldHasError("title") ||
-              fieldHasError("firstname") ||
-              fieldHasError("lastname") ||
-              fieldHasError("dob") ||
-              fieldHasError("status") ? (
-                <p className="mt-1 text-xs text-destructive">{message}</p>
-              ) : null
-            }
-            // pass errors conditionally per field for friendly UX
-            errors={
-              {
-                ...errors,
-                title: fieldHasError("title") ? errors.title : undefined,
-                firstname: fieldHasError("firstname")
-                  ? errors.firstname
-                  : undefined,
-                lastname: fieldHasError("lastname")
-                  ? errors.lastname
-                  : undefined,
-                dob: fieldHasError("dob") ? errors.dob : undefined,
-                status: fieldHasError("status") ? errors.status : undefined,
-              } as any
-            }
-            register={register}
-            setValue={setValue}
-            watch={watch}
-            control={control}
-            attemptedNext={attemptedNext}
-          />
-        )}
+        {currentStep === 1 && <PersonalDetails attemptedNext={attemptedNext} />}
 
-        {currentStep === 2 && (
-          <ContactDetails
-            FieldError={({ message }) =>
-              fieldHasError("email") ? (
-                <p className="mt-1 text-xs text-destructive">{message}</p>
-              ) : null
-            }
-            errors={
-              {
-                ...errors,
-                email: fieldHasError("email") ? errors.email : undefined,
-                nationality: fieldHasError("nationality")
-                  ? errors.nationality
-                  : undefined,
-                phone: fieldHasError("phone") ? errors.phone : undefined,
-                phoneType: fieldHasError("phoneType")
-                  ? errors.phoneType
-                  : undefined,
-              } as any
-            }
-            setValue={setValue}
-            watch={watch}
-            control={control}
-            register={register}
-            attemptedNext={attemptedNext}
-          />
-        )}
+        {currentStep === 2 && <ContactDetails attemptedNext={attemptedNext} />}
 
-        {currentStep === 3 && (
-          <Addresses
-            watch={watch}
-            register={register}
-            errors={errors}
-            control={control}
-            attemptedNext={attemptedNext}
-            setValue={setValue}
-          />
-        )}
+        {currentStep === 3 && <Addresses />}
 
         {currentStep === 4 && (
-          <WellbeingOverview
-            watch={watch}
-            register={register}
-            errors={errors}
-            control={control}
-            attemptedNext={attemptedNext}
-            setValue={setValue}
-          />
+          <WellbeingOverview attemptedNext={attemptedNext} />
         )}
       </FormProvider>
     </SheetForm>

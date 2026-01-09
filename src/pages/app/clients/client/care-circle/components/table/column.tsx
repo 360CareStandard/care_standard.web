@@ -12,7 +12,7 @@ export const clientContactColumns: ColumnDef<ClientContact>[] = [
   {
     accessorKey: "contactName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Medication Name" />
+      <DataTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => {
       const c = row.original;

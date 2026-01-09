@@ -26,4 +26,7 @@ export const qk = {
   medication: (clientId?: string, medicationId?: string, status?: string) =>
     ["medication", status, clientId, medicationId] as const,
   workspace: ["workspace"] as const,
+
+  //staff
+  staff: (params?: Record<string, unknown>) => ["staff", params] as const,
 };

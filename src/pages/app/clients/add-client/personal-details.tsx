@@ -1,45 +1,25 @@
 // features/clients/components/personal-details.tsx
 import { ClientFormData } from "../schemas/add-client";
-import {
-  Control,
-  FieldErrors,
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormWatch,
-} from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { TextField } from "@/components/shared/text-field";
 import { ProfileImageField } from "../components/profile-image-field";
 import { RHFSelectField } from "@/components/shared/rhf-select-field";
 import { RHFDatePicker } from "@/components/shared/rhf-date-picker";
 
 interface Props {
-  watch: UseFormWatch<ClientFormData>;
-  setValue: UseFormSetValue<ClientFormData>;
-  register: UseFormRegister<ClientFormData>;
-  FieldError: ({ message }: { message?: string }) => JSX.Element | null;
-  errors: FieldErrors<ClientFormData>;
-  control: Control<ClientFormData>;
   attemptedNext: boolean;
 }
 
-const PersonalDetails = ({
-  watch,
-  setValue,
-  register,
-  errors,
-  control,
-  attemptedNext,
-}: Props) => {
+const PersonalDetails = ({ attemptedNext }: Props) => {
+  const { register, control, formState, watch, setValue } =
+    useFormContext<ClientFormData>();
+  const { errors } = formState;
   const first = watch("firstname");
   const last = watch("lastname");
   const initials = `${first?.[0] ?? "J"}${last?.[0] ?? "W"}`;
   return (
     <div className="grid gap-4">
-      <ProfileImageField
-        watch={watch}
-        setValue={setValue}
-        initials={initials}
-      />
+      <ProfileImageField setValue={setValue} initials={initials} />
 
       <RHFSelectField
         control={control}

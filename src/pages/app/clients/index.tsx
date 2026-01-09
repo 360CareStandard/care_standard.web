@@ -8,7 +8,7 @@ const Clients = () => {
       <Main>
         <div className="mb-2 flex flex-wrap items-center justify-between space-y-2">
           <div>
-            <h1 className="text-3xl font-medium ">Clients</h1>
+            <h1 className="text-3xl font-semibold ">Clients</h1>
             {/* <p className="text-muted-foreground">Manage people in your care</p> */}
           </div>
           <ClientsPrimaryButtons />

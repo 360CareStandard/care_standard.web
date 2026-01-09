@@ -1,30 +1,16 @@
 // features/clients/components/wellbeing-overview.tsx
 import { TextareaField } from "@/components/shared/textarea-field";
-import {
-  Control,
-  FieldErrors,
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormWatch,
-} from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { ClientFormData } from "../schemas/add-client";
 import { RHFSelectField } from "@/components/shared/rhf-select-field";
 
 interface Props {
-  watch: UseFormWatch<ClientFormData>;
-  register: UseFormRegister<ClientFormData>;
-  errors: FieldErrors<ClientFormData>;
-  control: Control<ClientFormData>;
   attemptedNext: boolean;
-  setValue: UseFormSetValue<ClientFormData>;
 }
 
-const WellbeingOverview = ({
-  control,
-  attemptedNext,
-  setValue,
-  watch,
-}: Props) => {
+const WellbeingOverview = ({ attemptedNext }: Props) => {
+  const { control, watch, setValue } = useFormContext<ClientFormData>();
+
   return (
     <div className="grid gap-4">
       <div className="space-y-2">

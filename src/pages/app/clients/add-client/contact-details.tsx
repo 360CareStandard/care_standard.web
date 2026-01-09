@@ -1,10 +1,7 @@
 // contact-details.tsx
-import type {
-  Control,
-  UseFormSetValue,
-  UseFormWatch,
-  UseFormRegister,
-  FieldErrors,
+import {
+  
+  useFormContext,
 } from "react-hook-form";
 import type { ClientFormData } from "../schemas/add-client";
 import { RHFPhone } from "@/components/shared/rhf-phone";
@@ -12,13 +9,7 @@ import { RHFSelectField } from "@/components/shared/rhf-select-field";
 import { TextField } from "@/components/shared/text-field";
 
 interface Props {
-  watch: UseFormWatch<ClientFormData>;
-  setValue: UseFormSetValue<ClientFormData>;
-  control: Control<ClientFormData>;
-  FieldError: ({ message }: { message?: string }) => JSX.Element | null;
   attemptedNext: boolean;
-  register: UseFormRegister<ClientFormData>;
-  errors: FieldErrors<ClientFormData>;
 }
 const phoneArr = [
   { value: "mobile", label: "Mobile" },
@@ -26,12 +17,9 @@ const phoneArr = [
   { value: "work", label: "Work" },
 ];
 
-const ContactDetails = ({
-  control,
-  attemptedNext,
-  errors,
-  register,
-}: Props) => {
+const ContactDetails = ({ attemptedNext }: Props) => {
+  const { register, control, formState } = useFormContext<ClientFormData>();
+  const { errors } = formState;
   return (
     <section className="space-y-5 mt-4">
       <div className="grid gap-4">

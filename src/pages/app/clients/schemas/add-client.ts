@@ -6,8 +6,7 @@ import * as z from "zod";
 const ukMobileRegex = /^(?:\+44?7\d{9}|07\d{9})$/;
 
 export const clientSchema = z.object({
-  profileImage: z.string().optional(),
-
+  profileImage: z.any().optional(),
   // personal names (payload uses lowercase-ish keys)
   title: z.string().optional(), // payload has "Mr." etc
   firstname: z.string().trim().min(1, "Please enter a first name"),
