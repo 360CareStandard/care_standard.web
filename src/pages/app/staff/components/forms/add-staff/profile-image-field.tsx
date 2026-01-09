@@ -16,17 +16,31 @@ type Props = {
 };
 
 export function ProfileImageField({
+  watch,
   setValue,
   initials,
   label = "Profile Image",
   maxSizeMB = 5,
 }: Props) {
+  const file = watch("staffPicture");
+
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [preview, setPreview] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (file instanceof File) {
+      const url = URL.createObjectURL(file);
+      setPreview(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPreview(null);
+    }
+  }, [file]);
+
   const openPicker = () => fileRef.current?.click();
   const onRemove = () => {
-    setValue("staffPicture", "");
+    setValue("staffPicture", undefined);
     setPreview(null);
   };
 
@@ -41,10 +55,6 @@ export function ProfileImageField({
     }
 
     setValue("staffPicture", file, { shouldDirty: true });
-
-    // create preview only
-    const preview = URL.createObjectURL(file);
-    setPreview(preview);
   };
 
   return (

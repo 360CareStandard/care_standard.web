@@ -34,6 +34,7 @@ const AddStaff = ({ open, setOpen }: Props) => {
       email: "",
       staffRole: "Carer",
       status: "active",
+      adminAccessLevel: false,
     },
     mode: "onSubmit",
     reValidateMode: "onChange",
@@ -127,6 +128,9 @@ const AddStaff = ({ open, setOpen }: Props) => {
     useCreateStaff();
 
   const onValidSubmit = async (vals: StaffFormData) => {
+    // const imageSrc = useWatch();
+    //  const src = watch("staffPicture");
+
     try {
       const formData = new FormData();
 

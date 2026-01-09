@@ -3,11 +3,12 @@ import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trash, Edit } from "lucide-react";
-import type { UseFormSetValue } from "react-hook-form";
+import type { UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { ClientFormData } from "../schemas/add-client";
 
 type Props = {
+  watch: UseFormWatch<ClientFormData>;
   setValue: UseFormSetValue<ClientFormData>;
   initials: string;
   label?: string;
@@ -15,17 +16,31 @@ type Props = {
 };
 
 export function ProfileImageField({
+  watch,
   setValue,
   initials,
   label = "Profile Image",
   maxSizeMB = 5,
 }: Props) {
+  const file = watch("profileImage");
+
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [preview, setPreview] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (file instanceof File) {
+      const url = URL.createObjectURL(file);
+      setPreview(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPreview(null);
+    }
+  }, [file]);
+
   const openPicker = () => fileRef.current?.click();
   const onRemove = () => {
-    setValue("profileImage", "");
+    setValue("profileImage", undefined);
     setPreview(null);
   };
 
@@ -40,10 +55,6 @@ export function ProfileImageField({
     }
 
     setValue("profileImage", file, { shouldDirty: true });
-
-    // create preview only
-    const preview = URL.createObjectURL(file);
-    setPreview(preview);
   };
 
   return (

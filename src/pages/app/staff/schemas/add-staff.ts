@@ -7,7 +7,12 @@ const ukMobileRegex = /^(?:\+44?7\d{9}|07\d{9})$/;
 
 export const staffSchema = z
   .object({
-    staffPicture: z.any().optional(),
+    // staffPicture: z.instanceof(File, {
+    //   message: "Profile image is required",
+    // }),
+    staffPicture: z.instanceof(File).optional(),
+
+    // staffPicture: z.instanceof(File).optional(),
 
     firstname: z.string().trim().min(1, "Please enter a first name"),
     lastname: z.string().trim().min(1, "Please enter a last name"),

@@ -1,8 +1,12 @@
 import { Main } from "@/layouts/main";
 import { StaffPrimaryAction } from "./components/table/primary-action";
+import { useStaff } from "@/hooks/staff/useStaff";
 // import { ClientsPrimaryButtons } from "./components/table/client-primary-button";
 
 const Staff = () => {
+  const { data } = useStaff();
+  console.log(data);
+
   return (
     <>
       <Main>

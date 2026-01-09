@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/queryKeys";
 import { StaffProfileApi } from "@/api/staff/profile";
 
-export function useClients(params?: {
+export function useStaff(params?: {
   q?: string;
   page?: number;
   limit?: number;
