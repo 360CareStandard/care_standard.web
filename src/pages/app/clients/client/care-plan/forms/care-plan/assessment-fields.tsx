@@ -146,10 +146,10 @@ export function AssessmentFormFields() {
           <div className="space-y-1.5 ">
             <Label>Review On</Label>
             <div className="relative">
-              <Input
+              <input
                 type="date"
                 {...register("reviewDueDate")}
-                className="pr-8 bg-white"
+                className="bg-white   w-full rounded-md border  h-9 px-3 py-1 text-sm shadow-xs"
               />
               {/* <CalendarIcon className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /> */}
             </div>

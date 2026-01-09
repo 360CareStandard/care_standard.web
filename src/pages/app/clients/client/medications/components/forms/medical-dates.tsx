@@ -1,6 +1,5 @@
 import { useFormContext, useWatch } from "react-hook-form";
 
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MedicationForm } from "../../../../schemas/medication";
 
@@ -16,16 +15,20 @@ export function MedicationDatesSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#F7F9FC] p-2 rounded-lg">
         <div>
           <label className="form-label">Start Date *</label>
-          <Input type="date" {...register("startDate")} className="bg-white" />
+          <input
+            type="date"
+            {...register("startDate")}
+            className="bg-white   w-full rounded-md border  h-9 px-3 py-1 text-sm shadow-xs"
+          />
         </div>
 
         <div>
           <label className="form-label">End Date</label>
-          <Input
+          <input
             type="date"
             disabled={noEndDate}
             {...register("endDate")}
-            className="bg-white"
+            className="bg-white   w-full rounded-md border  h-9 px-3 py-1 text-sm shadow-xs"
           />
         </div>
       </div>

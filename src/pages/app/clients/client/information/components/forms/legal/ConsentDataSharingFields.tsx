@@ -2,7 +2,6 @@
 import * as React from "react";
 import { useFormContext, Controller, useWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -15,8 +14,7 @@ import {
 import type { LegalForm } from "../../../../../schemas/legal-setup";
 
 export function ConsentDataSharingFields() {
-  const { control, register, setValue, getValues, trigger } =
-    useFormContext<LegalForm>();
+  const { control, register, setValue, trigger } = useFormContext<LegalForm>();
 
   // watch the form-backed values we care about
   const dataSharingOn = useWatch({
@@ -31,11 +29,11 @@ export function ConsentDataSharingFields() {
     defaultValue: false,
   });
 
-  const familyAppAllowed = useWatch({
-    control,
-    name: "familyAppPermission",
-    defaultValue: false,
-  });
+  // const familyAppAllowed = useWatch({
+  //   control,
+  //   name: "familyAppPermission",
+  //   defaultValue: false,
+  // });
 
   // dataSharingScope is stored as a comma separated string in the schema.
   // Provide helpers to toggle individual scope bits.
@@ -66,28 +64,28 @@ export function ConsentDataSharingFields() {
     void trigger("dataSharingScope");
   };
 
-  // contact consent booleans are direct fields
-  const contactEmail = useWatch({
-    control,
-    name: "contactConsentEmail",
-    defaultValue: false,
-  });
-  const contactSMS = useWatch({
-    control,
-    name: "contactConsentSMS",
-    defaultValue: false,
-  });
-  const contactPhone = useWatch({
-    control,
-    name: "contactConsentPhone",
-    defaultValue: false,
-  });
+  // // contact consent booleans are direct fields
+  // const contactEmail = useWatch({
+  //   control,
+  //   name: "contactConsentEmail",
+  //   defaultValue: false,
+  // });
+  // const contactSMS = useWatch({
+  //   control,
+  //   name: "contactConsentSMS",
+  //   defaultValue: false,
+  // });
+  // const contactPhone = useWatch({
+  //   control,
+  //   name: "contactConsentPhone",
+  //   defaultValue: false,
+  // });
 
-  // SignedBy (string)
-  const signedBy = useWatch({
-    control,
-    name: "dataSharingConsentSignedBy",
-  });
+  // // SignedBy (string)
+  // const signedBy = useWatch({
+  //   control,
+  //   name: "dataSharingConsentSignedBy",
+  // });
 
   // Auto-clear dependent fields when toggles switch off
   React.useEffect(() => {
@@ -103,11 +101,11 @@ export function ConsentDataSharingFields() {
     }
   }, [dataSharingOn, setValue, trigger]);
 
-  const photoConsentDate = useWatch({
-    control,
-    name: "photoConsentDate",
-    defaultValue: "",
-  });
+  // const photoConsentDate = useWatch({
+  //   control,
+  //   name: "photoConsentDate",
+  //   defaultValue: "",
+  // });
 
   React.useEffect(() => {
     if (!mediaConsentOn) {
@@ -147,11 +145,11 @@ export function ConsentDataSharingFields() {
 
             <div>
               <Label className="mb-1 block">Consent Date</Label>
-              <Input
+              <input
                 {...register("dataSharingConsentDate")}
                 type="date"
                 placeholder="mm/dd/yyyy"
-                className="bg-white"
+                className="bg-white  w-full rounded-md border  h-9 px-3 py-1 text-sm shadow-xs"
               />
             </div>
 
@@ -246,11 +244,11 @@ export function ConsentDataSharingFields() {
             <div>
               <div>
                 <Label className="mb-1 block">Photo Consent Date</Label>
-                <Input
+                <input
                   {...register("photoConsentDate")}
                   type="date"
                   placeholder="mm/dd/yyyy"
-                  className="bg-white"
+                  className="bg-white  w-full rounded-md border  h-9 px-3 py-1 text-sm shadow-xs"
                 />
               </div>
             </div>

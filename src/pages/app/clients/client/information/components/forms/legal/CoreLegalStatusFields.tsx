@@ -85,11 +85,11 @@ export function CoreLegalStatusFields() {
           </div>
           <div className="sm:col-span-1">
             <Label className="mb-1 block">Valid From</Label>
-            <Input
+            <input
               {...register("poaValidFrom")}
               type="date"
               placeholder="mm/dd/yyyy"
-              className="bg-white text-xs"
+              className="bg-white  w-full rounded-md border  h-9 px-3 py-1 text-sm shadow-xs"
             />
           </div>
         </div>
@@ -157,11 +157,11 @@ export function CoreLegalStatusFields() {
             </div>
             <div>
               <Label className="mb-1 block">Signed Date</Label>
-              <Input
+              <input
                 {...register("dnarSignedDate")}
                 type="date"
                 placeholder="mm/dd/yyyy"
-                className="bg-white"
+                className="bg-white  w-full rounded-md border  h-9 px-3 py-1 text-sm shadow-xs"
               />
             </div>
           </div>
@@ -259,18 +259,18 @@ export function CoreLegalStatusFields() {
             </div>
             <div>
               <Label className="mb-1 block">Started Date</Label>
-              <Input
+              <input
                 {...register("legalStartDate")}
-                className="bg-white"
                 type="date"
                 placeholder="mm/dd/yyyy"
+                className="bg-white  w-full rounded-md border  h-9 px-3 py-1 text-sm shadow-xs"
               />
             </div>
             <div>
               <Label className="mb-1 block">End Date</Label>
-              <Input
+              <input
                 {...register("legalEndDate")}
-                className="bg-white"
+                className="bg-white  w-full rounded-md border  h-9 px-3 py-1 text-sm shadow-xs"
                 type="date"
                 placeholder="mm/dd/yyyy"
               />

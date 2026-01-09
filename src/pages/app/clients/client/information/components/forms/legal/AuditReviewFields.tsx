@@ -2,7 +2,6 @@
 import * as React from "react";
 import { useFormContext, Controller, useWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -30,10 +29,10 @@ export function AuditReviewFields() {
     name: "reviewDueDate",
   }) as string | undefined;
 
-  const responsiblePerson = useWatch({
-    control,
-    name: "responsiblePerson",
-  }) as string | undefined;
+  // const responsiblePerson = useWatch({
+  //   control,
+  //   name: "responsiblePerson",
+  // }) as string | undefined;
 
   const notesSummary = useWatch({
     control,
@@ -81,9 +80,10 @@ export function AuditReviewFields() {
           </div>
 
           {/* date input bound to reviewDueDate */}
-          <Input
+          <input
             type="date"
             placeholder="mm/dd/yyyy"
+            className="bg-white  w-full rounded-md border  h-9 px-3 py-1 text-sm shadow-xs"
             {...register("reviewDueDate")}
             value={reviewDueDate ?? ""}
             onChange={(e) => {

@@ -47,7 +47,7 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
 
         <div className="relative">
           {/* Put inputProps first so our computed props win last */}
-          <Input
+          <input
             {...inputProps}
             id={inputId}
             ref={ref}
@@ -57,7 +57,7 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
               hasError ? errorId : undefined
             )}
             className={cn(
-              "px-4 text-base h-11 placeholder:text-[#667085] focus-visible:ring-2",
+              "w-full text-base rounded-md border px-3 h-11 ",
               hasError &&
                 "border-red-300 bg-red-50 text-red-900 placeholder:text-red-400 focus-visible:ring-red-500 focus-visible:border-red-500",
               hasError ? "pr-10" : undefined,
