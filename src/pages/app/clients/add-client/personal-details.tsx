@@ -19,7 +19,11 @@ const PersonalDetails = ({ attemptedNext }: Props) => {
   const initials = `${first?.[0] ?? "J"}${last?.[0] ?? "W"}`;
   return (
     <div className="grid gap-4">
-      <ProfileImageField setValue={setValue} initials={initials} />
+      <ProfileImageField
+        watch={watch}
+        setValue={setValue}
+        initials={initials}
+      />
 
       <RHFSelectField
         control={control}

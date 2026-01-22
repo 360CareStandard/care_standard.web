@@ -28,5 +28,13 @@ export const qk = {
   workspace: ["workspace"] as const,
 
   //staff
-  staff: (params?: Record<string, unknown>) => ["staff", params] as const,
+  staffs: (params?: Record<string, unknown>) => ["staff", params] as const,
+  staff: (id: string) => ["staff", id] as const,
+  staffContacts: (staffId?: string) => ["staff-contacts", staffId] as const,
+  // unique key for a single contact
+  staffContact: (staffId?: string, contactId?: string) =>
+    ["staff-contact", staffId, contactId] as const,
+  staffWork: (staffId?: string) => ["staff-work", staffId] as const,
+  staffEmployment: (staffId?: string) => ["staff-employment", staffId] as const,
+  staffSkill: (staffId?: string) => ["staff-skill", staffId] as const,
 };

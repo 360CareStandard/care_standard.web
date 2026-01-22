@@ -1,11 +1,12 @@
 import { Main } from "@/layouts/main";
 import { StaffPrimaryAction } from "./components/table/primary-action";
 import { useStaff } from "@/hooks/staff/useStaff";
+import StaffTable from "./components/table/staff-table";
 // import { ClientsPrimaryButtons } from "./components/table/client-primary-button";
 
 const Staff = () => {
   const { data } = useStaff();
-  console.log(data);
+  console.log(data?.staffs);
 
   return (
     <>
@@ -22,7 +23,7 @@ const Staff = () => {
       rounded-lg
       "
         >
-          {/* <ClientsTable initialPage={1} initialLimit={10} /> */}
+          <StaffTable initialPage={1} initialLimit={10} />
         </div>
       </Main>
     </>

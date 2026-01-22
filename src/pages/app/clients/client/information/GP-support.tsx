@@ -52,7 +52,7 @@ const GPsupport = ({ clientId }: Props) => {
 
   const { data: clientGpSupport, isLoading } = useClientGpSupport(
     clientId,
-    Boolean(clientId)
+    Boolean(clientId),
   );
 
   const methods = useForm<GpSupportForm>({
@@ -63,14 +63,6 @@ const GPsupport = ({ clientId }: Props) => {
     mode: "onChange",
     defaultValues: initialFormValues as GpSupportForm,
   });
-
-  // React.useEffect(() => {
-  //   const sub = methods.watch((v) => {
-  //     // remove or reduce logging in production
-  //     console.log("GP support form (live):", v);
-  //   });
-  //   return () => sub.unsubscribe();
-  // }, [methods]);
 
   function mapApiToFormValues(api?: any): Partial<GpSupportForm> {
     if (!api) return initialFormValues;
@@ -83,7 +75,7 @@ const GPsupport = ({ clientId }: Props) => {
         practiceAddress: api.gpDetails?.practiceAddress ?? "",
       },
       otherHealthcareProfessionals: Array.isArray(
-        api.otherHealthcareProfessionals
+        api.otherHealthcareProfessionals,
       )
         ? api.otherHealthcareProfessionals.map((p: any) => ({
             name: p.name ?? "",

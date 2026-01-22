@@ -1,5 +1,6 @@
 // src/api/clients.ts
 import { api } from "@/lib/axios";
+import { StaffListResponse, StaffResponse } from "@/types/staff";
 
 export const StaffProfileApi = {
   list: async (params?: { q?: string; page?: number; limit?: number }) => {
@@ -9,9 +10,11 @@ export const StaffProfileApi = {
       search: params?.q ?? undefined,
     };
     return api
-      .get<any[]>("/staff/staffRecords", { params: safe })
-      .then((r) => r.data);
+      .get<StaffListResponse>("/staff/staffRecords", { params: safe })
+      .then((r) => r.data.data);
   },
+  get: (id: string) =>
+    api.get<StaffResponse>(`/staff/staffRecord/${id}`).then((r) => r.data.data),
 
   update: (id: string, formData: FormData) =>
     api

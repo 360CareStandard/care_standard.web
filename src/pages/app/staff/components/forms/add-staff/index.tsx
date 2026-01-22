@@ -49,6 +49,7 @@ const AddStaff = ({ open, setOpen }: Props) => {
     ],
     []
   );
+
   const firstStep = steps[0].id;
   const lastStep = steps[steps.length - 1].id;
 
@@ -128,8 +129,9 @@ const AddStaff = ({ open, setOpen }: Props) => {
     useCreateStaff();
 
   const onValidSubmit = async (vals: StaffFormData) => {
-    // const imageSrc = useWatch();
-    //  const src = watch("staffPicture");
+    //  const file = methods.watch("staffPicture");
+
+    // const hasImage = file instanceof File;
 
     try {
       const formData = new FormData();

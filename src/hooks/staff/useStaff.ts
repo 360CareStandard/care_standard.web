@@ -9,9 +9,18 @@ export function useStaff(params?: {
   limit?: number;
 }) {
   return useQuery({
-    queryKey: qk.staff(params),
+    queryKey: qk.staffs(params),
     queryFn: () => StaffProfileApi.list(params),
     select: (res) => res,
+    staleTime: 60_000,
+  });
+}
+export function useStaffDetails(id?: string, enabled = true) {
+  return useQuery({
+    queryKey: id ? qk.staff(id) : ["staff", "nil"],
+    queryFn: () => StaffProfileApi.get(id!),
+
+    enabled: Boolean(id) && enabled,
     staleTime: 60_000,
   });
 }
@@ -25,7 +34,7 @@ export function useCreateStaff() {
       return StaffProfileApi.post(formData);
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: qk.staff() });
+      qc.invalidateQueries({ queryKey: qk.staffs() });
     },
   });
 }
@@ -40,7 +49,7 @@ export function useUpdateStaff(staffId: string) {
       return StaffProfileApi.update(staffId, formData);
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: qk.staff() });
+      qc.invalidateQueries({ queryKey: qk.staff(staffId) });
     },
   });
 }
