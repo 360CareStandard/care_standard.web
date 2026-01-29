@@ -1,9 +1,13 @@
 import { SheetForm } from "@/components/shared/sheet-form";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { StaffFormData, staffSchema } from "../../../schemas/add-staff";
 import { FieldPath, FormProvider, Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateStaff } from "@/hooks/staff/useStaff";
+import {
+  useCreateStaff,
+  useStaffDetails,
+  useUpdateStaff,
+} from "@/hooks/staff/useStaff";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { StepperHeader } from "@/pages/app/clients/components/stepper-header";
@@ -12,13 +16,44 @@ import ContactDetails from "./contact-details";
 import RoleAndStatus from "./role&status";
 import Highlights from "./higlights";
 import { Spinner } from "@/components/shared/spinner";
+import { handleFormApiError } from "@/lib/handle-form-error";
+import { Staff } from "@/types/staff";
+
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  staffId?: string;
+  startStep: number; // 👈 new
 }
+
 const resolver = zodResolver(staffSchema) as unknown as Resolver<StaffFormData>;
 
-const AddStaff = ({ open, setOpen }: Props) => {
+const AddStaff = ({ open, setOpen, staffId, startStep }: Props) => {
+  const isEdit = Boolean(staffId);
+
+  const { data: staff } = useStaffDetails(staffId, isEdit);
+
+  function mapStaffToForm(data: Staff): StaffFormData {
+    return {
+      firstname: data.user.firstname ?? "",
+      lastname: data.user.lastname ?? "",
+      email: data.user.email ?? "",
+      preferredName: data.preferredName ?? "",
+      tittle: data.tittle ?? "",
+      pronouns: data.pronouns ?? "",
+      gender: data.gender ?? "",
+      dob: data.dob?.slice(0, 10) ?? "",
+      primaryPhoneNumber: data.primaryPhoneNumber ?? "",
+      primaryPhoneNumberType: data.primaryPhoneNumberType ?? "",
+      staffRole: data.staffRole ?? "Carer",
+      status: data.status ?? "active",
+      adminAccessLevel: data.adminAccessLevel ?? false,
+      highlights: data.highlights ?? "",
+      secondaryPhoneNumber: data.secondaryPhoneNumber ?? "",
+      secondaryPhoneNumberType: data.secondaryPhoneNumberType ?? "",
+    };
+  }
+
   const methods = useForm<StaffFormData>({
     resolver,
     defaultValues: {
@@ -36,10 +71,15 @@ const AddStaff = ({ open, setOpen }: Props) => {
       status: "active",
       adminAccessLevel: false,
     },
-    mode: "onSubmit",
+    mode: "onTouched",
     reValidateMode: "onChange",
     shouldUnregister: false,
   });
+  React.useEffect(() => {
+    if (staff && isEdit) {
+      methods.reset(mapStaffToForm(staff));
+    }
+  }, [staff, isEdit]);
   const steps = useMemo(
     () => [
       { id: 1, label: "Personal Details" },
@@ -47,7 +87,7 @@ const AddStaff = ({ open, setOpen }: Props) => {
       { id: 3, label: "Role & Status" },
       { id: 4, label: "Highlights" },
     ],
-    []
+    [],
   );
 
   const firstStep = steps[0].id;
@@ -68,22 +108,20 @@ const AddStaff = ({ open, setOpen }: Props) => {
     3: ["staffRole", "status", "adminAccessLevel"],
     4: ["highlights"],
   } as const;
+  const [currentStep, setCurrentStep] = React.useState(startStep);
 
-  const [currentStep, setCurrentStep] = useState<number>(firstStep);
+  // keep step in sync when sheet opens
+  React.useEffect(() => {
+    if (open) {
+      setCurrentStep(startStep);
+    }
+  }, [open, startStep]);
+  // const [currentStep, setCurrentStep] = useState<number>(firstStep);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [isStepValidating, setIsStepValidating] = useState(false);
   const [attemptedNext, setAttemptedNext] = useState(false); // gate error display
   const { formState } = methods;
   const errors = formState.errors;
-  // auto-clear stale errors for fields in the current step as the user types
-  const watchValues = methods.watch(stepFields[currentStep]);
-  useEffect(() => {
-    const fields = stepFields[currentStep];
-    if (fields.length) {
-      void methods.trigger([...fields]); // re-run validation on change
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(watchValues), currentStep]);
 
   const validateCurrentStep = async () => {
     const fields = stepFields[currentStep] ?? [];
@@ -125,47 +163,41 @@ const AddStaff = ({ open, setOpen }: Props) => {
       }
     }
   };
-  const { mutateAsync: createStaff, isPending: isSubmitting } =
-    useCreateStaff();
+  const { mutateAsync: createStaff, isPending: isCreating } = useCreateStaff();
+
+  const { mutateAsync: updateStaff, isPending: isUpdating } = useUpdateStaff(
+    staffId!,
+  );
+
+  const isSubmitting = isCreating || isUpdating;
 
   const onValidSubmit = async (vals: StaffFormData) => {
-    //  const file = methods.watch("staffPicture");
-
-    // const hasImage = file instanceof File;
-
     try {
       const formData = new FormData();
 
       Object.entries(vals).forEach(([key, value]) => {
-        if (value === undefined || value === null) return;
-
-        if (value instanceof File) {
-          formData.append(key, value); // <-- real binary
-        } else {
-          formData.append(key, String(value)); // <-- strings
-        }
+        if (value == null) return;
+        formData.append(key, value instanceof File ? value : String(value));
       });
 
-      await createStaff(formData);
+      if (isEdit) {
+        await updateStaff(formData);
+        toast.success("Staff updated");
+      } else {
+        await createStaff(formData);
+        toast.success("Staff created");
+      }
 
-      toast.success("Staff created");
+      setOpen(false);
       methods.reset();
       setCurrentStep(firstStep);
       setAttemptedNext(false);
-      setOpen(false);
-    } catch (err: any) {
-      const serverErrors = err?.response?.data?.errors as
-        | { field: keyof StaffFormData; message: string }[]
-        | undefined;
-
-      if (serverErrors?.length) {
-        serverErrors.forEach(({ field, message }) => {
-          methods.setError(field, { type: "server", message });
-        });
-      } else {
-        toast.error("Failed to create staff");
-        console.error(err);
-      }
+    } catch (err) {
+      handleFormApiError<StaffFormData>(
+        err,
+        methods.setError,
+        isEdit ? "Failed to update staff" : "Failed to create staff",
+      );
     }
   };
 
@@ -189,13 +221,15 @@ const AddStaff = ({ open, setOpen }: Props) => {
           //     methods.reset(initialPreferencesValues as any);
           //   }
         }}
-        title="Add New Staff"
+        title={isEdit ? "Edit Staff" : "Add New Staff"}
         headerClassName="bg-[#E4E7EC] py-2.5"
         submitLabel={
           currentStep < lastStep ? (
             "Next"
           ) : isSubmitting ? (
             <Spinner size="sm" />
+          ) : isEdit ? (
+            "Save Changes"
           ) : (
             "Create New Staff"
           )

@@ -51,6 +51,7 @@ const Work = ({ staffId }: Props) => {
       any
     >,
     mode: "onChange",
+    shouldUnregister: false,
     defaultValues: initialFormValues as StaffWorkForm,
   });
 

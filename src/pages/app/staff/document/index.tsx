@@ -2,6 +2,8 @@ import * as React from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Employment from "./employment";
+import Document from "./document";
+import AdditionalDocument from "./additional-document";
 
 const TAB_KEYS = ["employment", "document", "additional-documents"] as const;
 type TabKey = (typeof TAB_KEYS)[number];
@@ -80,10 +82,10 @@ export default function OnboardingDocument() {
         </TabsContent>
 
         <TabsContent value="document" className="pt-4">
-          <div>Document here</div>
+          <Document staffId={staffId as string} />
         </TabsContent>
         <TabsContent value="additional-documents" className="pt-4">
-          <div>Additional Documents here</div>
+          <AdditionalDocument staffId={staffId as string} />
         </TabsContent>
       </Tabs>
     </div>

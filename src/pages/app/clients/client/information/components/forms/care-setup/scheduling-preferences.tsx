@@ -1,4 +1,4 @@
-import { useFormContext, Controller, useWatch } from "react-hook-form";
+import { useFormContext, Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import Select, { MultiValue } from "react-select";
@@ -155,7 +155,7 @@ export function SchedulingPreferencesFields() {
               .filter(Boolean);
 
             const handleLanguageChange = (
-              selected: MultiValue<LanguageOption>
+              selected: MultiValue<LanguageOption>,
             ) => {
               const vals = (selected ?? []).map((o) => o.value);
               field.onChange(vals);

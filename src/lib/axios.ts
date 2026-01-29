@@ -26,19 +26,41 @@ api.interceptors.request.use((config) => {
 });
 
 // response: handle 401/expired token
+// lib/axios.ts
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const status = error?.response?.status;
+
+    // 1️⃣ Auth handling (keep as-is)
     if (status === 401) {
-      // clear auth and optionally redirect
       useAuthStore.getState().clearAuth();
-      // if you want a soft redirect on client pages:
+
       if (typeof window !== "undefined") {
         const current = window.location.pathname;
         window.location.href = `/login?next=${encodeURIComponent(current)}`;
       }
+
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
+
+    // 2️⃣ Validation / business logic errors (IMPORTANT)
+    if (status === 400 || status === 422) {
+      // Ensure error shape is preserved
+      return Promise.reject(error);
+    }
+
+    // 3️⃣ Fallback: normalize unknown server errors
+    return Promise.reject({
+      ...error,
+      response: {
+        ...error.response,
+        data: {
+          message:
+            error?.response?.data?.message ??
+            "Something went wrong. Please try again.",
+        },
+      },
+    });
+  },
 );

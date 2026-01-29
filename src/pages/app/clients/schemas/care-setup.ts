@@ -4,11 +4,11 @@ import { z } from "zod";
 /**
  * Helper: accept numeric strings or numbers, produce number
  */
-const NumberLike = z.union([z.string(), z.number()]).transform((val) => {
-  if (typeof val === "number") return val;
-  const parsed = Number(val);
-  return Number.isFinite(parsed) ? parsed : undefined;
-});
+// const NumberLike = z.union([z.string(), z.number()]).transform((val) => {
+//   if (typeof val === "number") return val;
+//   const parsed = Number(val);
+//   return Number.isFinite(parsed) ? parsed : undefined;
+// });
 export const SkillEnum = z.enum([
   "Medication",
   "Dementia Care",
@@ -74,7 +74,11 @@ export const CareSetupApiSchema = z.object({
   startDate: z.string().trim().min(1, "Please enter a date"),
   status: StatusEnum,
   visitDurationPreset: VisitDurationEnum.optional(),
-  authorisedHoursPerWeek: NumberLike.optional(),
+  authorisedHoursPerWeek: z
+    .union([z.number(), z.nan()])
+    .transform((v) => (Number.isNaN(v) ? null : v))
+    .nullable()
+    .optional(),
 
   // Booleans
   doubleUpVisitRequired: z.boolean().default(false).optional(),
@@ -96,7 +100,11 @@ export const CareSetupApiSchema = z.object({
   fundingSource: FundingSourceEnum.optional(),
   funder: z.string().optional(),
   authorizationNumber: z.string().optional(),
-  budgetCap: NumberLike.optional(),
+  budgetCap: z
+    .union([z.number(), z.nan()])
+    .transform((v) => (Number.isNaN(v) ? null : v))
+    .nullable()
+    .optional(),
   // Safety / checkin
   checkInMethod: z
     .string()
@@ -105,10 +113,14 @@ export const CareSetupApiSchema = z.object({
       (s) => ["gps", "nfc", "qr code", "qr-code", "qr_code"].includes(s) || !s,
       {
         message: "Invalid check in method",
-      }
+      },
     )
     .optional(),
-  lateVisitAlertThreshold: NumberLike.optional(),
+  lateVisitAlertThreshold: z
+    .union([z.number(), z.nan()])
+    .transform((v) => (Number.isNaN(v) ? null : v))
+    .nullable()
+    .optional(),
   escalationContactId: z.string().uuid().optional(), // name matches API field in example: null
   loneWorkerAlertEnabled: z.boolean().default(false),
 });

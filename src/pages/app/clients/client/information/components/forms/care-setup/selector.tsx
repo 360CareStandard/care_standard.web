@@ -7,46 +7,27 @@ import Select, {
 import { useFormContext, Controller, useWatch } from "react-hook-form";
 import { CareSetupForm } from "../../../../../schemas/care-setup";
 import { customSelectStyles as userCustomStyles } from "@/styles/react-select";
-import { Carer } from "../../../../components/carer-selection";
 import { Search, User, X } from "lucide-react";
+import { useStaff } from "@/hooks/staff/useStaff";
+import { Staff } from "@/types/staff";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 /**
  * CarerSelector with clearer visual difference for already-picked carers
  */
+type CarerOption = {
+  value: string;
+  label: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  profileImage: string;
+};
+
 export default function CarerSelector() {
   const { control } = useFormContext<CareSetupForm>();
-
-  // sample carers (replace with real data source)
-  const carers: Carer[] = [
-    {
-      id: "b9a680cb-3c6b-4680-86e5-06b476399eb8",
-      name: "John Malik",
-      email: "john.john@careservice.com",
-      initials: "JM",
-      skills: ["Medication", "Dementia Care"],
-    },
-    {
-      id: "2a4270a9-4d47-442a-8fd8-dc1d839ab722",
-      name: "A. Brown",
-      email: "anna.brown@careservice.com",
-      initials: "AB",
-      skills: ["Moving & Handling", "PEG Feeding"],
-    },
-    {
-      id: "52ec9599-6113-4114-b6d0-333977053459",
-      name: "S. Johnson",
-      email: "sarah.john@careservice.com",
-      initials: "SJ",
-      skills: ["Medication", "Dementia Care"],
-    },
-    {
-      id: "e30b13d1-e13f-4e0a-9ef1-690ecc44d48e",
-      name: "M. Davis",
-      email: "mike.davis@careservice.com",
-      initials: "MD",
-      skills: ["Catheter Care", "Moving & Handling"],
-    },
-  ];
+  const { data, isLoading } = useStaff();
+  const carers = data ? data.staffs : [];
 
   // watch both naming variants (avoidCarers vs avoidedCarers) so this works with either form shape
   const preferredIds = useWatch({ control, name: "preferredCarers" }) as
@@ -60,21 +41,29 @@ export default function CarerSelector() {
   // portal target for menus (if used inside sheet)
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const [portalTarget, setPortalTarget] = React.useState<HTMLElement | null>(
-    null
+    null,
   );
   React.useLayoutEffect(() => {
     if (containerRef.current) setPortalTarget(containerRef.current);
     else if (typeof document !== "undefined") setPortalTarget(document.body);
   }, []);
 
+  const getInitials = (firstname: string, lastname: string) =>
+    `${firstname[0]}${lastname[0]}`.toUpperCase();
+
   // build options
-  const baseOptions = carers.map((c) => ({
-    value: c.id,
-    label: c.name,
-    email: c.email,
-    skills: c.skills,
-    initials: c.initials,
-  }));
+  const baseOptions: CarerOption[] = React.useMemo(
+    () =>
+      carers.map((c: Staff) => ({
+        value: c.id,
+        label: `${c.user.firstname} ${c.user.lastname}`,
+        email: c.user.email,
+        firstname: c.user.firstname,
+        lastname: c.user.lastname,
+        profileImage: c.profilePicture || "",
+      })),
+    [carers],
+  );
 
   const preferredOptions = baseOptions;
   const avoidOptions = baseOptions;
@@ -90,8 +79,9 @@ export default function CarerSelector() {
      ----------------------- */
 
   // Option component: will show badge + dim the row if disabled (already selected in the other list)
-  const CarerOption = (props: OptionProps<any, true>) => {
+  const CarerOption = (props: OptionProps<CarerOption, true>) => {
     const { data, innerRef, innerProps, isDisabled } = props;
+
     // determine if this option is already chosen in preferred/avoid lists
     const inPreferred = (preferredIds ?? []).includes(data.value);
     const inAvoid = (avoidedIds ?? []).includes(data.value);
@@ -106,17 +96,25 @@ export default function CarerSelector() {
           isDisabled ? "opacity-60 pointer-events-none" : "hover:bg-gray-50"
         }`}
       >
-        <div
-          className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold mr-3 ${
+        <Avatar
+          className={`w-10 h-10 font-semibold mr-3 border ${
             inPreferred
-              ? "bg-emerald-100 text-emerald-800"
+              ? "border-2 border-emerald-100 text-primary"
               : inAvoid
-              ? "bg-red-100 text-red-800"
-              : "bg-gray-200 text-gray-700"
+                ? "border-2 border-red-100 text-red-800"
+                : "border-2 border-gray-200 text-gray-700"
           }`}
         >
-          {data.initials}
-        </div>
+          {data.profileImage ? (
+            <AvatarImage
+              src={data.profileImage}
+              alt={`${data.firstname} avatar`}
+            />
+          ) : null}
+          <AvatarFallback className="font-semibold">
+            {getInitials(data.firstname, data.lastname)}
+          </AvatarFallback>
+        </Avatar>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
@@ -138,7 +136,7 @@ export default function CarerSelector() {
             {data.email}
           </div>
 
-          <div className="flex gap-2 mt-2 flex-wrap">
+          {/* <div className="flex gap-2 mt-2 flex-wrap">
             {data.skills?.map((s: string, i: number) => (
               <span
                 key={i}
@@ -147,14 +145,14 @@ export default function CarerSelector() {
                 {s}
               </span>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
     );
   };
 
   // MultiValue for Preferred: avatar + label styled green
-  const PreferredMultiValue = (props: MultiValueProps<any, true>) => {
+  const PreferredMultiValue = (props: MultiValueProps<CarerOption, true>) => {
     const { data, removeProps } = props;
     return (
       <div className="flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg mr-2 ">
@@ -202,7 +200,7 @@ export default function CarerSelector() {
         render={({ field }) => {
           const value = (field.value ?? []) as string[];
           const selected = preferredOptions.filter((o) =>
-            value.includes(o.value)
+            value.includes(o.value),
           );
 
           return (
@@ -218,6 +216,7 @@ export default function CarerSelector() {
                 isMulti
                 options={preferredOptions}
                 value={selected}
+                isLoading={isLoading}
                 onChange={(opts) =>
                   field.onChange((opts ?? []).map((o: any) => o.value))
                 }

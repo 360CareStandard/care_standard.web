@@ -2,13 +2,19 @@
 import React from "react";
 import { TextField } from "@/components/shared/text-field";
 import { StaffWorkForm } from "../../schemas/work";
-import { useController, UseFormSetValue, Control } from "react-hook-form";
+import {
+  useController,
+  UseFormSetValue,
+  Control,
+  FieldErrors,
+} from "react-hook-form";
 
 type Props = {
   control: Control<StaffWorkForm>;
   setValue: UseFormSetValue<StaffWorkForm>;
   name?: "address";
   onSelected?: () => void;
+  errors: FieldErrors<StaffWorkForm>;
 };
 type Suggestion = {
   display_name: string;
@@ -22,6 +28,7 @@ export function AddressAutocomplete({
   setValue,
   name = "address",
   onSelected,
+  errors,
 }: Props) {
   const {
     field: { value, onChange },
@@ -65,11 +72,15 @@ export function AddressAutocomplete({
   }
 
   React.useEffect(() => {
-    if (!query || !isUserTypingRef.current) {
+    if (!query) {
       setItems([]);
       return;
     }
 
+    if (!isUserTypingRef.current) {
+      // value came from reset / selection
+      return;
+    }
     abortRef.current?.abort();
     if (timerRef.current) clearTimeout(timerRef.current);
 
@@ -91,7 +102,10 @@ export function AddressAutocomplete({
     const fullAddress = s.display_name;
     const lat = Number(s.lat);
     const lng = Number(s.lon);
-    onChange(fullAddress); // 👈 THIS is critical
+
+    isUserTypingRef.current = false; // ✅ restore
+
+    onChange(fullAddress);
 
     setValue("latitude", lat, { shouldDirty: true, shouldValidate: true });
     setValue("longitude", lng, { shouldDirty: true, shouldValidate: true });
@@ -100,7 +114,6 @@ export function AddressAutocomplete({
       `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`,
       { shouldDirty: true },
     );
-    isUserTypingRef.current = false;
 
     setItems([]);
     onSelected?.();
@@ -115,7 +128,7 @@ export function AddressAutocomplete({
           isUserTypingRef.current = true;
           onChange(e.target.value);
         }}
-        onBlur={() => setItems([])}
+        error={errors.address?.message}
         placeholder="Search address (street, postcode, town...)"
       />
 
@@ -129,7 +142,10 @@ export function AddressAutocomplete({
             <li
               key={`${i}-${s.display_name}`}
               className="cursor-pointer px-3 py-2 hover:bg-slate-50"
-              onClick={() => handleSelect(s)}
+              onMouseDown={(e) => {
+                e.preventDefault(); // ⬅️ critical
+                handleSelect(s);
+              }}
             >
               <div className="text-sm">{s.display_name}</div>
             </li>

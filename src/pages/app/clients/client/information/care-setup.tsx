@@ -25,10 +25,10 @@ import { Edit } from "iconsax-react";
 
 // in CareSetup component when creating `useForm`
 const initialFormValues: Partial<CareSetupForm> = {
-  packageId: undefined,
+  packageId: "",
   startDate: "",
   status: "active", // now TypeScript sees this as CareSetupForm['status']
-  visitDurationPreset: undefined,
+  visitDurationPreset: "45",
   doubleUpVisitRequired: false,
   overnightCareRequired: false,
   overnightCareType: "sleep-in",
@@ -43,8 +43,8 @@ const initialFormValues: Partial<CareSetupForm> = {
   fundingSource: "private",
   funder: "",
   authorizationNumber: "",
-  authorisedHoursPerWeek: 0,
-  budgetCap: 0,
+  authorisedHoursPerWeek: 1,
+  budgetCap: 1,
   checkInMethod: "gps",
   lateVisitAlertThreshold: 10,
   escalationContactId: undefined,
@@ -59,12 +59,12 @@ const CareSetup = ({ clientId }: Props) => {
   const createCareSetup = useCreateClientCarePlan(clientId);
   const updateCareSetup = useUpdateClientCarePlan(clientId);
   const [editingSetupId, setEditingSetupId] = React.useState<string | null>(
-    null
+    null,
   );
 
   const { data: clientSetupDetails, isLoading } = useClientCareSetup(
     clientId,
-    Boolean(clientId)
+    Boolean(clientId),
   );
   // console.log(clientSetupDetails);
 
@@ -91,7 +91,7 @@ const CareSetup = ({ clientId }: Props) => {
 
   // inside CareSetup component (above return or near top)
   function mapApiToFormValues(
-    apiData: ClientClientCarePlan
+    apiData: ClientClientCarePlan,
   ): Partial<CareSetupForm> {
     // Defensive mapping — pick the fields your form expects and normalize types
     const plan = apiData ?? {};
@@ -128,9 +128,9 @@ const CareSetup = ({ clientId }: Props) => {
         typeof plan.lateVisitAlertThreshold === "number"
           ? plan.lateVisitAlertThreshold
           : plan.lateVisitAlertThreshold === null ||
-            plan.lateVisitAlertThreshold === undefined
-          ? undefined
-          : Number(plan.lateVisitAlertThreshold) || undefined,
+              plan.lateVisitAlertThreshold === undefined
+            ? undefined
+            : Number(plan.lateVisitAlertThreshold) || undefined,
       escalationContactId: plan.escalationContactId ?? undefined,
       loneWorkerAlertEnabled: !!plan.loneWorkerAlertEnabled,
       authorisedHoursPerWeek:

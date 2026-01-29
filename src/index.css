@@ -43,8 +43,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   /* Updated font configuration to use Plus Jakarta Sans variable */
-  --font-sans: var(--font-plus-jakarta-sans), ui-sans-serif, system-ui,
-    sans-serif;
+  --font-sans:
+    var(--font-plus-jakarta-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
 
   /* Added design system color palette variables */
@@ -184,7 +184,10 @@
   color: var(--foreground);
   padding-left: 0.5rem; /* pl-2 */
   padding-right: 0.5rem; /* pr-2 */
-  transition: border-color 150ms, box-shadow 150ms, background-color 150ms;
+  transition:
+    border-color 150ms,
+    box-shadow 150ms,
+    background-color 150ms;
 }
 
 /* Focus ring to match shadcn (focus-visible:ring-2) */
@@ -356,7 +359,7 @@
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .motion-safe\\:animate-logo-pop {
-    animation: none !important;
+    animation: none;
   }
 }
 @layer base {
@@ -374,4 +377,124 @@
 
 .form-error {
   @apply text-xs text-red-500 mt-1;
+}
+
+/* Calendar */
+
+:root {
+  --fc-border-color: lightgray;
+  --fc-page-bg-color: none;
+}
+.dark {
+  --fc-border-color: gray;
+}
+
+/* Removing borders */
+
+.fc-scrollgrid {
+  @apply border-none;
+}
+
+.fc tbody tr:last-child td:first-child {
+  @apply border-l-0;
+}
+
+.fc tbody tr:last-child td:last-child {
+  @apply border-r-0 border-b-0;
+}
+
+.fc-theme-standard th {
+  @apply border-r-0;
+}
+
+/* Setting header size */
+
+.fc-col-header-cell-cushion {
+  @apply flex h-14 items-center;
+}
+
+/* Setting left time size */
+
+.fc-timegrid-slot {
+  @apply h-6;
+}
+
+.fc-timegrid-slot-label-cushion {
+  @apply text-xs font-light;
+}
+
+/* Setting cell colors */
+
+td.fc-daygrid-day.fc-day {
+  @apply hover:bg-secondary;
+}
+
+td.fc-daygrid-day.fc-day.fc-day-today {
+  @apply bg-secondary-foreground;
+}
+
+.fc-day-today {
+  @apply bg-inherit;
+}
+
+.fc-day-other {
+  @apply bg-gray-200 dark:bg-secondary;
+}
+
+.fc-daygrid-day-top {
+  @apply flex flex-row h-8 w-full items-center;
+}
+
+.fc-daygrid-dot-event {
+  @apply hover:bg-blue-50;
+}
+
+.fc-daygrid-event-harness {
+  @apply pr-2 hover:bg-none hover:scale-[1.02] transition-all hover:cursor-pointer;
+}
+
+.fc-timegrid-event-harness {
+  @apply hover:bg-none hover:cursor-pointer;
+}
+
+.fc-event-main {
+  @apply flex w-full h-full;
+}
+
+.fc-event {
+  @apply flex border-none min-w-full;
+}
+
+.fc-daygrid-event {
+  @apply mx-1;
+}
+
+.fc-timegrid-event {
+  @apply px-1;
+}
+
+td.fc-daygrid-day.fc-day {
+  pointer-events: none;
+}
+
+.fc-event {
+  pointer-events: all;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.fc-daygrid-event-harness {
+  pointer-events: all;
+}
+
+.fc-daygrid-day-top {
+  pointer-events: none;
+}
+
+.fc-timegrid-slot {
+  border-color: #eef2f7;
+}
+
+.fc-timegrid-col {
+  background-color: #ffffff;
 }

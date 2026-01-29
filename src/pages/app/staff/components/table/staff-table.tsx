@@ -87,7 +87,7 @@ export function StaffTable({
     if (staffData) {
       const serverPageIndex = Math.max(
         0,
-        Number(staffData.pagination?.page) - 1
+        Number(staffData.pagination?.page) - 1,
       );
       if (serverPageIndex !== pageIndex) {
         setPageIndex(serverPageIndex);
@@ -205,7 +205,7 @@ export function StaffTable({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     );
@@ -229,7 +229,7 @@ export function StaffTable({
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -281,7 +281,7 @@ export function StaffTable({
 
       <DataTablePagination table={table} />
 
-      <AddStaff open={open} setOpen={setOpen} />
+      <AddStaff open={open} setOpen={setOpen} startStep={1} />
     </div>
   );
 }

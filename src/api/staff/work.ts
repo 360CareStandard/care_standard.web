@@ -1,16 +1,14 @@
 // src/api/clients.ts
 import { api } from "@/lib/axios";
 import { StaffWorkForm } from "@/pages/app/staff/schemas/work";
-import { StaffWorkDetailsResponse, workDetails } from "@/types/staff/work";
+import { StaffWorkDetailsResponse } from "@/types/staff/work";
 
 export const StaffWorkApi = {
   get: (id: string) =>
     api.get<StaffWorkDetailsResponse>(`/staff/workDetails/${id}`).then((r) => {
-      const payload = r?.data?.data;
-      if (!payload) return undefined;
-      // server returns `works` in your response body (not workss)
-      if (payload.workDetails) return payload.workDetails[0] as workDetails;
-      // fallback if server returns `workss` array for some reason
+      const details = r.data.data?.workDetails;
+
+      return details.length ? details[0] : null;
     }),
 
   update: (id: string, body: StaffWorkForm) =>

@@ -1,22 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { CalendarAltIcon, EditIcon, TrashIcon, UserIcon } from "@/assets/icons";
-import { useState } from "react";
+import { CalendarAltIcon, EditIcon, UserIcon } from "@/assets/icons";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Staff } from "@/types/staff";
 import { InfoRow } from "../../clients/client/components/info-row";
-import AddStaff from "../components/forms/add-staff";
 
 interface Props {
   personal: Staff | undefined;
   isLoading: boolean;
+  openSheet: () => void;
 }
 
-const PersonalDetails = ({ personal }: Props) => {
-  const [open, setOpen] = useState(false);
-
+const PersonalDetails = ({ personal, openSheet }: Props) => {
   const getInitials = (staff: Staff | undefined) => {
     if (!staff?.user?.firstname && !staff?.user?.lastname) return "CL";
     const first = staff.user.firstname?.[0] ?? "";
@@ -42,17 +39,10 @@ const PersonalDetails = ({ personal }: Props) => {
                   variant="outline"
                   className="gap-2"
                   disabled={isLoading}
+                  onClick={openSheet}
                 >
                   <EditIcon />
                   Update
-                </Button>
-                <Button
-                  variant="outline"
-                  className="gap-2"
-                  disabled={isLoading}
-                >
-                  <TrashIcon />
-                  Remove
                 </Button>
               </div>
             </div>
@@ -61,7 +51,10 @@ const PersonalDetails = ({ personal }: Props) => {
               <Skeleton className="h-36 w-36 rounded-full" />
             ) : (
               <Avatar className="h-36 w-36">
-                <AvatarImage alt={personal.user?.firstname} src={""} />
+                <AvatarImage
+                  alt={personal.user?.firstname}
+                  src={personal.profilePicture ?? ""}
+                />
                 <AvatarFallback className="text-5xl font-semibold">
                   {getInitials(personal)}
                 </AvatarFallback>
@@ -82,7 +75,7 @@ const PersonalDetails = ({ personal }: Props) => {
                   size="sm"
                   variant="outline"
                   className="gap-2"
-                  onClick={() => setOpen(true)}
+                  onClick={openSheet}
                   disabled={isLoading}
                 >
                   <EditIcon />
@@ -145,8 +138,6 @@ const PersonalDetails = ({ personal }: Props) => {
           </CardContent>
         </Card>
       </div>
-
-      <AddStaff open={open} setOpen={setOpen} />
     </>
   );
 };

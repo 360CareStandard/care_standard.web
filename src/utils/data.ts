@@ -70,6 +70,7 @@ export interface CalendarEvent {
   end: Date;
   backgroundColor?: string;
   description: string;
+  display?: string;
 }
 
 export const initialEvents: CalendarEvent[] = [
@@ -81,14 +82,14 @@ export const initialEvents: CalendarEvent[] = [
       currentDate.getMonth(),
       currentDate.getDate(),
       12,
-      15
+      15,
     ),
     end: new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate(),
       13,
-      0
+      0,
     ),
     backgroundColor: "#AEC6E4",
     description: "This is a daily meeting to go over today's tasks.",
@@ -101,14 +102,14 @@ export const initialEvents: CalendarEvent[] = [
       currentDate.getMonth(),
       currentDate.getDate() + 1,
       16,
-      30
+      30,
     ),
     end: new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate() + 1,
       17,
-      30
+      30,
     ),
     backgroundColor: "#FFD1DC",
     description: "Lunch at Cracker Barrel with integration clients.",
@@ -121,14 +122,14 @@ export const initialEvents: CalendarEvent[] = [
       currentDate.getMonth(),
       currentDate.getDate(),
       18,
-      0
+      0,
     ),
     end: new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate(),
       18,
-      45
+      45,
     ),
     backgroundColor: "#B2E0B2",
     description: "Conversation with counselor about progression.",
@@ -141,14 +142,14 @@ export const initialEvents: CalendarEvent[] = [
       currentDate.getMonth(),
       currentDate.getDate() + 3,
       8,
-      0
+      0,
     ),
     end: new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate() + 3,
       18,
-      45
+      45,
     ),
     backgroundColor: "#FFB3BA",
     description: "Team bonding and strategic planning.",
@@ -161,14 +162,14 @@ export const initialEvents: CalendarEvent[] = [
       currentDate.getMonth(),
       currentDate.getDate() + 5,
       10,
-      0
+      0,
     ),
     end: new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate() + 5,
       15,
-      30
+      30,
     ),
     backgroundColor: "#FFDFBA",
     description:
@@ -182,14 +183,14 @@ export const initialEvents: CalendarEvent[] = [
       currentDate.getMonth(),
       currentDate.getDate() + getRandomDays(20, 24),
       9,
-      0
+      0,
     ),
     end: new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate() + getRandomDays(25, 29),
       15,
-      0
+      0,
     ),
     backgroundColor: "#B9FBC0",
     description: "Explore health resources and wellness activities.",
@@ -202,14 +203,14 @@ export const initialEvents: CalendarEvent[] = [
       currentDate.getMonth(),
       currentDate.getDate() + getRandomDays(30, 34),
       18,
-      0
+      0,
     ),
     end: new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate() + getRandomDays(35, 39),
       20,
-      0
+      0,
     ),
     backgroundColor: "#C3B1E1",
     description: "Discussing this month's book selection with the club.",
@@ -222,14 +223,14 @@ export const initialEvents: CalendarEvent[] = [
       currentDate.getMonth(),
       currentDate.getDate() + getRandomDays(40, 44),
       14,
-      0
+      0,
     ),
     end: new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate() + getRandomDays(45, 49),
       16,
-      0
+      0,
     ),
     backgroundColor: "#B2E7E0",
     description: "Join us for a weekend of creative writing exercises.",
@@ -242,14 +243,14 @@ export const initialEvents: CalendarEvent[] = [
       currentDate.getMonth(),
       currentDate.getDate() + getRandomDays(50, 54),
       19,
-      0
+      0,
     ),
     end: new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
       currentDate.getDate() + getRandomDays(55, 59),
       22,
-      0
+      0,
     ),
     backgroundColor: "#F6C9D8",
     description: "An evening of fun to raise funds for a good cause.",

@@ -6,13 +6,17 @@ import { AddressAutocomplete } from "../../address-autocomplete";
 import { StaffAddressMapBlock } from "../../address-map-block";
 import { RHFSelectField } from "@/components/shared/rhf-select-field";
 export function LocationAndTransport() {
-  const { setValue, control } = useFormContext<StaffWorkForm>();
-
+  const { setValue, control, formState } = useFormContext<StaffWorkForm>();
+  const { errors } = formState;
   return (
     <div className="space-y-4">
       <div className="relative z-20 space-y-3">
         <Label className="mb-1">Address</Label>
-        <AddressAutocomplete control={control} setValue={setValue} />
+        <AddressAutocomplete
+          control={control}
+          setValue={setValue}
+          errors={errors}
+        />
       </div>
 
       <div className="relative z-10">

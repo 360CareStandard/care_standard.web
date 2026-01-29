@@ -22,14 +22,14 @@ export type workDetails = {
 export interface StaffWorkDetailsResponse {
   // status: "success" | "error" | string;
   message?: string;
-  data?: {
+  data: {
     workDetails: workDetails[];
   };
 }
 export interface workDetailsResponse {
   // status: "success" | "error" | string;
   status?: string;
-  data?: workDetails;
+  data: workDetails;
   pagination: {
     total: number;
     page: number;

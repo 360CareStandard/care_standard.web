@@ -2,7 +2,7 @@ import z from "zod";
 
 export const StaffWorkSchema = z.object({
   address: z.string().trim().min(1, "Address is required"),
-  map: z.string().trim().min(1, "Required"),
+  map: z.string().trim().optional(),
 
   latitude: z.number(),
   longitude: z.number(),

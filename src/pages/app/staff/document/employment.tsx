@@ -14,7 +14,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatUpdatedAt } from "@/helpers/last-updated";
 import { Edit, Ranking } from "iconsax-react";
 import { EmptyStateCard } from "../components/empty-state";
-import { workDetails } from "@/types/staff/work";
 import { ErrorStateCard } from "../components/error-state";
 import {
   useCreateStaffEmployment,
@@ -23,8 +22,13 @@ import {
 } from "@/hooks/staff/useStaffEmployment";
 import { EmploymentForm, EmploymentSchema } from "../schemas/employment";
 import { EmploymentField } from "./components/form/employment";
+import { employmentDetails } from "@/types/staff/employment";
+import { EmploymentDetails } from "./components/details/employment";
+import { toDateInputValue } from "@/utils/date";
 
-const initialFormValues: Partial<EmploymentForm> = {};
+const initialFormValues: Partial<EmploymentForm> = {
+  employmentType: "Full-time",
+};
 
 type Props = {
   staffId: string;
@@ -56,20 +60,17 @@ const Employment = ({ staffId }: Props) => {
     defaultValues: initialFormValues as EmploymentForm,
   });
 
-  function mapApiToFormValues(api?: workDetails): Partial<EmploymentForm> {
+  function mapApiToFormValues(
+    api?: employmentDetails,
+  ): Partial<EmploymentForm> {
     if (!api) return initialFormValues;
     return {
-      address: api.address || "",
-      latitude: api.latitude ? Number(api.latitude) : 51.5074,
-      longitude: api.longitude ? Number(api.longitude) : -0.1278,
-      modeOfTransport: api.modeOfTransport || "",
-      rateCard: api.rateCard ? Number(api.rateCard) : 0,
-      travelRateCard: api.travelRateCard ? Number(api.travelRateCard) : 0,
-      note: api.note || "",
-      isApp: api.isApp || false,
-      isEmail: api.isEmail || false,
-      isPhone: api.isPhone || false,
-      isText: api.isText || false,
+      startDate: toDateInputValue(api.startDate),
+      reason: api.reason ?? "",
+      status: api.status ?? "",
+      terminatedDate: toDateInputValue(api.terminatedDate ?? undefined),
+      employmentType: api.employmentType ?? "",
+      weeklyContractedHours: api.weeklyContractedHours ?? undefined,
     } as Partial<EmploymentForm>;
   }
 
@@ -79,7 +80,7 @@ const Employment = ({ staffId }: Props) => {
     setOpen(true);
   };
 
-  const openForEdit = (apiRecord: workDetails) => {
+  const openForEdit = (apiRecord: employmentDetails) => {
     const mapped = mapApiToFormValues(apiRecord);
     methods.reset(mapped as EmploymentForm);
     setEditingId(apiRecord?.id ?? null);
@@ -160,7 +161,7 @@ const Employment = ({ staffId }: Props) => {
               size="lg"
             />
           ) : staffEmployment ? (
-            <div>Details here</div>
+            <EmploymentDetails data={staffEmployment} />
           ) : (
             // <StaffWorkDetails data={staffWork} open={open} />
             <EmptyStateCard

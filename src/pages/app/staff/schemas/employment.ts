@@ -7,13 +7,14 @@ export const EmploymentSchema = z
     status: z.string().min(1, "Status is required"),
 
     weeklyContractedHours: z
-      .number()
-      .min(0, "Weekly contracted hours must be a positive number")
+      .union([z.number(), z.nan()])
+      .transform((v) => (Number.isNaN(v) ? null : v))
+      .nullable()
       .optional(),
 
     reason: z.string().max(1000, "Reason is too long").optional(),
 
-    terminationDate: z
+    terminatedDate: z
       .string()
       .optional()
       .refine(
@@ -24,9 +25,9 @@ export const EmploymentSchema = z
   .superRefine((data, ctx) => {
     // 🔒 Conditional validation
     if (data.status === "terminated") {
-      if (!data.terminationDate) {
+      if (!data.terminatedDate) {
         ctx.addIssue({
-          path: ["terminationDate"],
+          path: ["terminatedDate"],
           message: "Termination date is required",
           code: z.ZodIssueCode.custom,
         });

@@ -43,7 +43,9 @@ export function FundingFields() {
       <TextField
         label="Budget Cap/Rate Plan"
         placeholder="e.g. £500/week"
-        {...register("budgetCap")}
+        {...register("budgetCap", {
+          valueAsNumber: true,
+        })}
         onInput={(e) => {
           // Allow only digits and one dot
           e.currentTarget.value = e.currentTarget.value

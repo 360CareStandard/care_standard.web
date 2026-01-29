@@ -37,4 +37,7 @@ export const qk = {
   staffWork: (staffId?: string) => ["staff-work", staffId] as const,
   staffEmployment: (staffId?: string) => ["staff-employment", staffId] as const,
   staffSkill: (staffId?: string) => ["staff-skill", staffId] as const,
+  staffDocument: (staffId?: string) => ["staff-document", staffId] as const,
+  staffAvailability: (staffId?: string) =>
+    ["staff-employment", staffId] as const,
 };

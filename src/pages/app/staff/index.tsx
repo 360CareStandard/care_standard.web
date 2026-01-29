@@ -1,20 +1,14 @@
 import { Main } from "@/layouts/main";
 import { StaffPrimaryAction } from "./components/table/primary-action";
-import { useStaff } from "@/hooks/staff/useStaff";
 import StaffTable from "./components/table/staff-table";
-// import { ClientsPrimaryButtons } from "./components/table/client-primary-button";
 
 const Staff = () => {
-  const { data } = useStaff();
-  console.log(data?.staffs);
-
   return (
     <>
       <Main>
         <div className="mb-2 flex flex-wrap items-center justify-between space-y-2">
           <div>
             <h1 className="text-3xl font-semibold ">Staff</h1>
-            {/* <p className="text-muted-foreground">Manage people in your care</p> */}
           </div>
           <StaffPrimaryAction />
         </div>

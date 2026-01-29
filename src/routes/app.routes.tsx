@@ -24,6 +24,10 @@ const CareCircle = lazy(() => import("@/pages/app/clients/client/care-circle"));
 const StaffOverview = lazy(() => import("@/pages/app/staff/overview"));
 const StaffInformation = lazy(() => import("@/pages/app/staff/information"));
 const StaffDocuments = lazy(() => import("@/pages/app/staff/document"));
+const StaffClients = lazy(() => import("@/pages/app/staff/clients"));
+const StaffAvailability = lazy(() => import("@/pages/app/staff/availability"));
+const StaffVisit = lazy(() => import("@/pages/app/staff/visits"));
+const StaffCalendar = lazy(() => import("@/pages/app/staff/github-calendar"));
 
 const appChildRoutes = (
   <>
@@ -51,6 +55,10 @@ const appChildRoutes = (
       <Route path="overview" element={<StaffOverview />} />
       <Route path="info" element={<StaffInformation />} />
       <Route path="documents" element={<StaffDocuments />} />
+      <Route path="clients" element={<StaffClients />} />
+      <Route path="availability" element={<StaffAvailability />} />
+      <Route path="visits" element={<StaffVisit />} />
+      <Route path="calendar" element={<StaffCalendar />} />
       <Route path="*" element={<Navigate to="/app/staff" replace />} />
     </Route>
   </>

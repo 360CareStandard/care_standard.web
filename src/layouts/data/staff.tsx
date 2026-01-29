@@ -1,6 +1,13 @@
 import React from "react";
 import { HomeIcon, UserSquareIcon } from "@/assets/icons";
-import { DocumentText } from "iconsax-react";
+import {
+  Activity,
+  Calendar2,
+  Clock,
+  DocumentText,
+  People,
+  Setting2,
+} from "iconsax-react";
 type Item = {
   title: string;
   slug: string; // appended to /app/clients/:clientId
@@ -20,6 +27,21 @@ export const STAFF_NAV: Group[] = [
         slug: "documents",
         icon: DocumentText,
       },
+    ],
+  },
+  {
+    heading: "Work & Care",
+    items: [
+      { title: "Clients", slug: "clients", icon: People },
+      { title: "Availability", slug: "availability", icon: Calendar2 },
+      { title: "Visits", slug: "visits", icon: Clock },
+    ],
+  },
+  {
+    heading: "Access & Activity",
+    items: [
+      { title: "Permissions", slug: "permissions", icon: Setting2 },
+      { title: "Activity Log", slug: "activity-log", icon: Activity },
     ],
   },
 ];

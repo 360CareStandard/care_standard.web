@@ -145,6 +145,11 @@ export function ServicePackageFields() {
 
   return (
     <div className="space-y-6">
+      {errors.root?.message && (
+        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">
+          {errors.root.message}
+        </div>
+      )}
       {/* row 1 */}
       <div className="grid grid-cols-1 items-center  sm:grid-cols-2 gap-4">
         <RHFSelectField
@@ -173,10 +178,13 @@ export function ServicePackageFields() {
           options={statusOptions}
         />
         <TextField
+          inputMode="numeric"
           type="number"
           label="Authorised Hr/Wk"
           min={0}
-          {...register("authorisedHoursPerWeek", { valueAsNumber: true })}
+          {...register("authorisedHoursPerWeek", {
+            valueAsNumber: true,
+          })}
           error={errors.authorisedHoursPerWeek?.message}
         />
       </div>

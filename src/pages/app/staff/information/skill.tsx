@@ -25,6 +25,7 @@ import { ErrorStateCard } from "../components/error-state";
 import { SkillCard } from "./components/skill-card";
 import { StaffSkill } from "@/types/staff/skill";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 const initialFormValues: Partial<AddStaffSkillForm> = {
   hasCertificate: false,
@@ -71,7 +72,7 @@ const Skill = ({ staffId }: Props) => {
       skillName: api.skillName || "",
       skillType: api.skillType || "",
       note: api.note || "",
-      hasCertificate: false,
+      hasCertificate: api.hasCertificate || false,
       expiredAt: api.expiredAt || undefined,
       certificateDocumentUrl: api.certificateUrl || "",
       // certificateDocument: api.certificateDocument || undefined, // File can not be prefilled
@@ -136,9 +137,12 @@ const Skill = ({ staffId }: Props) => {
       setOpen(false);
       setEditingId(null);
       methods.reset(initialFormValues as any);
-    } catch (err: any) {
-      console.error("Save failed", err);
-      toast.error(err?.message ?? "Save failed, try again");
+    } catch (err) {
+      handleFormApiError<AddStaffSkillForm>(
+        err,
+        methods.setError,
+        editingId ? "Failed to update skill" : "Failed to create skill",
+      );
     }
   }
 

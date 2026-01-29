@@ -19,8 +19,7 @@ export function useCreateStaffSkill(staffId: string) {
   return useMutation({
     // Accept a FormData
     mutationFn: (formData: FormData) => {
-      if (!staffId)
-        throw new Error("staffId is required to create legal profile");
+      if (!staffId) throw new Error("staffId is required to create skill");
       return StaffSkillApi.post(staffId, formData);
     },
     onSuccess: () => {

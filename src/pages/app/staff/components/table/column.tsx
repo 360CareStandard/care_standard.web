@@ -21,7 +21,7 @@ export const staffColumns: ColumnDef<Staff>[] = [
       const c = row.original.user;
       const d = row.original;
       const username = d.id; // use id in URL / linking
-      const src = "";
+      const src = row.original.profilePicture;
       const initials = (c.firstname?.[0] ?? "") + (c.lastname?.[0] ?? "");
       const fullName = `${c.firstname ?? ""} ${c.lastname ?? ""}`.trim();
       return (

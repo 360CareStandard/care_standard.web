@@ -15,7 +15,7 @@ export const RelationshipEnum = z.enum([
 
 const phoneRegex = /^\+?[0-9()\-\s.]{7,20}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const ukMobileRegex = /^(?:\+44?7\d{9}|07\d{9})$/;
+// const ukMobileRegex = /^(?:\+44?7\d{9}|07\d{9})$/;
 
 export const AddStaffContactSchema = z.object({
   nextOfKinFullName: z
@@ -32,12 +32,11 @@ export const AddStaffContactSchema = z.object({
     .string()
     .trim()
     .min(1, "Phone number is required")
-    .regex(phoneRegex, { message: "Enter a valid phone number" })
-    .refine((s) => ukMobileRegex.test(s), {
-      message:
-        "phone must be a valid UK number, e.g. +447911123456 or 07911123456",
-    }),
-
+    .regex(phoneRegex, { message: "Enter a valid phone number" }),
+  // .refine((s) => ukMobileRegex.test(s), {
+  //   message:
+  //     "phone must be a valid UK number, e.g. +447911123456 or 07911123456",
+  // }),
   email: z
     .string()
     .trim()
@@ -50,11 +49,7 @@ export const AddStaffContactSchema = z.object({
     .min(1, "Address is required")
     .max(240, "Address is too long"),
 
-  notes: z
-    .string()
-    .trim()
-    .min(1, "Notes are required")
-    .max(1000, "Notes are too long"),
+  notes: z.string().trim().optional(),
 
   availiableForUrgentSituation: z.boolean().optional(),
   mainPointOfContact: z.boolean().optional(),

@@ -8,8 +8,9 @@ import { NoteText } from "iconsax-react";
 interface Props {
   personal: Staff | undefined;
   isLoading: boolean;
+  openSheet: () => void;
 }
-const Highlights = ({ personal }: Props) => {
+const Highlights = ({ personal, isLoading, openSheet }: Props) => {
   return (
     <Card>
       <CardContent className="grid grid-cols-1  sm:grid-cols-2 gap-16">
@@ -20,7 +21,12 @@ const Highlights = ({ personal }: Props) => {
             profile.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" className="gap-2">
+            <Button
+              variant="outline"
+              className="gap-2"
+              disabled={isLoading}
+              onClick={openSheet}
+            >
               <EditIcon />
               Update
             </Button>

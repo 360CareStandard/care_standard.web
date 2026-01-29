@@ -70,17 +70,17 @@ export function SidebarNav({ basePath, nav, header }: SidebarNavProps) {
                             "group my-1 flex h-9 items-center gap-2 rounded px-2 text-[15px]",
                             "hover:bg-muted",
                             isActive &&
-                              "!bg-primary-accent text-primary hover:bg-primary/15"
+                              "!bg-primary-accent text-primary hover:bg-primary/15",
                           )}
                         >
                           <span className="inline-flex items-center gap-2">
                             <span className="grid size-8 place-items-center text-muted-foreground">
-                              <Icon />
+                              <Icon className="w-5 h-5" />
                             </span>
                             <span
                               className={cn(
                                 "truncate text-[14px]",
-                                isActive && "font-medium"
+                                isActive && "font-medium",
                               )}
                             >
                               {item.title}

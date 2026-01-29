@@ -11,7 +11,7 @@ export function StaffPrimaryAction() {
         <Plus size={18} /> <span>Add New Staff</span>
       </Button>
 
-      <AddStaff open={open} setOpen={setOpen} />
+      <AddStaff open={open} setOpen={setOpen} startStep={1} />
     </>
   );
 }

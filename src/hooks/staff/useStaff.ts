@@ -2,6 +2,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/queryKeys";
 import { StaffProfileApi } from "@/api/staff/profile";
+import { StaffFormData } from "@/pages/app/staff/schemas/add-staff";
+import { AxiosError } from "axios";
+import { ApiError } from "@/types/api-error";
 
 export function useStaff(params?: {
   q?: string;
@@ -28,13 +31,14 @@ export function useStaffDetails(id?: string, enabled = true) {
 export function useCreateStaff() {
   const qc = useQueryClient();
 
-  return useMutation({
-    // Accept a FormData
-    mutationFn: (formData: FormData) => {
-      return StaffProfileApi.post(formData);
-    },
+  return useMutation<
+    { status: "success" },
+    AxiosError<ApiError<StaffFormData>>,
+    FormData
+  >({
+    mutationFn: StaffProfileApi.post,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: qk.staffs() });
+      qc.invalidateQueries({ queryKey: ["staff"] });
     },
   });
 }
@@ -43,12 +47,11 @@ export function useUpdateStaff(staffId: string) {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: (formData: FormData) => {
-      if (!staffId)
-        throw new Error("staffId is required to update staff profile");
-      return StaffProfileApi.update(staffId, formData);
-    },
+    mutationFn: (formData: FormData) =>
+      StaffProfileApi.update(staffId, formData),
+
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["staff"] });
       qc.invalidateQueries({ queryKey: qk.staff(staffId) });
     },
   });

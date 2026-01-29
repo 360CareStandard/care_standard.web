@@ -7,6 +7,7 @@ export type StaffSkill = {
   note: string | null;
   skillName: string;
   skillType: string;
+  hasCertificate: boolean;
   staffId: string;
   updatedAt: string;
 };
