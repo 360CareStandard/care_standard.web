@@ -107,7 +107,7 @@ export function ContactDetailsCard({
         </InfoRow>
 
         <InfoRow label="Relationship" icon={<Users2 className="h-4 w-4" />}>
-          {empty(relationshipToClient)}
+          <span className="capitalize"> {empty(relationshipToClient)}</span>
         </InfoRow>
 
         <InfoRow label="Phone" icon={<Phone className="h-4 w-4" />}>

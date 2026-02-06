@@ -23,6 +23,7 @@ import Calendar from "@/components/calendar";
 import { useEvents } from "@/context/events-context";
 import { useEffect } from "react";
 import { mapStaffAvailabilityToEvents } from "./utils/map-staff-availability";
+import { ErrorStateCard } from "../components/error-state";
 const initialFormValues: Partial<StaffAvailabilityForm> = {
   frequency: "daily",
 };
@@ -40,6 +41,7 @@ export default function Availability() {
     data: availabilities,
     isLoading,
     refetch,
+    isError,
   } = useStaffAvailability(staffId as string, Boolean(staffId));
   const staffAvailability = availabilities ?? [];
   const { setEvents } = useEvents();
@@ -94,15 +96,20 @@ export default function Availability() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        {staffData && (
-          <div>
-            <h1 className="text-2xl font-semibold">
-              {staffData?.user.firstname}'s availability schedule
-            </h1>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Set working availability and manage absences for this staff member
-            </p>
-          </div>
+        {isLoading ? (
+          <Spinner size="lg" />
+        ) : (
+          staffData && (
+            <div>
+              <h1 className="text-2xl font-semibold">
+                {staffData?.user.firstname}'s availability schedule
+              </h1>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Set working availability and manage absences for this staff
+                member
+              </p>
+            </div>
+          )
         )}
         <div className="flex gap-2 items-center">
           <Button size="lg" onClick={openForAdd}>
@@ -120,6 +127,15 @@ export default function Availability() {
         {isLoading ? (
           <div className="flex justify-center py-20">
             <Spinner size="lg" />
+          </div>
+        ) : isError ? (
+          <div className="flex mt-52 justify-center items-center">
+            <ErrorStateCard
+              className="shadow-none !border-0 !bg-transparent"
+              title="Unable to load staff availabilities"
+              onClick={() => refetch()}
+              size="lg"
+            />
           </div>
         ) : staffAvailability.length ? (
           <Calendar />

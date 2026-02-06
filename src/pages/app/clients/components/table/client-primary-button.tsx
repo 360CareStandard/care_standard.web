@@ -11,7 +11,7 @@ export function ClientsPrimaryButtons() {
         <Plus size={18} /> <span>Add New Client</span>
       </Button>
 
-      <AddClient open={open} setOpen={setOpen} />
+      <AddClient open={open} setOpen={setOpen} startStep={1} />
     </>
   );
 }

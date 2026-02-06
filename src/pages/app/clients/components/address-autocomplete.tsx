@@ -23,6 +23,8 @@ export function AddressAutocomplete({
   defaultValue = "",
   onSelected,
 }: Props) {
+  const isUserTypingRef = React.useRef(false);
+
   const [q, setQ] = React.useState(defaultValue);
   const [items, setItems] = React.useState<Suggestion[]>([]);
   const [loading, setLoading] = React.useState(false);
@@ -57,19 +59,22 @@ export function AddressAutocomplete({
 
   // debounce input
   React.useEffect(() => {
-    abortRef.current?.abort();
-    if (timerRef.current) window.clearTimeout(timerRef.current);
-
     if (!q) {
       setItems([]);
       return;
     }
+    if (!isUserTypingRef.current) {
+      // value came from reset / selection
+      return;
+    }
 
+    abortRef.current?.abort();
+    if (timerRef.current) window.clearTimeout(timerRef.current);
     const ac = new AbortController();
     abortRef.current = ac;
     timerRef.current = window.setTimeout(
       () => void fetchSuggestions(q, ac.signal),
-      300
+      300,
     );
     return () => {
       window.clearTimeout(timerRef.current!);
@@ -94,6 +99,7 @@ export function AddressAutocomplete({
     const state = a.county || a.state || a.region || "";
     const postcode = a.postcode || "";
     const country = a.country || "";
+    isUserTypingRef.current = false; // ✅ restore
 
     // set form values — IMPORTANT: keys must match your schema exactly
     setValue("addressLine1", addressLine1, {
@@ -160,7 +166,10 @@ export function AddressAutocomplete({
         value={q}
         type="search"
         className="w-full rounded border px-3 py-2"
-        onChange={(e) => setQ(e.target.value)}
+        onChange={(e) => {
+          isUserTypingRef.current = true;
+          setQ(e.target.value);
+        }}
         placeholder="Search address (street, postcode, town...)"
       />
       {loading && (
@@ -173,7 +182,10 @@ export function AddressAutocomplete({
             <li
               key={`${s.lat}-${s.lon}-${s.display_name}`}
               className="cursor-pointer px-3 py-2 hover:bg-slate-50"
-              onClick={() => handleSelect(s)}
+              onMouseDown={(e) => {
+                e.preventDefault(); // ⬅️ critical
+                handleSelect(s);
+              }}
             >
               <div className="text-sm">{s.display_name}</div>
             </li>

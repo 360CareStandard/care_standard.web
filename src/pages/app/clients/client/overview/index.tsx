@@ -6,14 +6,21 @@ import ContactDetails from "./contact-details";
 import Addresses from "./addresses";
 import WellbeingOverview from "./wellbeing";
 import { useClient } from "@/hooks/client/useClients";
+import AddClient from "../../add-client";
 
 const TAB_KEYS = ["personal", "contact", "addresses", "wellbeing"] as const;
 type TabKey = (typeof TAB_KEYS)[number];
-
+const TAB_TO_STEP: Record<TabKey, number> = {
+  personal: 1,
+  contact: 2,
+  addresses: 3,
+  wellbeing: 4,
+};
 export default function Overview() {
   const { clientId } = useParams<{ clientId: string }>();
   const { data: clientData, isLoading } = useClient(clientId);
-  // console.log(data);
+  const [open, setOpen] = React.useState(false);
+  const [startStep, setStartStep] = React.useState(1);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -41,11 +48,15 @@ export default function Overview() {
           sp.set("tab", "personal");
           return sp;
         },
-        { replace: true }
+        { replace: true },
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const openSheet = () => {
+    setStartStep(TAB_TO_STEP[currentTab]);
+    setOpen(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -90,21 +101,43 @@ export default function Overview() {
         </TabsList>
 
         <TabsContent value="personal" className="space-y-5 pt-4">
-          <PersonalDetails personal={clientData} isLoading={isLoading} />
+          <PersonalDetails
+            personal={clientData}
+            isLoading={isLoading}
+            openSheet={openSheet}
+          />
         </TabsContent>
 
         <TabsContent value="contact" className="pt-4">
-          <ContactDetails personal={clientData} isLoading={isLoading} />
+          <ContactDetails
+            personal={clientData}
+            isLoading={isLoading}
+            openSheet={openSheet}
+          />
         </TabsContent>
 
         <TabsContent value="addresses" className="pt-4">
-          <Addresses personal={clientData} isLoading={isLoading} />
+          <Addresses
+            personal={clientData}
+            isLoading={isLoading}
+            openSheet={openSheet}
+          />
         </TabsContent>
 
         <TabsContent value="wellbeing" className="pt-4">
-          <WellbeingOverview personal={clientData} isLoading={isLoading} />
+          <WellbeingOverview
+            personal={clientData}
+            isLoading={isLoading}
+            openSheet={openSheet}
+          />
         </TabsContent>
       </Tabs>
+      <AddClient
+        open={open}
+        setOpen={setOpen}
+        clientId={clientId}
+        startStep={startStep}
+      />
     </div>
   );
 }

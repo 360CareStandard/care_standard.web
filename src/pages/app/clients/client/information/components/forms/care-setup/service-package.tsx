@@ -111,11 +111,11 @@ export function ServicePackageFields() {
     }
     // if turning OFF, you probably want to clear them (optional)
     else {
-      setValue("overnightCareStartTime", "", {
+      setValue("overnightCareStartTime", undefined, {
         shouldDirty: true,
         shouldValidate: true,
       });
-      setValue("overnightCareEndTime", "", {
+      setValue("overnightCareEndTime", undefined, {
         shouldDirty: true,
         shouldValidate: true,
       });

@@ -8,13 +8,12 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Plus, Search, ChevronDown, LayoutGrid, RefreshCw } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useClients } from "@/hooks/client/useClients";
-import { normalizeClientsResponse } from "@/pages/app/clients/components/data/normalize-clients";
 
 type ClientSmall = {
   id: string;
@@ -35,7 +34,7 @@ export function ClientQuickSwitcher({ className }: Props) {
 
   // Fetch a small page of clients from the API (page 1, limit 10)
   const {
-    data: raw,
+    data: clientData,
     isLoading,
     isFetching,
     isError,
@@ -48,27 +47,27 @@ export function ClientQuickSwitcher({ className }: Props) {
 
   // Map server response -> lightweight client objects used by the switcher.
   const apiClients: ClientSmall[] = React.useMemo(() => {
-    if (!raw) return [];
-    const normalized = normalizeClientsResponse(raw);
-    return normalized.clients.map((c) => ({
+    if (!clientData) return [];
+
+    return clientData.clients.map((c) => ({
       id: c.id,
       name:
-        c.name ||
+        c.firstname ||
         `${c.firstname ?? ""} ${c.lastname ?? ""}`.trim() ||
         "Unknown",
       meta:
-        (c.raw?.gender
-          ? `${String(c.raw.gender).replace(/^\w/, (s) => s.toUpperCase())} • `
+        (c?.gender
+          ? `${String(c.gender).replace(/^\w/, (s) => s.toUpperCase())} • `
           : "") +
-        (c.raw?.dob
+        (c?.dob
           ? `${Math.max(
               0,
-              new Date().getFullYear() - new Date(c.raw.dob).getFullYear()
+              new Date().getFullYear() - new Date(c.dob).getFullYear(),
             )} years`
           : ""),
-      avatar: null, // API currently provides no avatars; keep null fallback
+      avatar: c.imageUrl ?? "", // API currently provides no avatars; keep null fallback
     }));
-  }, [raw]);
+  }, [clientData]);
 
   // Use only API clients (no demo fallback). When empty -> show "No clients".
   const clients = apiClients;
@@ -91,7 +90,7 @@ export function ClientQuickSwitcher({ className }: Props) {
     if (!t) return clients;
     return clients.filter(
       (c) =>
-        c.name.toLowerCase().includes(t) || c.meta?.toLowerCase().includes(t)
+        c.name.toLowerCase().includes(t) || c.meta?.toLowerCase().includes(t),
     );
   }, [clients, q]);
 
@@ -126,13 +125,17 @@ export function ClientQuickSwitcher({ className }: Props) {
         <button
           className={cn(
             "flex w-full items-center gap-2 rounded-lg px-2 py-2 hover:bg-muted",
-            className
+            className,
           )}
           aria-haspopup="listbox"
           aria-expanded={open}
         >
-          <Avatar className="h-11 w-11 text-black">
-            {/* API currently doesn't provide avatars; use initials fallback */}
+          <Avatar className="h-11 w-11 text-black object-cover">
+            <AvatarImage
+              alt={active.name}
+              src={active.avatar ?? ""}
+              className="object-cover"
+            />{" "}
             <AvatarFallback>
               {active?.name?.slice(0, 2).toUpperCase() || "CL"}
             </AvatarFallback>
@@ -253,11 +256,17 @@ export function ClientQuickSwitcher({ className }: Props) {
                   onClick={() => goTo(c.id)}
                   className={cn(
                     "flex w-full items-center gap-3 rounded-md px-3 py-2 text-left",
-                    isActive || isHover ? "bg-primary-accent" : "hover:bg-muted"
+                    isActive || isHover
+                      ? "bg-primary-accent"
+                      : "hover:bg-muted",
                   )}
                 >
                   <Avatar className="h-9 w-9">
-                    {/* always fallback to initials because API has no avatar */}
+                    <AvatarImage
+                      alt={c.name}
+                      src={c.avatar ?? ""}
+                      className="object-cover"
+                    />
                     <AvatarFallback>
                       {c.name.slice(0, 2).toUpperCase()}
                     </AvatarFallback>

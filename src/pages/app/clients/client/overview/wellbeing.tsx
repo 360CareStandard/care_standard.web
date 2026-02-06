@@ -10,9 +10,10 @@ import { riskColorMap } from "@/helpers/risk-colors";
 interface Props {
   personal: Client | undefined;
   isLoading: boolean;
+  openSheet: () => void;
 }
 
-const WellbeingOverview = ({ personal }: Props) => {
+const WellbeingOverview = ({ personal, openSheet }: Props) => {
   // Normalize the riskLevel string (e.g., "High" → "high")
   const riskLevel = personal?.riskLevel?.toLowerCase();
   const riskStyle =
@@ -30,7 +31,12 @@ const WellbeingOverview = ({ personal }: Props) => {
             current health status behind the profile.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" variant="outline" className="gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-2"
+              onClick={openSheet}
+            >
               <EditIcon />
               Update
             </Button>
@@ -48,7 +54,7 @@ const WellbeingOverview = ({ personal }: Props) => {
                 className={cn(
                   "text-xs font-medium rounded-md px-2 py-1 capitalize",
                   riskStyle.bg,
-                  riskStyle.text
+                  riskStyle.text,
                 )}
               >
                 {riskLevel || "Unknown"}

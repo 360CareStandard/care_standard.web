@@ -7,11 +7,8 @@ import {
   CalendarAltIcon,
   EditIcon,
   StatusIcon,
-  TrashIcon,
   UserIcon,
 } from "@/assets/icons";
-import AddClient from "../../add-client";
-import { useState } from "react";
 import { Client } from "@/types/client/client";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,11 +16,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface Props {
   personal: Client | undefined;
   isLoading: boolean;
+  openSheet: () => void;
 }
 
-const PersonalDetails = ({ personal }: Props) => {
-  const [open, setOpen] = useState(false);
-
+const PersonalDetails = ({ personal, openSheet }: Props) => {
   const getInitials = (client: Client | undefined) => {
     if (!client?.firstname && !client?.lastname) return "CL";
     const first = client.firstname?.[0] ?? "";
@@ -49,18 +45,19 @@ const PersonalDetails = ({ personal }: Props) => {
                   variant="outline"
                   className="gap-2"
                   disabled={isLoading}
+                  onClick={openSheet}
                 >
                   <EditIcon />
                   Update
                 </Button>
-                <Button
+                {/* <Button
                   variant="outline"
                   className="gap-2"
                   disabled={isLoading}
                 >
                   <TrashIcon />
                   Remove
-                </Button>
+                </Button> */}
               </div>
             </div>
 
@@ -68,7 +65,11 @@ const PersonalDetails = ({ personal }: Props) => {
               <Skeleton className="h-36 w-36 rounded-full" />
             ) : (
               <Avatar className="h-36 w-36">
-                <AvatarImage alt={personal.firstname} src={""} />
+                <AvatarImage
+                  alt={personal.firstname}
+                  src={personal.imageUrl ?? ""}
+                  className="object-cover"
+                />
                 <AvatarFallback className="text-5xl font-semibold">
                   {getInitials(personal)}
                 </AvatarFallback>
@@ -89,7 +90,7 @@ const PersonalDetails = ({ personal }: Props) => {
                   size="sm"
                   variant="outline"
                   className="gap-2"
-                  onClick={() => setOpen(true)}
+                  onClick={openSheet}
                   disabled={isLoading}
                 >
                   <EditIcon />
@@ -136,7 +137,7 @@ const PersonalDetails = ({ personal }: Props) => {
                             (
                             {Math.floor(
                               (Date.now() - new Date(personal.dob).getTime()) /
-                                31557600000
+                                31557600000,
                             )}{" "}
                             years old)
                           </span>
@@ -152,7 +153,7 @@ const PersonalDetails = ({ personal }: Props) => {
                           "rounded-full px-2 py-0.5 text-xs capitalize",
                           personal.status === "active" && " text-primary",
                           personal.status === "paused" && " text-destructive",
-                          personal.status === "inactive" && " text-neutral-700"
+                          personal.status === "inactive" && " text-neutral-700",
                         )}
                       >
                         {personal.status ?? "—"}
@@ -165,8 +166,6 @@ const PersonalDetails = ({ personal }: Props) => {
           </CardContent>
         </Card>
       </div>
-
-      <AddClient open={open} setOpen={setOpen} />
     </>
   );
 };

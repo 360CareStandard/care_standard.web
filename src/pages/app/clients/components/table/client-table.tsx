@@ -1,5 +1,5 @@
 // src/components/clients/clients-table-wrapper.tsx
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -30,12 +30,9 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { useClients } from "@/hooks/client/useClients";
 import { clientsColumns } from "./column";
-import {
-  ClientNormalized,
-  normalizeClientsResponse,
-} from "../data/normalize-clients";
 import AddClient from "../../add-client";
 import { DataTableSkeleton } from "@/components/shared/data-table-skeleton";
+import { Client } from "@/types/client/client";
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,7 +44,7 @@ declare module "@tanstack/react-table" {
 interface ClientsTableProps {
   initialPage?: number;
   initialLimit?: number;
-  columns?: ColumnDef<ClientNormalized>[];
+  columns?: ColumnDef<Client>[];
 }
 
 export function ClientsTable({
@@ -68,7 +65,7 @@ export function ClientsTable({
 
   // fetch data from server using 1-based page param
   const {
-    data: raw,
+    data: clientData,
     isLoading,
     // isFetching,
     isError,
@@ -79,32 +76,26 @@ export function ClientsTable({
     limit: pageSize,
   });
 
-  // Normalize server response into rows + pagination info
-  const normalized = useMemo(
-    () => (raw ? normalizeClientsResponse(raw) : null),
-    [raw]
-  );
-
-  const rows: ClientNormalized[] = normalized?.clients ?? [];
-  const totalPages = normalized?.totalPages ?? 1; // server-provided total pages
+  const rows: Client[] = clientData?.clients ?? [];
+  const totalPages = clientData?.totalPages ?? 1; // server-provided total pages
   //   const resultCount = normalized?.result ?? 0;
   //   const currentServerPage = normalized?.currentPage ?? pageIndex + 1;
 
   // keep pagination state in sync if server returns different page (e.g. after refresh)
   useEffect(() => {
-    if (normalized) {
-      const serverPageIndex = Math.max(0, normalized.currentPage - 1);
+    if (clientData) {
+      const serverPageIndex = Math.max(0, Number(clientData.currentPage) - 1);
       if (serverPageIndex !== pageIndex) {
         setPageIndex(serverPageIndex);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [normalized?.currentPage]);
+  }, [clientData?.currentPage]);
 
   // ---- create the table with manual (server-side) pagination enabled ----
   const table = useReactTable({
     data: rows,
-    columns: columns as ColumnDef<ClientNormalized>[],
+    columns,
     state: {
       sorting,
       columnVisibility,
@@ -208,7 +199,7 @@ export function ClientsTable({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     );
@@ -232,7 +223,7 @@ export function ClientsTable({
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -284,7 +275,7 @@ export function ClientsTable({
 
       <DataTablePagination table={table} />
 
-      <AddClient open={open} setOpen={setOpen} />
+      <AddClient open={open} setOpen={setOpen} startStep={1} />
     </div>
   );
 }

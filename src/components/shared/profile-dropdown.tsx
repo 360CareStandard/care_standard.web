@@ -1,6 +1,5 @@
 // src/components/shared/profile-dropdown.tsx
 import { ReactNode, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,11 +34,11 @@ export default function ProfileDropdown({
   email,
   role,
   workspaceName,
-  onOpenWorkspaceSwitcher,
-  onOpenAccount,
-  onOpenOrgSettings,
+  // onOpenWorkspaceSwitcher,
+  // onOpenAccount,
+  // onOpenOrgSettings,
 }: ProfileDropdownProps) {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [logoutModal, setLogoutModal] = useState(false);
 
   return (
@@ -61,7 +60,7 @@ export default function ProfileDropdown({
                   <span
                     className={cn(
                       "rounded-full px-2 py-0.5",
-                      "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200"
+                      "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200",
                     )}
                   >
                     {role}
@@ -76,18 +75,18 @@ export default function ProfileDropdown({
             </div>
           </DropdownMenuLabel>
 
-          <DropdownMenuSeparator />
+          {/* <DropdownMenuSeparator /> */}
 
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             onClick={
               onOpenAccount ? onOpenAccount : () => navigate("/user/settings")
             }
           >
             Profile
             <DropdownMenuShortcut />
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             onClick={
               onOpenOrgSettings
                 ? onOpenOrgSettings
@@ -96,9 +95,9 @@ export default function ProfileDropdown({
           >
             Organisation settings
             <DropdownMenuShortcut />
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             onClick={
               onOpenWorkspaceSwitcher
                 ? onOpenWorkspaceSwitcher
@@ -107,7 +106,7 @@ export default function ProfileDropdown({
           >
             Switch workspace…
             <DropdownMenuShortcut />
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
           <DropdownMenuSeparator />
 

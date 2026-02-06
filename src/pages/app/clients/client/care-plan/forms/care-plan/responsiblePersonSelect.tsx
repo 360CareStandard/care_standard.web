@@ -11,21 +11,16 @@ import { Search, User, X } from "lucide-react";
 
 import { customSelectStyles as userCustomStyles } from "@/styles/react-select";
 import { AssessmentForm } from "../../../../schemas/care-assesment";
-
-type Carer = {
-  id: string;
-  name: string;
-  email: string;
-  initials: string;
-  skills?: string[];
-};
+import { useStaffScroll } from "@/hooks/staff/useStaff";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Option = {
-  value: string; // id
-  label: string; // name
+  value: string;
+  label: string;
   email: string;
-  initials: string;
-  skills?: string[];
+  firstname: string;
+  lastname: string;
+  image: string;
 };
 
 /**
@@ -34,44 +29,27 @@ type Option = {
  */
 export function ResponsiblePersonSelect() {
   const { control, setValue } = useFormContext<AssessmentForm>();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useStaffScroll({ limit: 10 });
 
+  const carers = data?.pages.flatMap((p) => p.staffs) ?? [];
   // TODO: replace with real carers list from API / props
-  const carers: Carer[] = [
-    {
-      id: "b9a680cb-3c6b-4680-86e5-06b476399eb8",
-      name: "John Malik",
-      email: "john.john@careservice.com",
-      initials: "JM",
-      skills: ["Medication", "Dementia Care"],
-    },
-    {
-      id: "2a4270a9-4d47-442a-8fd8-dc1d839ab722",
-      name: "A. Brown",
-      email: "anna.brown@careservice.com",
-      initials: "AB",
-      skills: ["Moving & Handling", "PEG Feeding"],
-    },
-    {
-      id: "52ec9599-6113-4114-b6d0-333977053459",
-      name: "S. Johnson",
-      email: "sarah.john@careservice.com",
-      initials: "SJ",
-      skills: ["Medication", "Dementia Care"],
-    },
-  ];
+  const getInitials = (firstname: string, lastname: string) =>
+    `${firstname[0]}${lastname[0]}`.toUpperCase();
 
   const options: Option[] = carers.map((c) => ({
     value: c.id,
-    label: c.name,
-    email: c.email,
-    initials: c.initials,
-    skills: c.skills,
+    label: `${c.user.firstname} ${c.user.lastname}`,
+    email: c.user.email,
+    image: c.profilePicture || "",
+    firstname: c.user.firstname,
+    lastname: c.user.lastname,
   }));
 
   // portal container (inside sheet)
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const [portalTarget, setPortalTarget] = React.useState<HTMLElement | null>(
-    null
+    null,
   );
   React.useLayoutEffect(() => {
     if (containerRef.current) setPortalTarget(containerRef.current);
@@ -97,7 +75,16 @@ export function ResponsiblePersonSelect() {
       paddingRight: 8,
     }),
   };
-
+  const MenuList = (props: any) => (
+    <components.MenuList {...props}>
+      {props.children}
+      {isFetchingNextPage && (
+        <div className="py-2 text-center text-xs text-muted-foreground">
+          Loading more…
+        </div>
+      )}
+    </components.MenuList>
+  );
   /* --------- Custom components ---------- */
 
   const CarerOption = (props: OptionProps<Option, false>) => {
@@ -108,9 +95,17 @@ export function ResponsiblePersonSelect() {
         {...innerProps}
         className="flex items-center p-2 cursor-pointer hover:bg-gray-50"
       >
-        <div className="w-10 h-10 rounded-full flex items-center justify-center font-semibold mr-3 bg-emerald-100 text-emerald-800">
-          {data.initials}
-        </div>
+        <Avatar
+          className={`w-10 h-10 font-semibold mr-3  bg-emerald-100 text-emerald-800
+                    `}
+        >
+          {data.image ? (
+            <AvatarImage src={data.image} alt={`${data.firstname} avatar`} />
+          ) : null}
+          <AvatarFallback className="font-semibold">
+            {getInitials(data.firstname, data.lastname)}
+          </AvatarFallback>
+        </Avatar>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
@@ -180,7 +175,14 @@ export function ResponsiblePersonSelect() {
                 Option: CarerOption,
                 SingleValue: ResponsibleSingleValue,
                 ClearIndicator,
+                MenuList,
                 // DropdownIndicator,
+              }}
+              isLoading={isLoading || isFetchingNextPage}
+              onMenuScrollToBottom={() => {
+                if (hasNextPage && !isFetchingNextPage) {
+                  fetchNextPage();
+                }
               }}
               menuPortalTarget={portalTarget}
               menuPosition="fixed"

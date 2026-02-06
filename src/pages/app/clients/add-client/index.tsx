@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { FormProvider, useForm, FieldPath, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SheetForm } from "@/components/shared/sheet-form";
@@ -9,19 +9,62 @@ import ContactDetails from "./contact-details";
 import Addresses from "./addresses";
 import WellbeingOverview from "./wellbeing-overview";
 import { StepperHeader } from "../components/stepper-header";
-import { useCreateClient } from "@/hooks/client/useClients";
+import {
+  useClient,
+  useCreateClient,
+  useUpdateClient,
+} from "@/hooks/client/useClients";
 import toast from "react-hot-toast";
 import { Spinner } from "@/components/shared/spinner";
+import { handleFormApiError } from "@/lib/handle-form-error";
+import { Client } from "@/types/client/client";
 
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  clientId?: string;
+  startStep: number; // 👈 new
 }
 const resolver = zodResolver(
-  clientSchema
+  clientSchema,
 ) as unknown as Resolver<ClientFormData>;
 
-const AddClient = ({ open, setOpen }: Props) => {
+const AddClient = ({ open, setOpen, clientId, startStep }: Props) => {
+  const isEdit = Boolean(clientId);
+  const { data: client } = useClient(clientId, isEdit);
+  function mapClientToForm(data: Client): ClientFormData {
+    return {
+      firstname: data.firstname ?? "",
+      lastname: data.lastname ?? "",
+      middlename: data.middlename ?? "",
+      email: data.email ?? "",
+      preferredname: data.preferredname ?? "",
+      title: data.title ?? "",
+      pronouns: data.pronouns ?? "",
+      gender: data.gender ?? "",
+      dob: data.dob?.slice(0, 10) ?? "",
+      phone: data.phone ?? "",
+      phoneType: data.phoneType ?? "",
+      status: data.status ?? "active",
+      wellbeingDetails: data.wellbeingDetails ?? "",
+      secondaryPhone: data.secondaryPhone ?? "",
+      secondaryPhoneType: data.secondaryPhoneType ?? "",
+      addressLine1: data.addressLine1 ?? "",
+      addressLine2: data.addressLine2 ?? "",
+      city: data.city ?? "",
+      riskLevel: data.riskLevel ?? "",
+      zip: data.zip ?? "",
+      accessDetails: data.accessDetails ?? "",
+      country: data.country ?? "",
+      nationality: data.nationality ?? "",
+      secureCheckInZone: data.secureCheckInZone ?? 0,
+      state: data.state ?? "",
+      latitude: Number(data.latitude) ?? 0,
+      longitude: Number(data.longitude) ?? 0,
+      county: data.county ?? "",
+    };
+  }
+
   const methods = useForm<ClientFormData>({
     resolver,
     defaultValues: {
@@ -45,7 +88,11 @@ const AddClient = ({ open, setOpen }: Props) => {
     reValidateMode: "onChange",
     shouldUnregister: false,
   });
-
+  React.useEffect(() => {
+    if (client && isEdit) {
+      methods.reset(mapClientToForm(client));
+    }
+  }, [client, isEdit]);
   const steps = useMemo(
     () => [
       { id: 1, label: "Personal Details" },
@@ -53,7 +100,7 @@ const AddClient = ({ open, setOpen }: Props) => {
       { id: 3, label: "Addresses" },
       { id: 4, label: "Wellbeing Overview" },
     ],
-    []
+    [],
   );
   const firstStep = steps[0].id;
   const lastStep = steps[steps.length - 1].id;
@@ -67,20 +114,14 @@ const AddClient = ({ open, setOpen }: Props) => {
   } as const;
 
   const [currentStep, setCurrentStep] = useState<number>(firstStep);
+  React.useEffect(() => {
+    if (open) {
+      setCurrentStep(startStep);
+    }
+  }, [open, startStep]);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [isStepValidating, setIsStepValidating] = useState(false);
   const [attemptedNext, setAttemptedNext] = useState(false); // gate error display
-
-  // auto-clear stale errors for fields in the current step as the user types
-  const watchValues = methods.watch(stepFields[currentStep]);
-  useEffect(() => {
-    const fields = stepFields[currentStep];
-    if (fields.length) {
-      void methods.trigger([...fields]); // re-run validation on change
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(watchValues), currentStep]);
-
   const validateCurrentStep = async () => {
     const fields = stepFields[currentStep] ?? [];
     const ok = await methods.trigger([...fields], { shouldFocus: true });
@@ -122,8 +163,13 @@ const AddClient = ({ open, setOpen }: Props) => {
       }
     }
   };
-  const { mutateAsync: createClient, isPending: isSubmitting } =
+  const { mutateAsync: createClient, isPending: isCreating } =
     useCreateClient();
+  const { mutateAsync: updateClient, isPending: isUpdating } = useUpdateClient(
+    clientId!,
+  );
+
+  const isSubmitting = isCreating || isUpdating;
 
   const onValidSubmit = async (vals: ClientFormData) => {
     // If your API needs a different shape, map here:
@@ -135,28 +181,31 @@ const AddClient = ({ open, setOpen }: Props) => {
     };
 
     try {
-      await createClient(payload);
-      toast?.success?.("Client created");
+      const formData = new FormData();
+
+      Object.entries(payload).forEach(([key, value]) => {
+        if (value == null) return;
+        formData.append(key, value instanceof File ? value : String(value));
+      });
+
+      if (isEdit) {
+        await updateClient(formData);
+        toast.success("Client updated");
+      } else {
+        await createClient(formData);
+        toast?.success?.("Client created");
+      }
+
+      setOpen(false);
       methods.reset();
       setCurrentStep(firstStep);
       setAttemptedNext(false);
-      setOpen(false);
-    } catch (err: any) {
-      // Optional: surface server validation errors back into the form
-      // Example expects { errors: [{ field: "email", message: "Already taken" }, ...] }
-      const serverErrors = err?.response?.data?.errors as
-        | { field: keyof ClientFormData; message: string }[]
-        | undefined;
-
-      if (serverErrors?.length) {
-        serverErrors.forEach(({ field, message }) => {
-          methods.setError(field, { type: "server", message });
-        });
-      } else {
-        toast.error("Failed to create client");
-        // toast?.error?.("Failed to create client");
-        console.error(err);
-      }
+    } catch (err) {
+      handleFormApiError<ClientFormData>(
+        err,
+        methods.setError,
+        isEdit ? "Failed to update client" : "Failed to create client",
+      );
     }
   };
 
@@ -175,7 +224,7 @@ const AddClient = ({ open, setOpen }: Props) => {
       open={open}
       hideCancel={currentStep > firstStep}
       onOpenChange={setOpen}
-      title="Add New Client"
+      title={isEdit ? "Edit Client" : "Add New Client"}
       description="Capture basic details to create a client profile"
       headerClassName="bg-[#E4E7EC] py-2.5"
       onSubmit={onFormSubmit}
@@ -184,6 +233,8 @@ const AddClient = ({ open, setOpen }: Props) => {
           "Next"
         ) : isSubmitting ? (
           <Spinner size="sm" />
+        ) : isEdit ? (
+          "Save Changes"
         ) : (
           "Create New Client"
         )
@@ -204,12 +255,6 @@ const AddClient = ({ open, setOpen }: Props) => {
       }
       submitDisabled={isStepValidating || isSubmitting}
     >
-      {/* <Stepper
-        steps={steps}
-        current={currentStep}
-        completed={completedSteps}
-        onStepClick={handleStepClick}
-      /> */}
       <StepperHeader
         steps={steps}
         current={currentStep}

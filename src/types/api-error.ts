@@ -6,7 +6,20 @@ export type FieldError<T extends FieldValues> = {
   message: string;
 };
 
-export type ApiError<T extends FieldValues> = {
+// export type ApiError<T extends FieldValues> = {
+//   message?: string;
+//   errors?: FieldError<T>[];
+// };
+
+export interface ApiError<T extends FieldValues> {
   message?: string;
+
   errors?: FieldError<T>[];
-};
+
+  error?: {
+    message?: string;
+    name?: string;
+    stack?: string;
+    [key: string]: any;
+  };
+}

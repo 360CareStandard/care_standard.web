@@ -25,9 +25,14 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 interface Props {
   personal: Client | undefined;
   isLoading?: boolean;
+  openSheet: () => void;
 }
 
-export default function Addresses({ personal, isLoading = false }: Props) {
+export default function Addresses({
+  personal,
+  isLoading = false,
+  openSheet,
+}: Props) {
   const lat = personal?.latitude ? Number(personal.latitude) : null;
   const lng = personal?.longitude ? Number(personal.longitude) : null;
   const hasCoords = Number.isFinite(lat) && Number.isFinite(lng);
@@ -57,6 +62,7 @@ export default function Addresses({ personal, isLoading = false }: Props) {
               variant="outline"
               className="gap-2"
               disabled={isLoading}
+              onClick={openSheet}
             >
               <EditIcon />
               Update

@@ -8,20 +8,24 @@ import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { LongText } from "@/components/shared/long-text";
 import { Link } from "react-router-dom";
-import { ClientNormalized } from "../data/normalize-clients";
 import { riskColorMap } from "@/helpers/risk-colors";
+import dayjs from "dayjs";
+import { Client } from "@/types/client/client";
 
 // small helper to compute age from YYYY-MM-DD string (returns undefined if no dob)
-function getAge(dob?: string | null) {
-  if (!dob) return undefined;
-  const d = new Date(dob);
-  if (Number.isNaN(d.getTime())) return undefined;
-  const diff = Date.now() - d.getTime();
-  const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
-  return age;
-}
 
-export const clientsColumns: ColumnDef<ClientNormalized>[] = [
+const calculateAge = (dateOfBirth: string | null) => {
+  const today = dayjs();
+  const birthDate = dayjs(dateOfBirth);
+
+  // Calculate the difference in years.
+  // dayjs().diff() truncates the result to a whole number by default for units like 'year'.
+  const age = today.diff(birthDate, "year");
+
+  return age;
+};
+
+export const clientsColumns: ColumnDef<Client>[] = [
   // ✅ Name with avatar (no checkbox column)
   {
     accessorKey: "name",
@@ -31,12 +35,9 @@ export const clientsColumns: ColumnDef<ClientNormalized>[] = [
     cell: ({ row }) => {
       const c = row.original;
       const username = c.id; // use id in URL / linking
-      const src = "";
-      const initials =
-        (c.firstname?.[0] ?? c.name?.[0] ?? "?") +
-        (c.lastname?.[0] ?? c.name?.split(" ")[1]?.[0] ?? "");
+      const src = c.imageUrl ?? "";
+      const initials = (c.firstname?.[0] ?? "?") + (c.lastname?.[0] ?? "");
       const fullName = `${c.firstname ?? ""} ${c.lastname ?? ""}`.trim();
-      const age = getAge(c.raw?.dob);
       return (
         <Link
           className="flex items-center gap-3"
@@ -49,11 +50,9 @@ export const clientsColumns: ColumnDef<ClientNormalized>[] = [
             </AvatarFallback>
           </Avatar>
           <div>
-            <LongText className="max-w-36 font-medium">
-              {fullName || c.name}
-            </LongText>
+            <LongText className="max-w-36 font-medium">{fullName}</LongText>
             <span className="w-fit text-nowrap text-sm text-muted-foreground">
-              {age ? `${age} years` : c.preferredname ?? "—"}
+              {calculateAge(c.dob || "")} years
             </span>
           </div>
         </Link>
@@ -95,8 +94,8 @@ export const clientsColumns: ColumnDef<ClientNormalized>[] = [
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      const status = row.original.status ?? row.getValue("status");
-      const badgeColor = callTypes.get(status);
+      const status = row.original?.status ?? row.getValue("status");
+      const badgeColor = callTypes.get(status as string);
       return (
         <div className="flex space-x-2">
           <Badge variant="outline" className={cn("capitalize", badgeColor)}>
@@ -162,7 +161,7 @@ export const clientsColumns: ColumnDef<ClientNormalized>[] = [
           className={cn(
             "text-xs font-medium rounded-md px-2 py-1 capitalize",
             riskStyle.bg,
-            riskStyle.text
+            riskStyle.text,
           )}
         >
           {riskLevel ?? "—"}

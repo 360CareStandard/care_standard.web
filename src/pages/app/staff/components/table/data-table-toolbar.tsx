@@ -15,8 +15,9 @@ import * as React from "react";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
+  search: string;
+  onSearchChange: (val: string) => void;
 }
-
 type SortKey =
   | "name-asc"
   | "name-desc"
@@ -26,6 +27,8 @@ type SortKey =
 
 export function DataTableToolbar<TData>({
   table,
+  onSearchChange,
+  search,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -68,9 +71,10 @@ export function DataTableToolbar<TData>({
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search client..."
-            value={(nameCol?.getFilterValue() as string) ?? ""}
-            onChange={(e) => nameCol?.setFilterValue(e.target.value)}
+            placeholder="Search staff..."
+            value={search}
+            type="search"
+            onChange={(e) => onSearchChange(e.target.value)}
             className="h-10 w-[240px] pl-9 md:w-[360px]"
           />
         </div>

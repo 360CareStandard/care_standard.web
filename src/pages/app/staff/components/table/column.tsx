@@ -27,7 +27,13 @@ export const staffColumns: ColumnDef<Staff>[] = [
       return (
         <Link className="flex items-center gap-3" to={`/app/staff/${username}`}>
           <Avatar className="h-12 w-12">
-            {src ? <AvatarImage src={src} alt={`${fullName} avatar`} /> : null}
+            {src ? (
+              <AvatarImage
+                src={src}
+                alt={`${fullName} avatar`}
+                className="object-cover"
+              />
+            ) : null}
             <AvatarFallback className="font-semibold">
               {initials.toUpperCase()}
             </AvatarFallback>

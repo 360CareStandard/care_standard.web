@@ -6,6 +6,7 @@ import { Trash, Edit } from "lucide-react";
 import type { UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { ClientFormData } from "../schemas/add-client";
+import toast from "react-hot-toast";
 
 type Props = {
   watch: UseFormWatch<ClientFormData>;
@@ -22,7 +23,7 @@ export function ProfileImageField({
   label = "Profile Image",
   maxSizeMB = 5,
 }: Props) {
-  const file = watch("profileImage");
+  const file = watch("clientPicture");
 
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -40,21 +41,28 @@ export function ProfileImageField({
 
   const openPicker = () => fileRef.current?.click();
   const onRemove = () => {
-    setValue("profileImage", undefined);
+    setValue("clientPicture", undefined);
     setPreview(null);
   };
 
   const onPick: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const allowedTypes = ["image/png", "image/jpeg"];
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only PNG and JPG images are allowed");
+      e.target.value = ""; // reset input
+      return;
+    }
 
     if (file.size > maxSizeMB * 1024 * 1024) {
-      alert(`Please choose an image under ${maxSizeMB}MB.`);
+      toast.error(`Please choose an image under ${maxSizeMB}MB.`);
       e.currentTarget.value = "";
       return;
     }
 
-    setValue("profileImage", file, { shouldDirty: true });
+    setValue("clientPicture", file, { shouldDirty: true });
   };
 
   return (
@@ -89,7 +97,7 @@ export function ProfileImageField({
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept=".png,.jpg,.jpeg"
         className="hidden"
         onChange={onPick}
       />

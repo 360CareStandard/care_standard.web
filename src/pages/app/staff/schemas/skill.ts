@@ -24,13 +24,13 @@ export const AddStaffSkillSchema = z
   .superRefine((data, ctx) => {
     // 🔒 Conditional validation
     if (data.hasCertificate) {
-      if (!data.certificateDocument) {
-        ctx.addIssue({
-          path: ["certificateDocument"],
-          message: "Certificate document is required",
-          code: z.ZodIssueCode.custom,
-        });
-      }
+      // if (!data.certificateDocument) {
+      //   ctx.addIssue({
+      //     path: ["certificateDocument"],
+      //     message: "Certificate document is required",
+      //     code: z.ZodIssueCode.custom,
+      //   });
+      // }
 
       if (!data.expiredAt) {
         ctx.addIssue({

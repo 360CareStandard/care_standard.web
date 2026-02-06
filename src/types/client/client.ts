@@ -14,6 +14,7 @@ export interface Agency {
 
 export interface Client {
   id: string;
+  imageUrl: string;
   agencyId: string;
   primaryContactUserId: string | null;
   firstname: string;

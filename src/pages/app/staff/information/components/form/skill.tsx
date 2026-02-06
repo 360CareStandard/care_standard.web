@@ -7,11 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { SingleDocumentUploader } from "@/components/shared/single-document-uploader";
 export function SkillForm() {
-    const { watch, setValue, formState,register } =
-  useFormContext<AddStaffSkillForm>();
+  const { watch, setValue, formState, register } =
+    useFormContext<AddStaffSkillForm>();
 
-const hasCertificate = watch("hasCertificate");
-
+  const hasCertificate = watch("hasCertificate");
 
   const { errors } = formState;
 
@@ -45,20 +44,23 @@ const hasCertificate = watch("hasCertificate");
           </p>
         </div>
 
-      <Switch
-  checked={hasCertificate}
-  onCheckedChange={(checked) => {
-    setValue("hasCertificate", checked, { shouldValidate: true });
+        <Switch
+          checked={hasCertificate}
+          onCheckedChange={(checked) => {
+            setValue("hasCertificate", checked, { shouldValidate: true });
 
-    if (!checked) {
-      // 🔥 Clear dependent fields
-      setValue("expiredAt", undefined, { shouldValidate: true });
-      setValue("certificateDocument", undefined, { shouldValidate: true });
-      setValue("certificateDocumentUrl", undefined, { shouldValidate: false });
-    }
-  }}
-/>
-
+            if (!checked) {
+              // 🔥 Clear dependent fields
+              setValue("expiredAt", undefined, { shouldValidate: true });
+              setValue("certificateDocument", undefined, {
+                shouldValidate: true,
+              });
+              setValue("certificateDocumentUrl", undefined, {
+                shouldValidate: false,
+              });
+            }
+          }}
+        />
       </div>
 
       {hasCertificate && (

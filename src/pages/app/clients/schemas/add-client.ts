@@ -6,7 +6,7 @@ import * as z from "zod";
 const ukMobileRegex = /^(?:\+44?7\d{9}|07\d{9})$/;
 
 export const clientSchema = z.object({
-  profileImage: z.any().optional(),
+  clientPicture: z.any().optional(),
   // personal names (payload uses lowercase-ish keys)
   title: z.string().optional(), // payload has "Mr." etc
   firstname: z.string().trim().min(1, "Please enter a first name"),
@@ -56,7 +56,7 @@ export const clientSchema = z.object({
       .refine((s) => ukMobileRegex.test(s), {
         message:
           "phone must be a valid UK number, e.g. +447911123456 or 07911123456",
-      })
+      }),
   ),
   phoneType: z.string().trim().min(1, "Please enter a phone type"),
   secondaryPhone: z.preprocess(
@@ -73,8 +73,8 @@ export const clientSchema = z.object({
           if (!s || s === "") return true; // allow empty
           return ukMobileRegex.test(s);
         },
-        { message: "secondaryPhone must be a valid UK mobile number" }
-      )
+        { message: "secondaryPhone must be a valid UK mobile number" },
+      ),
   ),
   secondaryPhoneType: z.string().optional().nullable(),
 

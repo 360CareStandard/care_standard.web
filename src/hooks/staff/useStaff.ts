@@ -5,6 +5,34 @@ import { StaffProfileApi } from "@/api/staff/profile";
 import { StaffFormData } from "@/pages/app/staff/schemas/add-staff";
 import { AxiosError } from "axios";
 import { ApiError } from "@/types/api-error";
+import { keepPreviousData } from "@tanstack/react-query";
+
+import { useInfiniteQuery } from "@tanstack/react-query";
+
+export function useStaffScroll(params?: { q?: string; limit?: number }) {
+  return useInfiniteQuery({
+    queryKey: qk.staffInfinite(params),
+    initialPageParam: 1,
+
+    queryFn: ({ pageParam }) =>
+      StaffProfileApi.list({
+        q: params?.q,
+        limit: params?.limit ?? 10,
+        page: pageParam,
+      }),
+
+    getNextPageParam: (lastPage) => {
+      const pagination = lastPage.pagination;
+
+      const page = Number(pagination.page);
+      const totalPages = Number(pagination.totalPages);
+
+      return page < totalPages ? page + 1 : undefined;
+    },
+
+    staleTime: 60_000,
+  });
+}
 
 export function useStaff(params?: {
   q?: string;
@@ -12,10 +40,11 @@ export function useStaff(params?: {
   limit?: number;
 }) {
   return useQuery({
-    queryKey: qk.staffs(params),
+    queryKey: qk.staffList(params),
     queryFn: () => StaffProfileApi.list(params),
     select: (res) => res,
     staleTime: 60_000,
+    placeholderData: keepPreviousData,
   });
 }
 export function useStaffDetails(id?: string, enabled = true) {

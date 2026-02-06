@@ -6,6 +6,7 @@ import { Trash, Edit } from "lucide-react";
 import type { UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { StaffFormData } from "../../../schemas/add-staff";
+import toast from "react-hot-toast";
 
 type Props = {
   watch: UseFormWatch<StaffFormData>;
@@ -47,9 +48,16 @@ export function ProfileImageField({
   const onPick: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const allowedTypes = ["image/png", "image/jpeg"];
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only PNG and JPG images are allowed");
+      e.target.value = ""; // reset input
+      return;
+    }
 
     if (file.size > maxSizeMB * 1024 * 1024) {
-      alert(`Please choose an image under ${maxSizeMB}MB.`);
+      toast.error(`Please choose an image under ${maxSizeMB}MB.`);
       e.currentTarget.value = "";
       return;
     }
@@ -89,7 +97,7 @@ export function ProfileImageField({
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept=".png,.jpg,.jpeg"
         className="hidden"
         onChange={onPick}
       />

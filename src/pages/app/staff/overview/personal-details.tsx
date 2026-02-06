@@ -54,6 +54,7 @@ const PersonalDetails = ({ personal, openSheet }: Props) => {
                 <AvatarImage
                   alt={personal.user?.firstname}
                   src={personal.profilePicture ?? ""}
+                  className="object-cover"
                 />
                 <AvatarFallback className="text-5xl font-semibold">
                   {getInitials(personal)}

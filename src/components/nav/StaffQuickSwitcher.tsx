@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Plus, Search, ChevronDown, LayoutGrid, RefreshCw } from "lucide-react";
@@ -46,7 +46,7 @@ export function StaffQuickSwitcher({ className }: Props) {
   });
 
   // Map server response -> lightweight client objects used by the switcher.
-  const apiClients: StaffSmall[] = React.useMemo(() => {
+  const apiStaff: StaffSmall[] = React.useMemo(() => {
     if (!staffData) return [];
     return staffData.staffs.map((c) => ({
       id: c.id,
@@ -63,12 +63,12 @@ export function StaffQuickSwitcher({ className }: Props) {
               new Date().getFullYear() - new Date(c.dob).getFullYear(),
             )} years`
           : ""),
-      avatar: null, // API currently provides no avatars; keep null fallback
+      avatar: c.profilePicture ?? null, // API currently provides no avatars; keep null fallback
     }));
   }, [staffData]);
 
   // Use only API staff (no demo fallback). When empty -> show "No staff".
-  const staff = apiClients;
+  const staff = apiStaff;
 
   const [open, setOpen] = React.useState(false);
   const [q, setQ] = React.useState("");
@@ -129,7 +129,13 @@ export function StaffQuickSwitcher({ className }: Props) {
           aria-expanded={open}
         >
           <Avatar className="h-11 w-11 text-black">
-            {/* API currently doesn't provide avatars; use initials fallback */}
+            {active?.avatar ? (
+              <AvatarImage
+                src={active?.avatar || ""}
+                alt={`${active?.name} avatar`}
+                className="object-cover"
+              />
+            ) : null}
             <AvatarFallback>
               {active?.name?.slice(0, 2).toUpperCase() || "CL"}
             </AvatarFallback>
@@ -256,7 +262,13 @@ export function StaffQuickSwitcher({ className }: Props) {
                   )}
                 >
                   <Avatar className="h-9 w-9">
-                    {/* always fallback to initials because API has no avatar */}
+                    {c?.avatar ? (
+                      <AvatarImage
+                        src={c?.avatar || ""}
+                        alt={`${c?.name} avatar`}
+                        className="object-cover"
+                      />
+                    ) : null}
                     <AvatarFallback>
                       {c.name.slice(0, 2).toUpperCase()}
                     </AvatarFallback>

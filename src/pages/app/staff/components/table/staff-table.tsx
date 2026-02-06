@@ -2,19 +2,12 @@
 import { useEffect, useState } from "react";
 import {
   ColumnDef,
-  ColumnFiltersState,
   RowData,
   SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
-  PaginationState,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -60,27 +53,42 @@ export function StaffTable({
   // other table state
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  function useDebouncedValue<T>(value: T, delay = 500) {
+    const [debounced, setDebounced] = useState(value);
 
+    useEffect(() => {
+      const id = setTimeout(() => setDebounced(value), delay);
+      return () => clearTimeout(id);
+    }, [value, delay]);
+
+    return debounced;
+  }
+
+  const debouncedSearch = useDebouncedValue(search);
   // fetch data from server using 1-based page param
+
   const {
     data: staffData,
     isLoading,
-    // isFetching,
     isError,
     error,
     refetch,
   } = useStaff({
     page: pageIndex + 1,
     limit: pageSize,
+    q: debouncedSearch,
   });
 
   const rows: Staff[] = staffData?.staffs ?? [];
   const totalPages = staffData?.pagination?.totalPages ?? 1; // server-provided total pages
   //   const resultCount = normalized?.result ?? 0;
   //   const currentServerPage = normalized?.currentPage ?? pageIndex + 1;
+  useEffect(() => {
+    setPageIndex(0);
+  }, [search]);
 
   // keep pagination state in sync if server returns different page (e.g. after refresh)
   useEffect(() => {
@@ -99,64 +107,52 @@ export function StaffTable({
   // ---- create the table with manual (server-side) pagination enabled ----
   const table = useReactTable({
     data: rows,
-    columns: columns as ColumnDef<Staff>[],
+    columns,
     state: {
       sorting,
       columnVisibility,
       rowSelection,
-      columnFilters,
       pagination: {
         pageIndex,
         pageSize,
-      } as PaginationState,
+      },
     },
     manualPagination: true,
     pageCount: totalPages,
     onPaginationChange: (updater) => {
-      const newState =
+      const next =
         typeof updater === "function"
           ? updater({ pageIndex, pageSize })
           : updater;
-      if (newState) {
-        if (
-          typeof newState.pageIndex === "number" &&
-          newState.pageIndex !== pageIndex
-        ) {
-          setPageIndex(newState.pageIndex);
-        }
-        if (
-          typeof newState.pageSize === "number" &&
-          newState.pageSize !== pageSize
-        ) {
-          setPageSize(newState.pageSize);
-        }
+
+      if (!next) return;
+
+      if (typeof next.pageIndex === "number" && next.pageIndex !== pageIndex) {
+        setPageIndex(next.pageIndex);
+      }
+
+      if (typeof next.pageSize === "number" && next.pageSize !== pageSize) {
+        setPageSize(next.pageSize);
       }
     },
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
   // --- Loading: show skeleton during initial load ---
-  if (isLoading) {
-    // pass columnCount and rowCount to match your columns
+  const isInitialLoad = isLoading && !staffData;
+
+  if (isInitialLoad) {
     return (
-      <div className="space-y-4">
-        <DataTableSkeleton
-          columnCount={columns.length}
-          rowCount={8}
-          searchableColumnCount={1}
-          filterableColumnCount={1}
-          showViewOptions={true}
-        />
-      </div>
+      <DataTableSkeleton
+        columnCount={columns.length}
+        rowCount={8}
+        searchableColumnCount={1}
+        filterableColumnCount={1}
+        showViewOptions
+      />
     );
   }
 
@@ -184,8 +180,11 @@ export function StaffTable({
         </div>
       )}
 
-      <DataTableToolbar table={table} />
-
+      <DataTableToolbar
+        table={table}
+        search={search}
+        onSearchChange={setSearch}
+      />
       <div>
         <Table>
           {table.getRowModel().rows?.length ? (

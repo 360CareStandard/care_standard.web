@@ -3,8 +3,13 @@ export const qk = {
   me: ["me"] as const,
   menu: (p?: any) => ["menu", p] as const,
   carePackage: (p?: any) => ["care-package", p] as const,
-  clients: (params?: Record<string, unknown>) => ["clients", params] as const,
+  clientList: (params?: { page?: number; limit?: number; q?: string }) => [
+    "client",
+    "list",
+    params,
+  ],
 
+  client: (id: string) => ["client", id] as const,
   clientContacts: (clientId?: string) => ["client-contacts", clientId] as const,
   // unique key for a single contact
   clientContact: (clientId?: string, contactId?: string) =>
@@ -20,7 +25,6 @@ export const qk = {
   clientPreferences: (clientId?: string) =>
     ["client-preferences", clientId] as const,
 
-  client: (id: string) => ["client", id] as const,
   carePlan: (clientId?: string, carePlanId?: string) =>
     ["care-plan", clientId, carePlanId] as const,
   medication: (clientId?: string, medicationId?: string, status?: string) =>
@@ -28,8 +32,21 @@ export const qk = {
   workspace: ["workspace"] as const,
 
   //staff
-  staffs: (params?: Record<string, unknown>) => ["staff", params] as const,
-  staff: (id: string) => ["staff", id] as const,
+  // staffs: (params?: Record<string, unknown>) => ["staff", params] as const,
+  // staff: (id: string) => ["staff", id] as const,
+  staffList: (params?: { page?: number; limit?: number; q?: string }) => [
+    "staff",
+    "list",
+    params,
+  ],
+
+  staffInfinite: (params?: { limit?: number; q?: string }) => [
+    "staff",
+    "infinite",
+    params,
+  ],
+
+  staff: (id: string) => ["staff", "detail", id],
   staffContacts: (staffId?: string) => ["staff-contacts", staffId] as const,
   // unique key for a single contact
   staffContact: (staffId?: string, contactId?: string) =>

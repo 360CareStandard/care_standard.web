@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/queryKeys";
 import { ClientsApi } from "@/api/client/profile";
 import { ClientFormData } from "@/pages/app/clients/schemas/add-client";
+import { AxiosError } from "axios";
+import { ApiError } from "@/types/api-error";
 
 export function useClients(params?: {
   q?: string;
@@ -10,24 +12,36 @@ export function useClients(params?: {
   limit?: number;
 }) {
   return useQuery({
-    queryKey: qk.clients(params),
+    queryKey: qk.clientList(params),
     queryFn: () => ClientsApi.list(params),
     select: (res) => res,
     staleTime: 60_000,
   });
 }
 
-export function useCreateClient(params?: {
-  q?: string;
-  page?: number;
-  limit?: number;
-}) {
+export function useCreateClient() {
+  const qc = useQueryClient();
+
+  return useMutation<
+    { status: "success" },
+    AxiosError<ApiError<ClientFormData>>,
+    FormData
+  >({
+    mutationFn: ClientsApi.post,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["client"] });
+    },
+  });
+}
+export function useUpdateClient(id: string) {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: (body: ClientFormData) => ClientsApi.post(body),
+    mutationFn: (formData: FormData) => ClientsApi.update(id, formData),
+
     onSuccess: () => {
-      return qc.invalidateQueries({ queryKey: qk.clients(params) });
+      qc.invalidateQueries({ queryKey: ["client"] });
+      qc.invalidateQueries({ queryKey: qk.client(id) });
     },
   });
 }
