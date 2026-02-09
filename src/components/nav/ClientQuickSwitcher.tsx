@@ -48,11 +48,11 @@ export function ClientQuickSwitcher({ className }: Props) {
   // Map server response -> lightweight client objects used by the switcher.
   const apiClients: ClientSmall[] = React.useMemo(() => {
     if (!clientData) return [];
-
-    return clientData.clients.map((c) => ({
-      id: c.id,
+    const clientArr = clientData.clients ?? [];
+    return clientArr.map((c) => ({
+      id: c?.id,
       name:
-        c.firstname ||
+        c?.firstname ||
         `${c.firstname ?? ""} ${c.lastname ?? ""}`.trim() ||
         "Unknown",
       meta:
@@ -132,8 +132,8 @@ export function ClientQuickSwitcher({ className }: Props) {
         >
           <Avatar className="h-11 w-11 text-black object-cover">
             <AvatarImage
-              alt={active.name}
-              src={active.avatar ?? ""}
+              alt={active?.name}
+              src={active?.avatar ?? ""}
               className="object-cover"
             />{" "}
             <AvatarFallback>
@@ -263,12 +263,12 @@ export function ClientQuickSwitcher({ className }: Props) {
                 >
                   <Avatar className="h-9 w-9">
                     <AvatarImage
-                      alt={c.name}
+                      alt={c?.name}
                       src={c.avatar ?? ""}
                       className="object-cover"
                     />
                     <AvatarFallback>
-                      {c.name.slice(0, 2).toUpperCase()}
+                      {c?.name.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
 

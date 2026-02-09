@@ -6,8 +6,9 @@ import { TextareaField } from "@/components/shared/textarea-field";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { SingleDocumentUploader } from "@/components/shared/single-document-uploader";
+import { RHFSelectField } from "@/components/shared/rhf-select-field";
 export function SkillForm() {
-  const { watch, setValue, formState, register } =
+  const { watch, setValue, formState, control, register } =
     useFormContext<AddStaffSkillForm>();
 
   const hasCertificate = watch("hasCertificate");
@@ -16,17 +17,30 @@ export function SkillForm() {
 
   return (
     <div className="space-y-4">
-      <TextField
-        label="Skill Name"
+      <RHFSelectField
+        control={control}
         {...register("skillName")}
-        error={errors.skillName?.message}
+        name="skillName"
+        label="Skill Name"
+        options={[
+          { value: "Moving & Handling", label: "Moving & Handling" },
+          {
+            value: "Medication Administration",
+            label: "Medication Administration",
+          },
+          { value: "Dementia Care", label: "Dementia Care" },
+          { value: "First Aid", label: "First Aid" },
+          { value: "Safeguarding", label: "Safeguarding" },
+          { value: "Personal Care", label: "Personal Care" },
+        ]}
+        showErrorWhen="touched"
       />
 
-      <TextField
+      {/* <TextField
         label="Skill Type"
         {...register("skillType")}
         error={errors.skillType?.message}
-      />
+      /> */}
 
       <TextareaField
         label="Notes (Optional)"
@@ -38,7 +52,7 @@ export function SkillForm() {
       {/* Certificate Switch */}
       <div className="flex items-start justify-between gap-4 py-2">
         <div>
-          <Label className="font-medium mb-1">Certificate</Label>
+          <Label className="font-medium mb-1">Skill Type</Label>
           <p className="text-sm text-muted-foreground">
             This skill has a certificate
           </p>

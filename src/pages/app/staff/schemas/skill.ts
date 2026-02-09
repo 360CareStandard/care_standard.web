@@ -4,7 +4,7 @@ export const AddStaffSkillSchema = z
   .object({
     skillName: z.string().min(1, "Skill name is required"),
 
-    skillType: z.string().min(1, "Skill type is required"),
+    skillType: z.string().optional(),
 
     note: z.string().max(1000, "Note is too long").optional(),
 
