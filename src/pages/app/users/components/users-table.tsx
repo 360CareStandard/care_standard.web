@@ -92,7 +92,7 @@ export function UsersTable({ columns, data }: DataTableProps) {
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     );
@@ -116,7 +116,7 @@ export function UsersTable({ columns, data }: DataTableProps) {
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -153,7 +153,7 @@ export function UsersTable({ columns, data }: DataTableProps) {
         </Table>
       </div>
       <DataTablePagination table={table} />
-      <AddClient open={open} setOpen={setOpen} />
+      <AddClient open={open} setOpen={setOpen} startStep={1} />
     </div>
   );
 }

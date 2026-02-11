@@ -2,15 +2,7 @@
 import { useFormContext } from "react-hook-form";
 import { RHFSelectField } from "@/components/shared/rhf-select-field";
 import { TextField } from "@/components/shared/text-field";
-import {
-  CareSetupForm,
-  FundingSourceEnum,
-} from "../../../../../schemas/care-setup";
-
-const fundingOptions = FundingSourceEnum.options.map((v) => ({
-  value: v,
-  label: v,
-}));
+import { CareSetupForm } from "../../../../../schemas/care-setup";
 
 export function FundingFields() {
   const { register, control, formState } = useFormContext<CareSetupForm>();
@@ -23,7 +15,13 @@ export function FundingFields() {
         name="fundingSource"
         label="Funding Source"
         placeholder="Select funding source"
-        options={fundingOptions}
+        options={[
+          { value: "nhs", label: "NHS" },
+          { value: "local-authority", label: "Local Authority" },
+          { value: "private", label: "Private" },
+          { value: "mixed", label: "Mixed" },
+          { value: "other", label: "Other" },
+        ]}
       />
 
       <TextField

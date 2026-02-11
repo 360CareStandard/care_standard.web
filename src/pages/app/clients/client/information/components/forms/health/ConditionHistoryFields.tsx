@@ -12,7 +12,7 @@ export function ConditionHistoryFields() {
   const { register, control } = useFormContext<MedicalForm>();
 
   // Manage array of diagnosedConditions from the form
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "diagnosedConditions",
   });
@@ -52,7 +52,7 @@ export function ConditionHistoryFields() {
                   type="date"
                   placeholder="yyyy-mm-dd"
                   {...register(
-                    `diagnosedConditions.${index}.diagnosisDate` as const
+                    `diagnosedConditions.${index}.diagnosisDate` as const,
                   )}
                   defaultValue={field.diagnosisDate ?? ""}
                 />

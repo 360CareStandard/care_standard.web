@@ -9,7 +9,7 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { HomeEnvironmentForm } from "../../../../../schemas/home-environment";
 
 type EquipmentKey = "Hospital Bed" | "CPAP Machine" | "Hoist" | "Wheelchair";
-type AssistiveKey = "Fall Alarm" | "Telecare" | "Pendant Alarm";
+// type AssistiveKey = "Fall Alarm" | "Telecare" | "Pendant Alarm";
 type HazardKey = "Clutter" | "Stairs" | "Fire Risk" | "Aggressive pets";
 
 const EQUIPMENT: EquipmentKey[] = [
@@ -18,7 +18,7 @@ const EQUIPMENT: EquipmentKey[] = [
   "Hoist",
   "Wheelchair",
 ];
-const ASSISTIVE: AssistiveKey[] = ["Fall Alarm", "Telecare", "Pendant Alarm"];
+// const ASSISTIVE: AssistiveKey[] = ["Fall Alarm", "Telecare", "Pendant Alarm"];
 const HAZARDS: HazardKey[] = [
   "Clutter",
   "Stairs",
@@ -43,7 +43,7 @@ function ToggleChip({
         "group inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors",
         active
           ? "bg-emerald-100 text-emerald-900 border-emerald-200"
-          : "bg-transparent text-foreground border-border hover:bg-muted/60"
+          : "bg-transparent text-foreground border-border hover:bg-muted/60",
       )}
     >
       <span
@@ -51,7 +51,7 @@ function ToggleChip({
           "grid h-5 w-5 place-items-center rounded-[6px] border",
           active
             ? "bg-emerald-600 text-white border-emerald-600"
-            : "border-muted-foreground/30 text-transparent"
+            : "border-muted-foreground/30 text-transparent",
         )}
       >
         <Check className="h-3.5 w-3.5" />
@@ -87,7 +87,7 @@ export function EnvironmentEquipmentFields() {
 
   const equipmentPresent = React.useMemo(
     () => new Set(env?.equipmentPresent ?? []),
-    [env]
+    [env],
   );
   // const assistiveSet = React.useMemo(
   //   () => new Set(env?.assistiveTechnology ?? []),
@@ -95,13 +95,13 @@ export function EnvironmentEquipmentFields() {
   // );
   const hazardsSet = React.useMemo(
     () => new Set(env?.knownHazards ?? []),
-    [env]
+    [env],
   );
 
   // helpers to update nested arrays safely
   const toggleArrayValue = (
     key: keyof NonNullable<typeof env>,
-    value: string
+    value: string,
   ) => {
     const current = getValues("environmentAndEquipment") ?? {};
     const arr: string[] = Array.isArray(current[key]) ? current[key]! : [];
@@ -111,7 +111,7 @@ export function EnvironmentEquipmentFields() {
     setValue(
       "environmentAndEquipment",
       { ...current, [key]: next },
-      { shouldDirty: true }
+      { shouldDirty: true },
     );
   };
   const togglePetsPresent = (on: boolean) => {
@@ -122,9 +122,9 @@ export function EnvironmentEquipmentFields() {
       {
         ...current,
         petsPresent: Boolean(on),
-        pets: on ? current.pets ?? "" : "",
+        pets: on ? (current.pets ?? "") : "",
       },
-      { shouldDirty: true }
+      { shouldDirty: true },
     );
   };
   const setPets = (v: string) => {
@@ -132,19 +132,19 @@ export function EnvironmentEquipmentFields() {
     setValue(
       "environmentAndEquipment",
       { ...current, pets: v },
-      { shouldDirty: true }
+      { shouldDirty: true },
     );
   };
 
-  const setPetsToggle = (on: boolean) => {
-    const current = getValues("environmentAndEquipment") ?? {};
-    // when switching off, clear pet details
-    setValue(
-      "environmentAndEquipment",
-      { ...current, pets: on ? current.pets ?? "" : "" },
-      { shouldDirty: true }
-    );
-  };
+  // const setPetsToggle = (on: boolean) => {
+  //   const current = getValues("environmentAndEquipment") ?? {};
+  //   // when switching off, clear pet details
+  //   setValue(
+  //     "environmentAndEquipment",
+  //     { ...current, pets: on ? current.pets ?? "" : "" },
+  //     { shouldDirty: true }
+  //   );
+  // };
 
   // const setHazardNotes = (v: string) => {
   //   const current = getValues("environmentAndEquipment") ?? {};

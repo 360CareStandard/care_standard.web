@@ -14,6 +14,11 @@ export const qk = {
   // unique key for a single contact
   clientContact: (clientId?: string, contactId?: string) =>
     ["client-contact", clientId, contactId] as const,
+  clientVisitSchedules: (clientId?: string) =>
+    ["client-visit-schedule", clientId] as const,
+  // unique key for a single contact
+  clientVisitSchedule: (clientId?: string, scheduleId?: string) =>
+    ["client-visit-schedule", clientId, scheduleId] as const,
   // unique key for a single contact
   clientCare: (clientId?: string) => ["client-care", clientId] as const,
   clientLegal: (clientId?: string) => ["client-legal", clientId] as const,

@@ -44,7 +44,7 @@ export default function CalendarNav({
   calendarRef,
   viewedDate,
 }: CalendarNavProps) {
-  const [currentView, setCurrentView] = useState("timeGridWeek");
+  const [currentView] = useState("timeGridWeek");
 
   const selectedMonth = viewedDate.getMonth() + 1;
   const selectedDay = viewedDate.getDate();

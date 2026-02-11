@@ -17,7 +17,7 @@ export const StaffContactApi = {
   },
 
   // src/api/clients.ts (or src/api/client/contact.ts)
-  get: (id: string, contactId: string) =>
+  get: (contactId: string) =>
     api.get<StaffContactResponse>(`/staff/nextOfKin/${contactId}`).then((r) => {
       const payload = r?.data?.data;
       if (!payload) return undefined;
@@ -26,7 +26,7 @@ export const StaffContactApi = {
       return payload as StaffContact;
     }),
 
-  update: (id: string, contactId: string, body: UpdateClientBody) =>
+  update: (contactId: string, body: UpdateClientBody) =>
     api
       .patch<StaffContact>(`/staff/nextOfKin/${contactId}`, body)
       .then((r) => r.data),
@@ -34,7 +34,7 @@ export const StaffContactApi = {
   post: (id: string, body: AddStaffContactForm) =>
     api.post<StaffContact>(`/staff/nextOfKin/${id}`, body).then((r) => r.data), // ← FIXED
 
-  delete: (id: string, contactId: string) =>
+  delete: (contactId: string) =>
     api
       .delete<{ status: "success" }>(`/staff/nextOfKin/${contactId}`)
       .then((r) => r.data),

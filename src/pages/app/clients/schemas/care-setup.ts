@@ -24,12 +24,7 @@ export const LanguageEnum = z.enum(["No requirement", "English", "Spanish"]);
 export const StatusEnum = z.enum(["active", "paused", "ended"]);
 export const VisitPresetEnum = z.enum(["AM", "PM", "Evening", "Custom"]);
 export const CheckInMethodEnum = z.enum(["gps", "nfc", "qr code"]);
-export const FundingSourceEnum = z.enum([
-  "NHS",
-  "local authority",
-  "private",
-  "mixed",
-]);
+
 /**
  * Visit duration preset allowed values in API: "30", "15" etc.
  * Accepts either string or number but stores string form.
@@ -56,7 +51,7 @@ const TimeHHMMSS = z
 /**
  * Language list — API accepts array of strings
  */
-const LanguageString = z.string();
+// const LanguageString = z.string();
 
 /**
  * Main full schema mapping to the API payload
@@ -94,10 +89,12 @@ export const CareSetupApiSchema = z.object({
   preferredCarers: z.array(z.string()).default([]),
   avoidedCarers: z.array(z.string()).default([]),
   requiredSkills: z.array(z.string()).default([]),
-  languageRequirements: z.array(LanguageString).default([]),
-
+  // languageRequirements: z.array(LanguageString).default([]),
+  languageRequirements: z
+    .array(z.union([LanguageEnum, z.string().min(1)]))
+    .default([]),
   // Funding
-  fundingSource: FundingSourceEnum.optional(),
+  fundingSource: z.string().optional(),
   funder: z.string().optional(),
   authorizationNumber: z.string().optional(),
   budgetCap: z

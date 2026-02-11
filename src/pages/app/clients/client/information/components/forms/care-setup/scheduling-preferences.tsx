@@ -13,6 +13,7 @@ import { customSelectStyles } from "@/styles/react-select";
 import React from "react";
 import CarerSelector from "./selector";
 import { Input } from "@/components/ui/input";
+import CreatableSelect from "react-select/creatable";
 
 const durationOptions = VisitPresetEnum.options.map((v) => ({
   value: v,
@@ -20,7 +21,6 @@ const durationOptions = VisitPresetEnum.options.map((v) => ({
 }));
 
 const skills = SkillEnum.options.map((v) => ({ value: v, label: v }));
-const languages = LanguageEnum.options.map((v) => ({ value: v, label: v }));
 type SkillValue = z.infer<typeof SkillEnum>; // "Medication" | "Dementia Care" | ...
 type LanguageValue = z.infer<typeof LanguageEnum>; // "Medication" | "Dementia Care" | ...
 type Option = { value: SkillValue; label: string };
@@ -29,6 +29,12 @@ type LanguageOption = { value: LanguageValue; label: string };
 export function SchedulingPreferencesFields() {
   const { control } = useFormContext<CareSetupForm>();
   const sheetContentRef = React.useRef(null);
+  const baseLanguages = LanguageEnum.options.map((v) => ({
+    value: v,
+    label: v,
+  }));
+  const [languageOptions, setLanguageOptions] =
+    React.useState<LanguageOption[]>(baseLanguages);
 
   return (
     <div className="space-y-6" ref={sheetContentRef}>
@@ -140,6 +146,7 @@ export function SchedulingPreferencesFields() {
           }}
         />
       </div>
+
       <div>
         <Label className="mb-2 block text-sm font-medium">
           Language Requirement
@@ -149,25 +156,17 @@ export function SchedulingPreferencesFields() {
           name="languageRequirements"
           control={control}
           render={({ field, fieldState }) => {
-            // field.value is string[] (e.g. ["Medication","PEG Feeding"])
-            const selectedLanguages = (field.value ?? [])
-              .map((val: string) => languages.find((o) => o.value === val)!)
-              .filter(Boolean);
-
-            const handleLanguageChange = (
-              selected: MultiValue<LanguageOption>,
-            ) => {
-              const vals = (selected ?? []).map((o) => o.value);
-              field.onChange(vals);
-            };
-
+            const selected = (field.value ?? []).map(
+              (val: string) =>
+                languageOptions.find((o) => o.value === val) ?? {
+                  value: val as any,
+                  label: val,
+                },
+            );
             return (
               <>
-                <Select<LanguageOption, true>
+                <CreatableSelect<LanguageOption, true>
                   isMulti
-                  options={languages}
-                  value={selectedLanguages}
-                  onChange={handleLanguageChange}
                   placeholder="Select Language Requirement..."
                   // PORTAL / POSITIONING fixes:
                   menuPortalTarget={sheetContentRef.current}
@@ -177,6 +176,20 @@ export function SchedulingPreferencesFields() {
                   styles={customSelectStyles}
                   // optional: control whether menu closes on scroll
                   closeMenuOnScroll={false}
+                  options={languageOptions}
+                  value={selected}
+                  onChange={(selected) =>
+                    field.onChange((selected ?? []).map((o) => o.value))
+                  }
+                  onCreateOption={(input) => {
+                    const newOpt = { value: input as any, label: input };
+                    setLanguageOptions((prev) =>
+                      prev.some((o) => o.value === newOpt.value)
+                        ? prev
+                        : [...prev, newOpt],
+                    );
+                    field.onChange([...(field.value ?? []), input]);
+                  }}
                 />
 
                 {fieldState.error && (

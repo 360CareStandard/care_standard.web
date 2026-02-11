@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -180,6 +178,10 @@ export function EventEditForm({
                       onChange={field.onChange}
                       hourCycle={12}
                       granularity="minute"
+                      showOutsideDays={""}
+                      locale={" "}
+                      showWeekNumber={""}
+                      weekStartsOn=""
                     />
                   </FormControl>
                   <FormMessage />
@@ -198,6 +200,10 @@ export function EventEditForm({
                       onChange={field.onChange}
                       hourCycle={12}
                       granularity="minute"
+                      showOutsideDays={""}
+                      locale={" "}
+                      showWeekNumber={""}
+                      weekStartsOn=""
                     />
                   </FormControl>
                   <FormMessage />

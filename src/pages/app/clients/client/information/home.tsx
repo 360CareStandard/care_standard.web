@@ -26,6 +26,7 @@ import { formatUpdatedAt } from "@/helpers/last-updated";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HomeEnvironmentDetails } from "./components/details/home-environment";
 import { Edit } from "iconsax-react";
+import { ClientHomeEnvironment } from "@/types/client/home-environment";
 
 const initialFormValues: Partial<HomeEnvironmentForm> = {
   livingSituation: {
@@ -64,7 +65,7 @@ export default function HomeEnvironment({ clientId }: Props) {
 
   const { data: clientHomeEnvironment, isLoading } = useHomeEnvironment(
     clientId,
-    Boolean(clientId)
+    Boolean(clientId),
   );
 
   const methods = useForm<HomeEnvironmentForm>({
@@ -83,7 +84,9 @@ export default function HomeEnvironment({ clientId }: Props) {
     return () => sub.unsubscribe();
   }, [methods]);
 
-  function mapApiToFormValues(api?: any): Partial<HomeEnvironmentForm> {
+  function mapApiToFormValues(
+    api?: ClientHomeEnvironment,
+  ): Partial<HomeEnvironmentForm> {
     if (!api) return initialFormValues;
     return {
       livingSituation: {
@@ -105,7 +108,7 @@ export default function HomeEnvironment({ clientId }: Props) {
       },
       environmentAndEquipment: {
         equipmentPresent: Array.isArray(
-          api.environmentAndEquipment?.equipmentPresent
+          api.environmentAndEquipment?.equipmentPresent,
         )
           ? api.environmentAndEquipment.equipmentPresent
           : [],

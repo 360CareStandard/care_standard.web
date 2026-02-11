@@ -39,6 +39,8 @@ export interface ClientHomeEnvironment {
     knownHazards: string[]; // e.g. ["Clutter", "Stairs"]
     equipmentPresent: string[]; // e.g. ["Hospital Bed"]
   };
+  status: "active" | "inactive" | "archived" | undefined;
+  metadata: Record<string, any>;
 
   createdAt: string; // ISO timestamp
   updatedAt: string; // ISO timestamp
