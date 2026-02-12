@@ -22,12 +22,12 @@ const DAYS: { label: string; value: Day }[] = [
 ];
 type Option = { value: string; label: string };
 const skills: Option[] = [
-  { value: "medication-administration", label: "Medication Administration" },
-  { value: "cather-care", label: "Cather care" },
+  { value: "Medication Administration", label: "Medication Administration" },
+  { value: "Cather care", label: "Cather care" },
 ];
 const activities: Option[] = [
-  { value: "meal-preparation", label: "Meal Preparation" },
-  { value: "phone-repair", label: "Phone Repair" },
+  { value: "Meal Preparation", label: "Meal Preparation" },
+  { value: "Phone Repair", label: "Phone Repair" },
 ];
 const VisitScheduleFormField = () => {
   const { watch, formState, register, setValue, control } =

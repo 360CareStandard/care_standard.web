@@ -59,9 +59,11 @@ export function useUpdateVisitSchedule(clientId: string, scheduleId: string) {
     },
     onSuccess: () => {
       // ✅ invalidate the SAME query used by useVisitSchedule
-
-      return qc.invalidateQueries({
+      qc.invalidateQueries({
         queryKey: qk.clientVisitSchedule(clientId, scheduleId),
+      });
+      return qc.invalidateQueries({
+        queryKey: qk.clientVisitSchedules(clientId),
       });
     },
   });

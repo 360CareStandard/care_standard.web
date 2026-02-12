@@ -15,11 +15,16 @@ import {
 } from "../../schemas/visit-schedule";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
-import { CalendarAdd } from "iconsax-react";
+import { Add, CalendarAdd } from "iconsax-react";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { Spinner } from "@/components/shared/spinner";
 import VisitScheduleFormField from "./components/form/visit-schedule-form";
 import { handleFormApiError } from "@/lib/handle-form-error";
+import { CalendarEvent, Mode } from "./components/calendar/calendar-types";
+import Calendar from "./components/calendar/calendar";
+import { ErrorStateCard } from "@/pages/app/staff/components/error-state";
+import { visitSchedulesToCalendarEvents } from "./components/visit-schedules-to-calendar-events";
+
 const initialFormValues: Partial<VisitScheduleForm> = {
   visitFrequency: "daily",
   daysOfWeek: [],
@@ -42,6 +47,14 @@ export default function VisitSchedule() {
     isError,
   } = useVisitScheduleList(clientId as string, Boolean(clientId));
   const visitSchedules = visitScheduleData ?? [];
+
+  const [mode, setMode] = React.useState<Mode>("week");
+  const [date, setDate] = React.useState<Date>(new Date());
+
+  const calendarEvents = React.useMemo<CalendarEvent[]>(
+    () => visitSchedulesToCalendarEvents(visitSchedules as any),
+    [visitSchedules],
+  );
 
   const methods = useForm<VisitScheduleForm>({
     resolver: zodResolver(VisitScheduleSchema) as unknown as Resolver<
@@ -94,6 +107,7 @@ export default function VisitSchedule() {
       repeatEveryWeeks: values.repeatEveryWeeks,
     };
   }
+
   async function onSubmit(values: VisitScheduleForm) {
     const payload = toApiPayload(values);
     try {
@@ -126,29 +140,64 @@ export default function VisitSchedule() {
   };
   return (
     <div className="space-y-6 !w-full flex-1 ">
-      <div className="w-full">
-        <h1 className="text-2xl font-semibold">Visit Schedule</h1>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Manage care visits and Scheduling
-        </p>
-      </div>
-      {/* w-[1118px] */}
-      <Card className="flex-1 mt-12  mx-auto w-full">
-        <CardContent className="flex justify-center items-center flex-col py-8 gap-2 w-full">
-          <CalendarAdd size={32} />
-          <h4 className="font-semibold">No visits scheduled yet</h4>
-          <p className="text-muted-foreground text-sm">
-            Start by adding a visit to track care schedule and ensure
-            continuity.
+      <div className="flex justify-between items-center">
+        <div className="w-full">
+          <h1 className="text-2xl font-semibold">Visit Schedule</h1>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Manage care visits and Scheduling
           </p>
-          <div className="mt-1">
-            <Button onClick={openForAdd} className="text-xs">
-              <PlusIcon />
-              Add Visit
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+        <Button size="lg" onClick={openForAdd}>
+          <Add />
+          Add Visit
+        </Button>
+      </div>
+      {isLoading ? (
+        <div className="flex items-center justify-center gap-2 py-10">
+          <Spinner size="lg" />
+          <span className=" text-muted-foreground">Loading schedules...</span>
+        </div>
+      ) : isError ? (
+        <div className="flex mt-52 justify-center items-center">
+          <ErrorStateCard
+            className="shadow-none !border-0 !bg-transparent"
+            title="Failed to load visit schedules."
+            onClick={() => refetch()}
+            size="lg"
+          />
+        </div>
+      ) : visitSchedules.length === 0 ? (
+        <Card className="flex-1 mt-12  mx-auto w-full">
+          <CardContent className="flex justify-center items-center flex-col py-8 gap-2 w-full">
+            <CalendarAdd size={32} />
+            <h4 className="font-semibold">No visits scheduled yet</h4>
+            <p className="text-muted-foreground text-sm">
+              Start by adding a visit to track care schedule and ensure
+              continuity.
+            </p>
+            <div className="mt-1">
+              <Button onClick={openForAdd} className="text-xs">
+                <PlusIcon />
+                Add Visit
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="flex-1 mt-12 mx-auto w-full shadow-none border-0">
+          <CardContent>
+            <Calendar
+              events={calendarEvents}
+              // If your calendar allows editing events, keep these:
+              setEvents={() => {}}
+              mode={mode}
+              setMode={setMode}
+              date={date}
+              setDate={setDate}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       <SheetForm
         open={open}
