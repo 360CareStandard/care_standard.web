@@ -29,7 +29,7 @@ const SUPPORT_TYPES = [
 ] as const;
 
 export function LivingSituationFields() {
-  const { control, register, watch, getValues, setValue } =
+  const { control, register, watch, getValues } =
     useFormContext<HomeEnvironmentForm>();
 
   // field array for livingSituation.householdMembers
@@ -75,7 +75,7 @@ export function LivingSituationFields() {
   const watchedMembers = watch("livingSituation.householdMembers");
   const lastIsBlank = React.useMemo(
     () => computeLastIsBlank(),
-    [computeLastIsBlank, watchedMembers]
+    [computeLastIsBlank, watchedMembers],
   );
 
   return (
@@ -119,7 +119,7 @@ export function LivingSituationFields() {
                 <Input
                   placeholder="Relationship"
                   {...register(
-                    `livingSituation.householdMembers.${idx}.relationship` as const
+                    `livingSituation.householdMembers.${idx}.relationship` as const,
                   )}
                 />
 

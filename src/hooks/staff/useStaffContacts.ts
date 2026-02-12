@@ -23,7 +23,7 @@ export function useStaffContact(
       staffId && contactId
         ? qk.staffContact(staffId, contactId)
         : ["staff-contact-temp", contactId],
-    queryFn: () => StaffContactApi.get(staffId, contactId),
+    queryFn: () => StaffContactApi.get(staffId),
     enabled: Boolean(staffId && contactId && enabled),
   });
 }
@@ -56,14 +56,13 @@ export function useUpdateStaffContact(staffId: string) {
 
   return useMutation({
     mutationFn: ({
-      contactId,
       body,
     }: {
       contactId: string;
       body: AddStaffContactForm;
     }) => {
       if (!staffId) throw new Error("staffId is required to update a contact");
-      return StaffContactApi.update(staffId, contactId, body);
+      return StaffContactApi.update(staffId, body);
     },
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: qk.staffContacts(staffId!) });
@@ -82,9 +81,9 @@ export function useDeleteStaffContact(staffId: string) {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: (contactId: string) => {
+    mutationFn: () => {
       if (!staffId) throw new Error("staffId is required to delete a contact");
-      return StaffContactApi.delete(staffId, contactId);
+      return StaffContactApi.delete(staffId);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: qk.staffContacts(staffId) });

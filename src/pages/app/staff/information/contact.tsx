@@ -107,7 +107,7 @@ const ContactNextOfKin: React.FC<Props> = ({ staffId }) => {
   const performDelete = async () => {
     if (!pendingDeleteContact) return;
     try {
-      await deleteContact.mutateAsync(pendingDeleteContact.id);
+      await deleteContact.mutateAsync();
       toast.success("Contact deleted");
       setConfirmOpen(false);
       setPendingDeleteContact(null);
