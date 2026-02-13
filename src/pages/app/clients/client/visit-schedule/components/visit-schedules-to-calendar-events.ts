@@ -51,6 +51,7 @@ export function visitSchedulesToCalendarEvents(
         end,
         duration: s.duration,
         status: s.status,
+        carerassigned: s.preferredCarersDetails ?? undefined,
       };
 
       return [event];

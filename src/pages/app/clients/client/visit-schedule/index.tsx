@@ -24,6 +24,7 @@ import { CalendarEvent, Mode } from "./components/calendar/calendar-types";
 import Calendar from "./components/calendar/calendar";
 import { ErrorStateCard } from "@/pages/app/staff/components/error-state";
 import { visitSchedulesToCalendarEvents } from "./components/visit-schedules-to-calendar-events";
+import SinglePageLoader from "@/components/loading/single-page-loader";
 
 const initialFormValues: Partial<VisitScheduleForm> = {
   visitFrequency: "daily",
@@ -153,10 +154,7 @@ export default function VisitSchedule() {
         </Button>
       </div>
       {isLoading ? (
-        <div className="flex items-center justify-center gap-2 py-10">
-          <Spinner size="lg" />
-          <span className=" text-muted-foreground">Loading schedules...</span>
-        </div>
+        <SinglePageLoader text="visit schedules" />
       ) : isError ? (
         <div className="flex mt-52 justify-center items-center">
           <ErrorStateCard

@@ -34,7 +34,7 @@ export function SidebarNav({ basePath, nav, header }: SidebarNavProps) {
 
   return (
     <Sidebar
-      collapsible="icon"
+      collapsible="offcanvas"
       variant="sidebar"
       className="!bg-white pt-20 !w-[272px]"
     >

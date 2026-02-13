@@ -79,6 +79,28 @@ export default function CalendarEvent({
   const animationKey = `${event.id}-${
     isEventInCurrentMonth ? "current" : "adjacent"
   }`;
+  function formatCarerLabel(event: CalendarEventType) {
+    const carers = event.carerassigned ?? [];
+
+    // pick primary person to display:
+    const primary = carers[0]?.user ?? null;
+
+    if (!primary) return "";
+
+    const firstInitial = primary.firstname?.[0]
+      ? `${primary.firstname[0]}.`
+      : "";
+    const lastName = primary.lastname ?? "";
+    const name = `${firstInitial} ${lastName}`.trim();
+
+    // how many extra carers to show as +N
+    // - if carersNeeded is present, use it (it represents total required)
+    // - otherwise use preferredCarersDetails length as a fallback
+    const totalNeeded = carers.length;
+    const plus = totalNeeded > 1 ? ` +${totalNeeded - 1}` : "";
+
+    return `${name}${plus}`;
+  }
 
   return (
     <MotionConfig reducedMotion="user">
@@ -168,8 +190,11 @@ export default function CalendarEvent({
             >
               {event.status ? `${event.status}` : ""}
             </small>
-            <span className={cn(``, month && "hidden ")}>
+            <span className={cn("flex items-center gap-1", month && "hidden")}>
               <User size={13} />
+              <small className={cn(`capitalize text-${event.color}-700`)}>
+                {formatCarerLabel(event)}
+              </small>
             </span>
           </div>
         </motion.div>

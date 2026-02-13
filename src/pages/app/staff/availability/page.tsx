@@ -24,6 +24,7 @@ import { useEvents } from "@/context/events-context";
 import { useEffect } from "react";
 import { mapStaffAvailabilityToEvents } from "./utils/map-staff-availability";
 import { ErrorStateCard } from "../components/error-state";
+import SinglePageLoader from "@/components/loading/single-page-loader";
 const initialFormValues: Partial<StaffAvailabilityForm> = {
   frequency: "daily",
 };
@@ -125,9 +126,7 @@ export default function Availability() {
 
       <div>
         {isLoading ? (
-          <div className="flex justify-center py-20">
-            <Spinner size="lg" />
-          </div>
+          <SinglePageLoader text="staff availabilities" />
         ) : isError ? (
           <div className="flex mt-52 justify-center items-center">
             <ErrorStateCard

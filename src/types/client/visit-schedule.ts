@@ -17,6 +17,20 @@ export type VisitStatus =
 export type FundingSource = "private" | "nhs";
 
 export type DayOfWeek = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+export interface StaffUser {
+  firstname: string;
+  lastname: string;
+  email: string;
+  phone: string;
+}
+
+export interface StaffDetails {
+  id: UUID;
+  staffRole: string; // "Carer" (could be union later)
+  primaryPhoneNumber: string;
+  primaryPhoneNumberType: string; // "mobile" etc (could be union later)
+  user: StaffUser;
+}
 
 export interface VisitScheduleType {
   id: UUID;
@@ -33,7 +47,7 @@ export interface VisitScheduleType {
 
   visitStartTime: TimeString;
   visitEndTime: TimeString;
-  duration: number; // in minutes
+  duration: number; // minutes
 
   startDate: ISODateString;
   endDate: ISODateString;
@@ -94,6 +108,11 @@ export interface VisitScheduleType {
 
   createdAt: ISODateTimeString;
   updatedAt: ISODateTimeString;
+
+  // ✅ new nested expansions from BE
+  assignedStaff?: StaffDetails | null;
+  secondaryStaff?: StaffDetails | null;
+  preferredCarersDetails: StaffDetails[];
 }
 
 export interface VisitSchedulesResponse {

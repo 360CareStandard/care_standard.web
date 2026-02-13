@@ -23,6 +23,7 @@ import { toast } from "react-hot-toast";
 import { handleFormApiError } from "@/lib/handle-form-error";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Clock } from "iconsax-react";
+import SinglePageLoader from "@/components/loading/single-page-loader";
 
 const toHHmm = (time?: string) => {
   if (!time) return time;
@@ -166,6 +167,10 @@ export default function CalendarManageEventDialog() {
     void methods.handleSubmit(onSubmit)();
   };
 
+  if (isLoadingDetails) {
+    return <SinglePageLoader text=" visit schedule" />;
+  }
+
   return (
     <>
       <ScheduleDetailsSheet
@@ -174,7 +179,6 @@ export default function CalendarManageEventDialog() {
           setManageEventDialogOpen(open);
           if (!open) setSelectedEvent(null);
         }}
-        isLoadingDetails={isLoadingDetails}
         schedule={visitScheduleDetails}
         onEdit={(p) => {
           // reuse your existing edit logic

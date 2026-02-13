@@ -4,17 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { SheetForm } from "@/components/shared/sheet-form";
-import {
-  Clock,
-  Edit,
-  Health,
-  InfoCircle,
-  People,
-  TickCircle,
-  Trash,
-} from "iconsax-react";
+import { Clock, Edit, Health, InfoCircle, People, Trash } from "iconsax-react";
 import { VisitScheduleType } from "@/types/client/visit-schedule";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { InfoRow } from "../../../../components/info-row";
 import dayjs from "dayjs";
@@ -25,7 +16,6 @@ type Props = {
   schedule: VisitScheduleType | undefined;
   onEdit?: (schedule: VisitScheduleType) => void;
   onArchive?: (schedule: VisitScheduleType) => void;
-  isLoadingDetails: boolean;
 };
 
 export function ScheduleDetailsSheet({
@@ -34,7 +24,6 @@ export function ScheduleDetailsSheet({
   schedule,
   onEdit,
   onArchive,
-  isLoadingDetails,
 }: Props) {
   if (!schedule) return null;
   const startDateTime = dayjs(
@@ -42,6 +31,43 @@ export function ScheduleDetailsSheet({
   );
 
   const endDateTime = dayjs(`${schedule.startDate}T${schedule.visitEndTime}`);
+  type CarerCardItem = {
+    id: string;
+    label: string; // "Carer 1"
+    name: string; // "L. Khan"
+    avatarUrl?: string | null; // if you have it later
+  };
+
+  function formatShortName(firstname?: string, lastname?: string) {
+    const fi = firstname?.[0] ? `${firstname[0].toUpperCase()}.` : "";
+    const ln = lastname ?? "";
+    return `${fi} ${ln}`.trim() || "-";
+  }
+
+  function buildCarerCards(schedule: VisitScheduleType): CarerCardItem[] {
+    const seen = new Set<string>();
+
+    const candidates = [
+      schedule.assignedStaff ?? null,
+      schedule.secondaryStaff ?? null,
+      ...(schedule.preferredCarersDetails ?? []),
+    ].filter(Boolean);
+
+    const unique = candidates.filter((c: any) => {
+      if (!c?.id) return false;
+      if (seen.has(c.id)) return false;
+      seen.add(c.id);
+      return true;
+    });
+
+    return unique.map((carer: any, idx: number) => ({
+      id: carer.id,
+      label: `Carer ${idx + 1}`,
+      name: formatShortName(carer.user?.firstname, carer.user?.lastname),
+      // avatarUrl: carer.user?.avatarUrl ?? null, // if/when BE provides
+    }));
+  }
+
   return (
     <SheetForm
       open={open}
@@ -51,16 +77,7 @@ export function ScheduleDetailsSheet({
       submitLabel=""
       submitDisabled
     >
-      {isLoadingDetails ? (
-        <div className="flex items-center justify-center h-48">
-          <div className="p-6">
-            <Skeleton className="h-6 w-1/3 mb-3" />
-            <Skeleton className="h-6 w-full mb-2" />
-            <Skeleton className="h-6 w-full mb-2" />
-            <Skeleton className="h-6 w-3/4" />
-          </div>
-        </div>
-      ) : (
+      
         <div className="flex-1 overflow-y-auto py-5 space-y-6">
           {/* top row: status + actions */}
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -191,26 +208,51 @@ export function ScheduleDetailsSheet({
                 </Card>
                 <Card>
                   <CardContent className="space-y-2">
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <People size={18} color="#025134" />
-
-                        <h3 className="font-medium text-sm">Assigned Carers</h3>
-                      </div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <People size={18} color="#025134" />
+                      <h3 className="font-medium text-sm">Assigned Carers</h3>
                     </div>
 
-                    {/* <div className="grid grid-cols-2 gap-x-12 ">
-                      <InfoRow label="Visit Type">
-                        <span className="capitalize">
-                          {schedule.scheduleType || "-"}
-                        </span>
-                      </InfoRow>
-                      <InfoRow label="Duration">
-                        {schedule.duration ? `${schedule.duration} mins` : "-"}
-                      </InfoRow>
-                    </div> */}
+                    {(() => {
+                      const carers = buildCarerCards(schedule);
+
+                      if (carers.length === 0) {
+                        return (
+                          <p className="text-sm text-muted-foreground">
+                            No carers assigned
+                          </p>
+                        );
+                      }
+
+                      return (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          {carers.map((c) => (
+                            <div key={c.id} className="flex items-center gap-3">
+                              {/* avatar */}
+                              <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                                {/* swap to <img src={c.avatarUrl} ... /> when you have it */}
+                                <span className="text-xs font-semibold text-gray-600">
+                                  {c.name === "-"
+                                    ? "?"
+                                    : c.name.split(" ")[0]?.[0]}
+                                </span>
+                              </div>
+
+                              {/* labels */}
+                              <div className="leading-tight">
+                                <p className="text-sm text-muted-foreground">
+                                  {c.label}
+                                </p>
+                                <p className="text-sm font-medium">{c.name}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })()}
                   </CardContent>
                 </Card>
+
                 <Card>
                   <CardContent className="space-y-2">
                     <div>
@@ -243,14 +285,14 @@ export function ScheduleDetailsSheet({
               <div className="space-y-4">
                 {schedule.activitiesRequired?.map((activities) => (
                   <Card key={activities}>
-                    <CardContent className="space-y-2">
-                      <div>
+                    <CardContent>
+                      {/* <div>
                         <div className="flex items-center gap-2 mb-2">
                           <TickCircle size={18} color="#025134" />
 
-                          <h3 className="font-medium text-sm">{activities}</h3>
                         </div>
-                      </div>
+                      </div> */}
+                      <h3 className="font-medium text-sm">{activities}</h3>
                     </CardContent>
                   </Card>
                 ))}
@@ -258,8 +300,88 @@ export function ScheduleDetailsSheet({
             </TabsContent>
 
             {/* TASKS */}
-            <TabsContent value="tasks" className="mt-4">
-              <div className="space-y-3"></div>
+            <TabsContent value="attendance">
+              <div className="space-y-4">
+                <Card>
+                  <CardContent className="space-y-2">
+                    <div className="flex items-center gap-2 mb-2">
+                      <People size={18} color="#025134" />
+                      <h3 className="font-medium text-sm">Assigned Carers</h3>
+                    </div>
+
+                    {(() => {
+                      const carers = buildCarerCards(schedule);
+
+                      if (carers.length === 0) {
+                        return (
+                          <p className="text-sm text-muted-foreground">
+                            No carers assigned
+                          </p>
+                        );
+                      }
+
+                      return (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                          {carers.map((c) => (
+                            <div key={c.id} className="flex items-center gap-3">
+                              {/* avatar */}
+                              <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                                {/* swap to <img src={c.avatarUrl} ... /> when you have it */}
+                                <span className="text-xs font-semibold text-gray-600">
+                                  {c.name === "-"
+                                    ? "?"
+                                    : c.name.split(" ")[0]?.[0]}
+                                </span>
+                              </div>
+
+                              {/* labels */}
+                              <div className="leading-tight">
+                                <p className="text-sm text-muted-foreground">
+                                  {c.label}
+                                </p>
+                                <p className="text-sm font-medium">{c.name}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="space-y-2">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <InfoCircle size={18} color="#025134" />
+
+                        <h3 className="font-medium text-sm">
+                          Visit Information
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-x-12 ">
+                      <InfoRow label="Check-in Time">
+                        <span className="capitalize">
+                          {schedule.checkedInBy || "-"}
+                        </span>
+                      </InfoRow>
+                      <InfoRow label="Check-out Time">
+                        {schedule.checkedOutBy || "-"}
+                      </InfoRow>
+                      <InfoRow label="Total Duration">
+                        <span>{schedule.duration || "-"}</span>
+                      </InfoRow>
+                      <InfoRow label="Check-in Method">
+                        <span className="uppercase">
+                          {schedule.checkedInBy || "-"}
+                        </span>
+                      </InfoRow>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             {/* AUDIT */}
@@ -268,7 +390,7 @@ export function ScheduleDetailsSheet({
             </TabsContent>
           </Tabs>
         </div>
-      )}
+      
     </SheetForm>
   );
 }

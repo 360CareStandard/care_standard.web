@@ -1,3 +1,5 @@
+import { StaffDetails } from "@/types/client/visit-schedule";
+
 export type CalendarProps = {
   events: CalendarEvent[];
   setEvents: (events: CalendarEvent[]) => void;
@@ -25,6 +27,7 @@ export type CalendarEvent = {
   duration?: number;
   description?: string;
   status?: string;
+  carerassigned?: StaffDetails[];
 };
 
 export const calendarModes = ["day", "week", "month"] as const;
