@@ -144,14 +144,7 @@ export default function HomeEnvironment({ clientId }: Props) {
 
   // onSubmit should call your create/update hooks — replace with your hooks as needed
   const onSubmit = async (values: HomeEnvironmentForm) => {
-    const payload = {
-      ...values,
-      environmentAndEquipment: {
-        ...values.environmentAndEquipment,
-        // optionally omit petsPresent if backend doesn't expect it:
-        petsPresent: undefined,
-      },
-    };
+    const payload = values;
     try {
       if (editingId) {
         await updateHomeEnvironment.mutateAsync({ body: payload });

@@ -43,10 +43,11 @@ export default function CalendarManageEventDialog() {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const [editOpen, setEditOpen] = useState(false);
+  const [editingScheduleId, setEditingScheduleId] = useState<string | null>(null);
   const deleteVisitSchedule = useDeleteVisitSchedule(clientId as string);
   const updateVisitSchedule = useUpdateVisitSchedule(
     clientId as string,
-    selectedEvent?.id ?? "",
+    editingScheduleId ?? selectedEvent?.id ?? "",
   );
   // fetch single contact details only when editing
   const { data: visitScheduleDetails, isLoading: isLoadingDetails } =
@@ -133,6 +134,7 @@ export default function CalendarManageEventDialog() {
       await updateVisitSchedule.mutateAsync({ body: payload });
       toast.success("Visit schedule updated");
       setEditOpen(false);
+      setEditingScheduleId(null);
     } catch (err) {
       handleFormApiError<VisitScheduleForm>(
         err,
@@ -159,6 +161,7 @@ export default function CalendarManageEventDialog() {
   const openForEdit = (visit: VisitScheduleType) => {
     const mapped = mapApiToFormValues(visit);
     methods.reset(mapped as any);
+    setEditingScheduleId(visit.id);
     setEditOpen(true);
   };
 
@@ -181,9 +184,8 @@ export default function CalendarManageEventDialog() {
         }}
         schedule={visitScheduleDetails}
         onEdit={(p) => {
-          // reuse your existing edit logic
-          openForEdit(p);
           setManageEventDialogOpen(false);
+          setTimeout(() => openForEdit(p), 0);
         }}
         onArchive={openDeleteDialog}
       />
@@ -192,6 +194,7 @@ export default function CalendarManageEventDialog() {
         open={editOpen}
         onOpenChange={(v) => {
           setEditOpen(v);
+          if (!v) setEditingScheduleId(null);
         }}
         title={"Edit Visit"}
         description={`Schedule visits for this client. Choose frequency and configure details.`}
