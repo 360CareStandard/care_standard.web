@@ -1,4 +1,4 @@
-// components/nav/ClientQuickSwitcher.tsx
+// src/components/nav/ClientQuickSwitcher.tsx
 import * as React from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import {
@@ -8,53 +8,80 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { Plus, Search, ChevronDown, LayoutGrid } from "lucide-react";
+import { Plus, Search, ChevronDown, LayoutGrid, RefreshCw } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useClients } from "@/hooks/client/useClients";
 
-type Client = {
+type ClientSmall = {
   id: string;
   name: string;
-  meta?: string; // e.g. "Female • ~64 Years"
-  avatar?: string;
+  meta?: string;
+  avatar?: string | null;
 };
 
 type Props = {
-  clients?: Client[]; // optional; falls back to DEMO_CLIENTS
   className?: string;
 };
 
-const DEMO_CLIENTS: Client[] = [
-  {
-    id: "jemmy-w",
-    name: "Jemmy Wilson",
-    meta: "Female • ~64 Years",
-    avatar: "/images/smiley-elder-woman-standing-kitchen.png",
-  },
-  { id: "robert-w", name: "Robert Wilson", meta: "Male • ~68 Years" },
-  { id: "eliza-w", name: "Elizabeth Wilson", meta: "Female • ~36 Years" },
-];
-
-export function ClientQuickSwitcher({
-  clients = DEMO_CLIENTS,
-  className,
-}: Props) {
+export function ClientQuickSwitcher({ className }: Props) {
   const { clientId } = useParams<{ clientId: string }>();
   const navigate = useNavigate();
   const loc = useLocation();
   const { setOpenMobile } = useSidebar();
 
+  // Fetch a small page of clients from the API (page 1, limit 10)
+  const {
+    data: clientData,
+    isLoading,
+    isFetching,
+    isError,
+    // error,
+    refetch,
+  } = useClients({
+    page: 1,
+    limit: 10,
+  });
+
+  // Map server response -> lightweight client objects used by the switcher.
+  const apiClients: ClientSmall[] = React.useMemo(() => {
+    if (!clientData) return [];
+    const clientArr = clientData.clients ?? [];
+    return clientArr.map((c) => ({
+      id: c?.id,
+      name:
+        c?.firstname ||
+        `${c.firstname ?? ""} ${c.lastname ?? ""}`.trim() ||
+        "Unknown",
+      meta:
+        (c?.gender
+          ? `${String(c.gender).replace(/^\w/, (s) => s.toUpperCase())} • `
+          : "") +
+        (c?.dob
+          ? `${Math.max(
+              0,
+              new Date().getFullYear() - new Date(c.dob).getFullYear(),
+            )} years`
+          : ""),
+      avatar: c.imageUrl ?? "", // API currently provides no avatars; keep null fallback
+    }));
+  }, [clientData]);
+
+  // Use only API clients (no demo fallback). When empty -> show "No clients".
+  const clients = apiClients;
+
   const [open, setOpen] = React.useState(false);
   const [q, setQ] = React.useState("");
 
-  // current subpath after /app/clients/:clientId
-  // e.g. "/visit-schedule", "/overview" (default)
+  // current subpath after /app/clients/:clientId (e.g. "/visit-schedule")
   const sub = React.useMemo(() => {
     const m = loc.pathname.match(/^\/app\/clients\/[^/]+(\/.*)?$/);
     return m?.[1] ?? "/overview";
   }, [loc.pathname]);
 
+  // Prefer route param for active client; if absent and clients exist use first
   const activeId = clientId ?? clients[0]?.id;
   const active = clients.find((c) => c.id === activeId) ?? clients[0];
 
@@ -63,7 +90,7 @@ export function ClientQuickSwitcher({
     if (!t) return clients;
     return clients.filter(
       (c) =>
-        c.name.toLowerCase().includes(t) || c.meta?.toLowerCase().includes(t)
+        c.name.toLowerCase().includes(t) || c.meta?.toLowerCase().includes(t),
     );
   }, [clients, q]);
 
@@ -73,7 +100,7 @@ export function ClientQuickSwitcher({
     setOpenMobile(false);
   };
 
-  // simple keyboard nav
+  // keyboard navigation
   const listRef = React.useRef<HTMLDivElement>(null);
   const [hoverIdx, setHoverIdx] = React.useState<number>(-1);
   React.useEffect(() => setHoverIdx(-1), [q, open]); // reset when query or open changes
@@ -98,30 +125,41 @@ export function ClientQuickSwitcher({
         <button
           className={cn(
             "flex w-full items-center gap-2 rounded-lg px-2 py-2 hover:bg-muted",
-            className
+            className,
           )}
           aria-haspopup="listbox"
           aria-expanded={open}
         >
-          <Avatar className="h-8 w-8">
-            {active?.avatar ? (
-              <AvatarImage src={active.avatar} alt={active.name} />
-            ) : (
-              <AvatarFallback>
-                {active?.name?.slice(0, 2).toUpperCase() || "CL"}
-              </AvatarFallback>
-            )}
+          <Avatar className="h-11 w-11 text-black object-cover">
+            <AvatarImage
+              alt={active?.name}
+              src={active?.avatar ?? ""}
+              className="object-cover"
+            />{" "}
+            <AvatarFallback>
+              {active?.name?.slice(0, 2).toUpperCase() || "CL"}
+            </AvatarFallback>
           </Avatar>
+
           <div className="min-w-0 flex-1 text-left">
             <div className="truncate text-sm font-semibold">
-              {active?.name ?? "Select client"}
+              {active?.name ??
+                (isLoading ? <span>Loading…</span> : "Select client")}
             </div>
-            {active?.meta && (
+
+            {isFetching && !isLoading && (
+              <div className="truncate text-xs text-muted-foreground">
+                Updating…
+              </div>
+            )}
+
+            {!isFetching && active?.meta && (
               <div className="truncate text-xs text-muted-foreground">
                 {active.meta}
               </div>
             )}
           </div>
+
           <ChevronDown className="ml-1 h-4 w-4 text-muted-foreground" />
         </button>
       </PopoverTrigger>
@@ -132,7 +170,7 @@ export function ClientQuickSwitcher({
         sideOffset={8}
         className="w-[320px] p-0 shadow-2xl"
       >
-        {/* Search */}
+        {/* Header: search + actions */}
         <div className="flex items-center gap-2 border-b px-3 py-2">
           <Search className="h-4 w-4 text-muted-foreground" />
           <Input
@@ -142,6 +180,32 @@ export function ClientQuickSwitcher({
             placeholder="Search client…"
             className="h-8 border-0 shadow-none focus-visible:ring-0"
           />
+
+          <div className="ml-auto flex items-center gap-2">
+            {isLoading ? (
+              <Skeleton className="h-8 w-8 rounded" />
+            ) : isError ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  refetch();
+                }}
+                className="gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/app/clients")}
+                className="gap-2"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* List */}
@@ -151,49 +215,74 @@ export function ClientQuickSwitcher({
           className="max-h-72 overflow-y-auto px-1 py-1"
         >
           <div className="px-3 pb-1 pt-2 text-xs font-medium text-muted-foreground">
-            Clients list
+            Clients
           </div>
-          {filtered.map((c, i) => {
-            const isActive = c.id === activeId;
-            const isHover = i === hoverIdx;
-            return (
-              <button
-                key={c.id}
-                role="option"
-                aria-selected={isActive}
-                onMouseEnter={() => setHoverIdx(i)}
-                onMouseLeave={() => setHoverIdx(-1)}
-                onClick={() => goTo(c.id)}
-                className={cn(
-                  "flex w-full items-center gap-3 rounded-md px-3 py-2",
-                  isActive || isHover ? "bg-primary-accent" : "hover:bg-muted"
-                )}
-              >
-                <Avatar>
-                  {c.avatar ? (
-                    <AvatarImage src={c.avatar} alt={c.name} />
-                  ) : (
-                    <AvatarFallback>
-                      {c.name.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  )}
-                </Avatar>
-                <div className="min-w-0 text-left">
-                  <div className="truncate text-sm font-medium">{c.name}</div>
-                  {c.meta && (
-                    <div className="truncate text-[11px] text-muted-foreground">
-                      {c.meta}
-                    </div>
-                  )}
-                </div>
-              </button>
-            );
-          })}
 
-          {!filtered.length && (
-            <div className="px-3 py-6 text-center text-sm text-muted-foreground">
-              No matches
+          {/* Loading skeleton */}
+          {isLoading ? (
+            <div className="space-y-2 px-2 py-2">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex w-full items-center gap-3 rounded-md px-3 py-2"
+                >
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                  <div className="min-w-0 flex-1">
+                    <Skeleton className="h-4 w-36 mb-1" />
+                    <Skeleton className="h-3 w-28" />
+                  </div>
+                </div>
+              ))}
             </div>
+          ) : isError ? (
+            <div className="px-3 py-4 text-sm text-center text-red-600">
+              Failed to load clients.
+            </div>
+          ) : clients.length === 0 ? (
+            <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+              No clients found.
+            </div>
+          ) : (
+            filtered.map((c, i) => {
+              const isActive = c.id === activeId;
+              const isHover = i === hoverIdx;
+              return (
+                <button
+                  key={c.id}
+                  role="option"
+                  aria-selected={isActive}
+                  onMouseEnter={() => setHoverIdx(i)}
+                  onMouseLeave={() => setHoverIdx(-1)}
+                  onClick={() => goTo(c.id)}
+                  className={cn(
+                    "flex w-full items-center gap-3 rounded-md px-3 py-2 text-left",
+                    isActive || isHover
+                      ? "bg-primary-accent"
+                      : "hover:bg-muted",
+                  )}
+                >
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage
+                      alt={c?.name}
+                      src={c.avatar ?? ""}
+                      className="object-cover"
+                    />
+                    <AvatarFallback>
+                      {c?.name.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium">{c.name}</div>
+                    {c.meta && (
+                      <div className="truncate text-[11px] text-muted-foreground">
+                        {c.meta}
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })
           )}
         </div>
 
@@ -229,3 +318,5 @@ export function ClientQuickSwitcher({
     </Popover>
   );
 }
+
+export default ClientQuickSwitcher;

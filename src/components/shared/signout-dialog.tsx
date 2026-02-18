@@ -26,11 +26,12 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
+      className="!bg-[#F9FAFB] "
       title="Sign out"
       desc="Are you sure you want to sign out? You will need to sign in again to access your account."
       confirmText="Sign out"
       handleConfirm={handleSignOut}
-      className="sm:max-w-sm"
+      destructive
     />
   );
 }

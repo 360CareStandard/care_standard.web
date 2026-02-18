@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { callTypes, userTypes } from "../data/data";
+import { callTypes } from "../data/data";
 import { User } from "../data/schema";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
@@ -44,7 +44,7 @@ export const columns: ColumnDef<User>[] = [
           </Avatar>
           <div>
             <LongText className="max-w-36">{fullName}</LongText>
-            <span className="w-fit text-nowrap">78 years</span>
+            <span className="w-fit text-nowrap">{row.index + 20} years</span>
           </div>
         </Link>
       );
@@ -91,18 +91,6 @@ export const columns: ColumnDef<User>[] = [
     enableSorting: false,
   },
 
-  // {
-  //   id: "fullName",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Name" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     const { firstName, lastName } = row.original;
-  //     const fullName = `${firstName} ${lastName}`;
-  //     return <LongText className="max-w-36">{fullName}</LongText>;
-  //   },
-  //   meta: { className: "w-36" },
-  // },
   {
     accessorKey: "email",
     header: ({ column }) => (
@@ -121,27 +109,6 @@ export const columns: ColumnDef<User>[] = [
     enableSorting: false,
   },
 
-  {
-    accessorKey: "role",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Role" />
-    ),
-    cell: ({ row }) => {
-      const { role } = row.original;
-      const userType = userTypes.find(({ value }) => value === role);
-      if (!userType) return null;
-      const Icon = userType.icon;
-      return (
-        <div className="flex items-center gap-x-2">
-          {Icon && <Icon size={16} className="text-muted-foreground" />}
-          <span className="text-sm capitalize">{row.getValue("role")}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     id: "actions",
     cell: DataTableRowActions,

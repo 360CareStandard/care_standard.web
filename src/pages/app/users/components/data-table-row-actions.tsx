@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Row } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,15 +8,13 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User } from "../data/schema";
 import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
 
-interface DataTableRowActionsProps {
-  row: Row<User>;
-}
+// interface DataTableRowActionsProps {
+//   row: Row<User>;
+// }
 
-export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-  console.log(row);
+export function DataTableRowActions() {
   const [open, setOpen] = useState(false);
 
   return (

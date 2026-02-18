@@ -51,10 +51,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   return (
     <div className={cn("w-full", containerClassName)}>
       {label ? (
-        <Label
-          id={labelId}
-          className="mb-2 block text-sm font-normal text-slate-700"
-        >
+        <Label id={labelId} className="mb-2 block ">
           {label}
         </Label>
       ) : null}
@@ -67,35 +64,45 @@ export const SelectField: React.FC<SelectFieldProps> = ({
             hasError ? errorId : undefined
           )}
           className={cn(
-            "!h-11 text-sm w-full",
+            "!h-11 text-sm w-full ",
             hasError
-              ? "border-red-300 bg-red-50 text-red-900 placeholder:text-red-400 focus-visible:ring-red-500 focus-visible:border-red-500"
+              ? "border-red-300 capitalize bg-red-50 text-red-900 placeholder:text-red-400 focus-visible:ring-red-500 focus-visible:border-red-500"
               : "focus-visible:ring-2 placeholder:text-sm",
             triggerClassName
           )}
         >
-          <SelectValue placeholder={placeholder} />
+          <SelectValue placeholder={placeholder} className="capitalize" />
         </SelectTrigger>
         <SelectContent>
-          {options.map((opt) => (
+          {options.length > 0 ? (
+            options.map((opt) => (
+              <SelectItem
+                key={opt.value}
+                value={opt.value}
+                disabled={opt.disabled}
+                className="text-sm capitalize"
+              >
+                {opt.label}
+              </SelectItem>
+            ))
+          ) : (
             <SelectItem
-              key={opt.value}
-              value={opt.value}
-              disabled={opt.disabled}
-              className="text-sm"
+              value="__empty__"
+              disabled
+              className="text-sm italic text-gray-400"
             >
-              {opt.label}
+              No options available
             </SelectItem>
-          ))}
+          )}
         </SelectContent>
       </Select>
 
       {hasError && typeof error === "string" ? (
-        <p id={errorId} role="alert" className="mt-2 text-sm text-red-600">
+        <p id={errorId} role="alert" className="mt-1 text-sm text-red-600">
           {error}
         </p>
       ) : hint ? (
-        <p id={helpId} className="mt-2 text-sm text-slate-500">
+        <p id={helpId} className="mt-2 text-xs text-slate-500">
           {hint}
         </p>
       ) : null}

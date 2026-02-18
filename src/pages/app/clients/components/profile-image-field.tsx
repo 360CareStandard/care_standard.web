@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trash, Edit } from "lucide-react";
 import type { UseFormSetValue, UseFormWatch } from "react-hook-form";
-import { ClientFormData } from "../schemas/add-client";
 import { Label } from "@/components/ui/label";
+import { ClientFormData } from "../schemas/add-client";
+import toast from "react-hot-toast";
 
 type Props = {
   watch: UseFormWatch<ClientFormData>;
@@ -22,23 +23,46 @@ export function ProfileImageField({
   label = "Profile Image",
   maxSizeMB = 5,
 }: Props) {
+  const file = watch("clientPicture");
+
   const fileRef = useRef<HTMLInputElement>(null);
-  const src = watch("profileImage"); // <-- typed as string | undefined
+
+  const [preview, setPreview] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (file instanceof File) {
+      const url = URL.createObjectURL(file);
+      setPreview(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPreview(null);
+    }
+  }, [file]);
 
   const openPicker = () => fileRef.current?.click();
-  const onRemove = () => setValue("profileImage", "");
+  const onRemove = () => {
+    setValue("clientPicture", undefined);
+    setPreview(null);
+  };
 
   const onPick: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const allowedTypes = ["image/png", "image/jpeg"];
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Only PNG and JPG images are allowed");
+      e.target.value = ""; // reset input
+      return;
+    }
+
     if (file.size > maxSizeMB * 1024 * 1024) {
-      alert(`Please choose an image under ${maxSizeMB}MB.`);
+      toast.error(`Please choose an image under ${maxSizeMB}MB.`);
       e.currentTarget.value = "";
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => setValue("profileImage", String(reader.result ?? ""));
-    reader.readAsDataURL(file);
+
+    setValue("clientPicture", file, { shouldDirty: true });
   };
 
   return (
@@ -46,7 +70,7 @@ export function ProfileImageField({
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex gap-2 items-center">
           <Avatar className="h-16 w-16 ring-2 ring-white shadow">
-            <AvatarImage src={src || ""} className="object-cover" />
+            <AvatarImage src={preview || ""} className="object-cover" />
             <AvatarFallback className="text-base">{initials}</AvatarFallback>
           </Avatar>
 
@@ -60,9 +84,9 @@ export function ProfileImageField({
 
         <div className="flex gap-2">
           <Button type="button" variant="outline" onClick={openPicker}>
-            <Edit className="mr-2 h-4 w-4" /> Update
+            <Edit className="mr-2 h-4 w-4" /> Upload
           </Button>
-          {src && (
+          {preview && (
             <Button type="button" variant="outline" onClick={onRemove}>
               <Trash className="mr-2 h-4 w-4" /> Remove
             </Button>
@@ -73,7 +97,7 @@ export function ProfileImageField({
       <input
         ref={fileRef}
         type="file"
-        accept="image/*"
+        accept=".png,.jpg,.jpeg"
         className="hidden"
         onChange={onPick}
       />

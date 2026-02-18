@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
-import { userTypes } from "../data/data";
 import { Search, ChevronDown, X } from "lucide-react";
 import * as React from "react";
 
@@ -125,13 +124,6 @@ export function DataTableToolbar<TData>({
                 { label: "Invited", value: "invited" },
                 { label: "Suspended", value: "suspended" },
               ]}
-            />
-          )}
-          {table.getColumn("role") && (
-            <DataTableFacetedFilter
-              column={table.getColumn("role")}
-              title="Role"
-              options={userTypes.map((t) => ({ ...t }))}
             />
           )}
         </div>

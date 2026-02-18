@@ -9,7 +9,7 @@ import {
 type Props = {
   value: string;
   icon?: React.ReactNode;
-  title: string;
+  title: JSX.Element | string;
   subtitle?: string;
   children: React.ReactNode;
   className?: string;

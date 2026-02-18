@@ -35,6 +35,7 @@ type SheetFormProps = {
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   submitLabel?: React.ReactNode;
   cancelLabel?: React.ReactNode;
+  submitLoading?: boolean;
   submitDisabled?: boolean;
   hideCancel?: boolean;
   /** Extra nodes */
@@ -42,6 +43,7 @@ type SheetFormProps = {
 
   /** Form body goes here */
   children: React.ReactNode;
+  sheetContentRef?: React.MutableRefObject<null>;
 };
 
 /**
@@ -65,7 +67,9 @@ export function SheetForm({
   submitLabel = "Save changes",
   cancelLabel = "Close",
   submitDisabled,
+  // submitLoading,
   hideCancel = false,
+  sheetContentRef,
   footerExtra,
 
   children,
@@ -75,6 +79,7 @@ export function SheetForm({
       {trigger ? <SheetTrigger asChild>{trigger}</SheetTrigger> : null}
 
       <SheetContent
+        ref={sheetContentRef}
         side={side}
         className={cn("sm:max-w-[520px] w-full", className)}
       >
@@ -109,9 +114,12 @@ export function SheetForm({
                   </Button>
                 </SheetClose>
               )}
-              <Button type="submit" disabled={submitDisabled}>
-                {submitLabel}
-              </Button>
+              {submitLabel && (
+                <Button type="submit" disabled={submitDisabled}>
+                  {/* {submitLoading ? <Spinner size="sm" /> : null} */}
+                  {submitLabel}
+                </Button>
+              )}
             </div>
           </SheetFooter>
         </form>

@@ -1,0 +1,91 @@
+/* calendar.css */
+
+/* Grid background */
+.fc {
+  --fc-border-color: #e5e7eb;
+  --fc-page-bg-color: #ffffff;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+/* Day header row */
+.fc-col-header-cell {
+  padding: 8px 0;
+  font-weight: 600;
+  font-size: 13px;
+  color: #111827;
+}
+
+/* Time labels (left column) */
+.fc-timegrid-slot-label {
+  font-size: 12px;
+  color: #111827;
+  padding-right: 6px;
+}
+
+/* Increase row height */
+.fc-timegrid-slot {
+  height: 44px;
+}
+
+/* Vertical & horizontal grid lines */
+.fc-timegrid-slot,
+.fc-timegrid-col {
+  border-color: #e5e7eb;
+}
+
+/* TODAY column highlight */
+.fc-day-today {
+  background-color: #fef9c3 !important; /* soft yellow */
+}
+
+/* Remove default event styling */
+.fc-event {
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Availability block */
+.availability-event {
+  height: 100%;
+  width: 100%;
+  background-color: #dcfce7; /* light green */
+  border: 1px solid #22c55e;
+  border-radius: 6px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Time text */
+.availability-time {
+  font-size: 12px;
+  font-weight: 500;
+  color: #065f46;
+}
+
+/* Label */
+.availability-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #065f46;
+}
+
+/* Header buttons */
+.fc-button {
+  background: #6b7280 !important;
+  border: none !important;
+  font-size: 12px !important;
+}
+
+.fc-button-primary:not(:disabled):hover {
+  background: #4b5563 !important;
+}
+
+/* Remove excessive padding */
+.fc-scrollgrid-section-body {
+  background: #ffffff;
+}
+.fc-timegrid-col-events {
+  margin: 2px;
+}

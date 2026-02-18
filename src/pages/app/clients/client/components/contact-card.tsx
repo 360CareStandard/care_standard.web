@@ -8,36 +8,15 @@ import {
   NotebookText,
   User2,
   Users,
-  Pencil,
-  Trash2,
   Users2,
   Tag,
 } from "lucide-react";
 import { InfoRow } from "./info-row"; // <- your InfoRow from the prompt
-
-type ContactDetails = {
-  fullName: string;
-  relationship:
-    | "Spouse"
-    | "Son"
-    | "Daughter"
-    | "Sibling"
-    | "Parent"
-    | "Friend"
-    | "Neighbor"
-    | "Carer"
-    | "Other"; // "Son" | "Spouse" | ...
-  phone: string; // keep as "" if not provided
-  email: string;
-  address: string;
-  notes: string;
-  primaryContact: boolean;
-  emergencyContact: boolean;
-  familyAccessApp: boolean;
-};
+import { ClientContact } from "@/types/client/contact";
+import { Edit, Trash } from "iconsax-react";
 
 type Props = {
-  contact: ContactDetails;
+  contact: ClientContact;
   onEdit?: () => void;
   onDelete?: () => void;
   className?: string;
@@ -50,22 +29,35 @@ export function ContactDetailsCard({
   className,
 }: Props) {
   const {
-    fullName,
-    phone,
-    email,
-    address,
+    contactName,
+    contactPhone,
+    contactEmail,
+    contactAddress,
     notes,
-    primaryContact,
-    emergencyContact,
-    familyAccessApp,
+    isPrimaryContact,
+    isEmergencyContact,
+    hasAppAccess,
+    relationshipToClient,
   } = contact;
 
   const TagBadges = () => (
-    <div className="flex flex-wrap gap-2">
-      {primaryContact && <Badge variant="default">Primary</Badge>}
-      {emergencyContact && <Badge variant="destructive">Emergency</Badge>}
-      {familyAccessApp && <Badge>App Access</Badge>}
-      {!primaryContact && !emergencyContact && !familyAccessApp ? (
+    <div className="flex flex-wrap gap-2 mt-1">
+      {isPrimaryContact && (
+        <Badge className="bg-green-100  text-green-600 rounded-full">
+          Primary
+        </Badge>
+      )}
+      {isEmergencyContact && (
+        <Badge className="bg-red-100  text-red-600 rounded-full">
+          Emergency
+        </Badge>
+      )}
+      {hasAppAccess && (
+        <Badge className="bg-gray-100  text-gray-600 rounded-full">
+          App Access
+        </Badge>
+      )}
+      {!isPrimaryContact && !isEmergencyContact && !hasAppAccess ? (
         <span className="text-xs text-muted-foreground">No tags</span>
       ) : null}
     </div>
@@ -80,7 +72,7 @@ export function ContactDetailsCard({
 
   return (
     <Card className={className}>
-      <CardHeader className="flex items-center justify-between space-y-0 px-4 ">
+      <CardHeader className="flex items-center justify-between space-y-0 px-4 !py-0">
         <div className="flex items-center gap-2">
           <Users className="h-4 w-4 text-muted-foreground" />
           <h3 className="text-sm font-semibold">Contact Details</h3>
@@ -93,7 +85,7 @@ export function ContactDetailsCard({
               onClick={onEdit}
               aria-label="Edit contact"
             >
-              <Pencil className="h-4 w-4" />
+              <Edit size={20} color="#667185" />
             </Button>
           ) : null}
           {onDelete ? (
@@ -103,36 +95,38 @@ export function ContactDetailsCard({
               onClick={onDelete}
               aria-label="Delete contact"
             >
-              <Trash2 className="h-4 w-4 text-destructive" />
+              <Trash color="#E26E6A" size={20} />
             </Button>
           ) : null}
         </div>
       </CardHeader>
 
-      <CardContent className="p-0">
+      <CardContent className="!p-0">
         <InfoRow label="Full name" icon={<User2 className="h-4 w-4" />}>
-          {empty(fullName)}
+          {empty(contactName)}
         </InfoRow>
 
         <InfoRow label="Relationship" icon={<Users2 className="h-4 w-4" />}>
-          {empty("Family")}
+          <span className="capitalize"> {empty(relationshipToClient)}</span>
         </InfoRow>
 
         <InfoRow label="Phone" icon={<Phone className="h-4 w-4" />}>
-          {empty(phone)}
+          {empty(contactPhone)}
         </InfoRow>
 
         <InfoRow label="Email" icon={<Mail className="h-4 w-4" />}>
-          {empty(email)}
+          {empty(contactEmail)}
         </InfoRow>
 
         <InfoRow label="Address" icon={<MapPin className="h-4 w-4" />}>
-          {empty(address)}
+          {empty(contactAddress)}
         </InfoRow>
 
-        <InfoRow label="Notes" icon={<NotebookText className="h-4 w-4" />}>
-          {empty(notes)}
-        </InfoRow>
+        {notes && (
+          <InfoRow label="Notes" icon={<NotebookText className="h-4 w-4" />}>
+            {empty(notes)}
+          </InfoRow>
+        )}
         <InfoRow label="Tags" icon={<Tag className="h-4 w-4" />}>
           <TagBadges />
         </InfoRow>

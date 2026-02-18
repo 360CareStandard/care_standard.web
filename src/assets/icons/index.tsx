@@ -10,3 +10,6 @@ export { default as UsersIcon } from "./users";
 export { default as UserSquareIcon } from "./user-square";
 export { default as CalendarAltIcon } from "./calender-alt";
 export { default as StatusIcon } from "./status";
+export { default as CapsuleIcon } from "./capsule";
+export { default as PeopleIcon } from "./people";
+export { default as DocumentDownloadIcon } from "./document-download";

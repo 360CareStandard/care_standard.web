@@ -1,6 +1,4 @@
 // features/clients/components/address-map-block.tsx
-"use client";
-
 import * as React from "react";
 import { Control, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
@@ -10,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ClientFormData } from "../schemas/add-client";
-
 import { MapContainer, TileLayer, Marker, Circle, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Info } from "lucide-react";
@@ -50,19 +47,25 @@ function FitOnLatLngChange({ lat, lng }: { lat: number; lng: number }) {
 }
 
 export function AddressMapBlock({ watch, setValue, errors, className }: Props) {
-  const lat = watch("lat") ?? 51.5074;
-  const lng = watch("lng") ?? -0.1278;
-  const radius = watch("checkinRadiusM") ?? 200;
+  const lat = watch("latitude") ?? 51.5074;
+  const lng = watch("longitude") ?? -0.1278;
+  const radius = watch("secureCheckInZone") ?? 200;
   const [geoLoading, setGeoLoading] = React.useState(false);
   const abortRef = React.useRef<AbortController | null>(null);
   const setRadius = (n: number) =>
-    setValue("checkinRadiusM", clamp(n), {
+    setValue("secureCheckInZone", clamp(n), {
       shouldDirty: true,
       shouldTouch: true,
     });
   const setLatLng = (newLat: number, newLng: number, doReverse = true) => {
-    setValue("lat", Number(newLat), { shouldDirty: true, shouldTouch: true });
-    setValue("lng", Number(newLng), { shouldDirty: true, shouldTouch: true });
+    setValue("latitude", Number(newLat), {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+    setValue("longitude", Number(newLng), {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
     if (doReverse) void reverseFill(newLat, newLng);
   };
 
@@ -82,11 +85,15 @@ export function AddressMapBlock({ watch, setValue, errors, className }: Props) {
         setValue("addressLine1", result.addressLine1, { shouldDirty: true });
       if (result.city) setValue("city", result.city, { shouldDirty: true });
       if (result.state) setValue("state", result.state, { shouldDirty: true });
+      if (result.state) setValue("county", result.state, { shouldDirty: true });
       if (result.postcode)
-        setValue("postcode", result.postcode, { shouldDirty: true });
+        setValue("zip", result.postcode, { shouldDirty: true });
 
       // If you have a "country" field, set it. If not, omit this.
       setValue("primaryPhoneCountry" as any, result.country ?? "", {
+        shouldDirty: true,
+      });
+      setValue("country" as any, result.country ?? "", {
         shouldDirty: true,
       });
     } finally {
@@ -252,12 +259,12 @@ export function AddressMapBlock({ watch, setValue, errors, className }: Props) {
               onChange={(e) => setRadius(Number(e.target.value || MIN))}
               onBlur={(e) => setRadius(Number(e.target.value || MIN))} // ✅ snap inside on blur
             />
-            <span className="text-xs text-muted-foreground">meters</span>
+            <span className="text-xs text-muted-foreground">mtrs</span>
           </div>
         </div>
-        {errors?.checkinRadiusM && (
+        {errors?.secureCheckInZone && (
           <p className="text-xs text-destructive">
-            {errors.checkinRadiusM.message as string}
+            {errors.secureCheckInZone.message as string}
           </p>
         )}
       </div>

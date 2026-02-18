@@ -3,18 +3,30 @@ import { lazy } from "react";
 import { Route, Navigate } from "react-router-dom";
 import ContainerLayout from "@/layouts/container-layout";
 import ClientProfileLayout from "@/layouts/client-profile-layout";
+import StaffProfileLayout from "@/layouts/staff-profile-layout";
 
 const Clients = lazy(() => import("@/pages/app/clients"));
 const Staff = lazy(() => import("@/pages/app/staff"));
 const ClientOverview = lazy(
-  () => import("@/pages/app/clients/client/overview")
+  () => import("@/pages/app/clients/client/overview"),
 );
 const ClientInformation = lazy(
-  () => import("@/pages/app/clients/client/information")
+  () => import("@/pages/app/clients/client/information"),
 );
 const VisitSchedule = lazy(
-  () => import("@/pages/app/clients/client/visit-schedule")
+  () => import("@/pages/app/clients/client/visit-schedule"),
 );
+const CarePlan = lazy(() => import("@/pages/app/clients/client/care-plan"));
+const Medication = lazy(() => import("@/pages/app/clients/client/medications"));
+const CareCircle = lazy(() => import("@/pages/app/clients/client/care-circle"));
+
+//Staff
+const StaffOverview = lazy(() => import("@/pages/app/staff/overview"));
+const StaffInformation = lazy(() => import("@/pages/app/staff/information"));
+const StaffDocuments = lazy(() => import("@/pages/app/staff/document"));
+const StaffClients = lazy(() => import("@/pages/app/staff/clients"));
+const StaffAvailability = lazy(() => import("@/pages/app/staff/availability"));
+const StaffVisit = lazy(() => import("@/pages/app/staff/visits"));
 
 const appChildRoutes = (
   <>
@@ -32,9 +44,21 @@ const appChildRoutes = (
       <Route path="overview" element={<ClientOverview />} />
       <Route path="info" element={<ClientInformation />} />
       <Route path="visit-schedule" element={<VisitSchedule />} />
+      <Route path="care-plan" element={<CarePlan />} />
+      <Route path="medication" element={<Medication />} />
+      <Route path="care-circle" element={<CareCircle />} />
+      <Route path="*" element={<Navigate to="/app/clients" replace />} />
     </Route>
-
-    <Route path="*" element={<Navigate to="/app/clients" replace />} />
+    <Route path="staff/:staffId" element={<StaffProfileLayout />}>
+      <Route index element={<Navigate to="overview" replace />} />
+      <Route path="overview" element={<StaffOverview />} />
+      <Route path="info" element={<StaffInformation />} />
+      <Route path="documents" element={<StaffDocuments />} />
+      <Route path="clients" element={<StaffClients />} />
+      <Route path="availability" element={<StaffAvailability />} />
+      <Route path="visits" element={<StaffVisit />} />
+      <Route path="*" element={<Navigate to="/app/staff" replace />} />
+    </Route>
   </>
 );
 

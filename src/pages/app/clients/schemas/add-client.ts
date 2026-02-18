@@ -1,73 +1,82 @@
 // features/clients/schemas/add-client.ts
 import * as z from "zod";
 
-// "gender": "male",
-// "nationality": "British",
+// features/clients/schemas/add-client-api.ts
 
-// "county": "Greater London",
-// "zip": "NW1 6XE",
-// "country": "United Kingdom",
+const ukMobileRegex = /^(?:\+44?7\d{9}|07\d{9})$/;
 
-// "phone": "+447911123456",
-// "phoneType": "mobile",
-// "secondaryPhone": "02079460000",
-// "secondaryPhoneType": "work",
-
-// "wellbeingDetails": "YOU NEED TO ALWAYS WASH HIS BUM BUM WHEN HE SHITS, AND ALSO FEED HIM FOOD",
-
-// "riskLevel": "medium"
 export const clientSchema = z.object({
-  profileImage: z.string().optional(),
+  clientPicture: z.any().optional(),
+  // personal names (payload uses lowercase-ish keys)
+  title: z.string().optional(), // payload has "Mr." etc
+  firstname: z.string().trim().min(1, "Please enter a first name"),
+  middlename: z.string().optional().nullable(), // payload: "middlename"
+  lastname: z.string().trim().min(1, "Please enter a last name"),
+  preferredname: z.string().optional().nullable(),
+  pronouns: z.string().optional().nullable(),
 
-  title: z
-    .string("Please select a title")
-    .trim()
-    .min(1, "Please select a title"),
-
-  firstname: z
-    .string("Please enter a first name")
-    .trim()
-    .min(1, "Please enter a first name"),
-
-  middleName: z.string().optional(),
-
-  lastname: z
-    .string("Please enter a last name")
-    .trim()
-    .min(1, "Please enter a last name"),
-
-  preferredName: z.string().optional(),
-  pronouns: z.string().optional(),
-
+  // dob as string ISO
   dob: z
-    .string("Please enter a date of birth")
+    .string()
     .refine((s) => !!s, "Please enter a date of birth")
     .refine((s) => !Number.isNaN(Date.parse(s)), "Invalid date")
     .refine((s) => new Date(s) <= new Date(), "DOB can’t be in the future"),
 
-  status: z
-    .string("Please enter a status")
-    .trim()
-    .min(1, "Please enter a status"),
+  gender: z.string().optional(),
+  nationality: z.string().optional(),
 
-  primaryPhoneNumber: z
-    .string("Please enter a phone number")
-    .trim()
-    .min(1, "Please enter a phone number"),
+  // address keys (payload uses addressLine1/2, city, county, state, zip, country)
+  addressLine1: z.string().trim().min(1, "Please enter address line 1"),
+  addressLine2: z.string().optional().nullable(),
+  city: z.string().trim().min(1, "Please enter a city"),
+  county: z.string().optional().nullable(), // payload contains county
+  state: z.string().optional().nullable(),
+  zip: z.string().trim().min(1, "Please enter a postal code"),
+  country: z.string().optional(),
 
-  primaryPhoneType: z
-    .string("Please enter a phone type")
-    .trim()
-    .min(1, "Please enter a phone type"),
+  accessDetails: z.string().optional().nullable(),
 
-  primaryPhoneCountry: z
-    .string("Please select a country")
-    .trim()
-    .min(1, "Please select a country"),
+  // coordinates in payload: "latitude", "longitude" (nullable)
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
+  secureCheckInZone: z.number().nullable().optional(), // unknown type: nullable number
 
-  additionalPhoneNumber: z.string().optional(),
-  additionalPhoneType: z.string().optional(),
-  additionalPhoneCountry: z.string().optional(),
+  // phone fields (payload: phone, phoneType, secondaryPhone, secondaryPhoneType)
+
+  phone: z.preprocess(
+    (val) => {
+      if (typeof val !== "string") return val;
+      // remove spaces, dashes, parentheses
+      return val.replace(/[\s()-]/g, "");
+    },
+    z
+      .string()
+      .trim()
+      .min(1, "Please enter a phone number")
+      .refine((s) => ukMobileRegex.test(s), {
+        message:
+          "phone must be a valid UK number, e.g. +447911123456 or 07911123456",
+      }),
+  ),
+  phoneType: z.string().trim().min(1, "Please enter a phone type"),
+  secondaryPhone: z.preprocess(
+    (val) => {
+      if (typeof val !== "string") return val;
+      return val.replace(/[\s()-]/g, "");
+    },
+    z
+      .string()
+      .optional()
+      .nullable()
+      .refine(
+        (s) => {
+          if (!s || s === "") return true; // allow empty
+          return ukMobileRegex.test(s);
+        },
+        { message: "secondaryPhone must be a valid UK mobile number" },
+      ),
+  ),
+  secondaryPhoneType: z.string().optional().nullable(),
 
   email: z
     .string()
@@ -75,22 +84,16 @@ export const clientSchema = z.object({
     .min(1, "Please enter an email address")
     .email("Please enter a valid email address"),
 
-  addressLine1: z.string().trim().min(1, "Please enter address line 1"),
-  addressLine2: z.string().optional(),
-  city: z.string().trim().min(1, "Please enter a city"),
-  state: z.string().trim().min(1, "Please enter a county/state"),
-  postcode: z.string().trim().min(1, "Please enter a postal code"),
-  riskLevel: z.string().trim().min(1, "Select a risk level"),
-  wellbeing: z
-    .string("Please enter a wellbeing overview")
+  // wellbeing / risk
+  wellbeingDetails: z
+    .string()
     .trim()
     .min(1, "Please enter a wellbeing overview")
     .max(400, "Maximum 400 characters"),
+  riskLevel: z.string().trim().min(1, "Select a risk level"),
 
-  accessDetails: z.string().optional(),
-  lat: z.number("Location is required"),
-  lng: z.number("Location is required"),
-  checkinRadiusM: z.number().min(50).max(2000),
+  status: z.string().trim().min(1, "Please enter a status"),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type ClientFormData = z.infer<typeof clientSchema>;

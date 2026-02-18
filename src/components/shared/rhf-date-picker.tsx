@@ -1,6 +1,4 @@
-import { CalendarIcon } from "lucide-react";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
@@ -12,18 +10,18 @@ const toYMD = (d: Date) => {
   return `${y}-${m}-${day}`;
 };
 
-const formatLong = (ymd?: string) => {
-  if (!ymd) return "";
-  const [y, m, d] = ymd.split("-").map(Number);
-  if (!y || !m || !d) return "";
-  const dt = new Date(y, m - 1, d);
-  if (Number.isNaN(dt.getTime())) return "";
-  return dt.toLocaleDateString("en-US", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
-};
+// const formatLong = (ymd?: string) => {
+//   if (!ymd) return "";
+//   const [y, m, d] = ymd.split("-").map(Number);
+//   if (!y || !m || !d) return "";
+//   const dt = new Date(y, m - 1, d);
+//   if (Number.isNaN(dt.getTime())) return "";
+//   return dt.toLocaleDateString("en-US", {
+//     day: "2-digit",
+//     month: "long",
+//     year: "numeric",
+//   });
+// };
 
 type Props<T extends FieldValues> = {
   control: Control<T>;
@@ -43,7 +41,6 @@ export function RHFDatePicker<T extends FieldValues>({
   placeholder = "Select a date",
   minDate = new Date(1900, 0, 1),
   maxDate = new Date(),
-  disabled,
   className,
 }: Props<T>) {
   const min = toYMD(minDate);
@@ -64,38 +61,22 @@ export function RHFDatePicker<T extends FieldValues>({
               </Label>
             )}
 
-            <div className="relative !w-[262px]">
-              {/* Visible pretty display (doesn't handle clicks) */}
-              <Input
-                id={`${name}-display`}
-                readOnly
-                value={formatLong(value)}
-                placeholder={placeholder}
-                className={cn(
-                  "h-11 pr-10 text-base pointer-events-none", // clicks pass through
-                  fieldState.invalid &&
-                    "border-destructive bg-red-50 text-red-900 placeholder:text-red-400"
-                )}
-                aria-describedby={fieldState.error ? `${name}-err` : undefined}
-              />
-
-              {/* Calendar icon (decorative) */}
-              <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 p-1">
-                <CalendarIcon className="size-4" />
-              </span>
-
-              {/* Real native date input sits ON TOP, fully transparent.
-                  It receives all clicks and opens the OS picker. */}
+            <div className="relative w-full">
               <input
+                id={`${name}-display`}
                 type="date"
                 value={value}
                 min={min}
                 max={max}
-                disabled={disabled}
                 onChange={(e) => field.onChange(e.target.value)} // "YYYY-MM-DD"
                 onBlur={field.onBlur}
-                // full overlay
-                className="absolute inset-0 z-10 pr-3 opacity-0   cursor-pointer"
+                placeholder={placeholder}
+                className={cn(
+                  "w-full text-base rounded-md border px-3 h-11 ", // clicks pass through
+                  fieldState.invalid &&
+                    "border-destructive bg-red-50 text-red-900 placeholder:text-red-400"
+                )}
+                aria-describedby={fieldState.error ? `${name}-err` : undefined}
               />
             </div>
 

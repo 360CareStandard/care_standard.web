@@ -285,7 +285,7 @@ function App() {
                     <Input type="text" placeholder="Add users" />
                   </div>
                 </div>
-                <div className="mt-6 flex gap-3">
+                <div className="mt-6 flex gap-3 ">
                   <Button>Save Changes</Button>
                   <Button variant="outline">Cancel</Button>
                 </div>
