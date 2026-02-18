@@ -30,6 +30,7 @@ export interface StaffDetails {
   primaryPhoneNumber: string;
   primaryPhoneNumberType: string; // "mobile" etc (could be union later)
   user: StaffUser;
+  profilePicture: string | null; // URL to profile picture
 }
 
 export interface VisitScheduleType {

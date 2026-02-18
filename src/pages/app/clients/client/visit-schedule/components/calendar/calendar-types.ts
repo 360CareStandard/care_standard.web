@@ -27,6 +27,7 @@ export type CalendarEvent = {
   duration?: number;
   description?: string;
   status?: string;
+  profilePicture?: string;
   carerassigned?: StaffDetails[];
 };
 

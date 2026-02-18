@@ -3,12 +3,13 @@ import { ClientClientCarePlan } from "@/types/client/care-setup";
 import { InfoRow } from "../../../components/info-row";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc"; // 👈 import the plugin
-
+import { User } from "iconsax-react";
 dayjs.extend(utc); // 👈 register the plugin before using it
 
 interface Props {
   data: ClientClientCarePlan;
 }
+
 export const CareSetupDetails = ({ data }: Props) => {
   const plan = data;
 
@@ -71,11 +72,11 @@ export const CareSetupDetails = ({ data }: Props) => {
                       : "Waking night"
                   } (${
                     dayjs(`1970-01-01T${plan.overnightCareStartTime}`).format(
-                      "hh:mm A"
+                      "hh:mm A",
                     ) || "-"
                   } - ${
                     dayjs(`1970-01-01T${plan.overnightCareEndTime}`).format(
-                      "hh:mm A"
+                      "hh:mm A",
                     ) || "-"
                   })`
                 : "-"}
@@ -122,14 +123,17 @@ export const CareSetupDetails = ({ data }: Props) => {
             </InfoRow>
 
             <InfoRow label="Preferred Carers">
-              {plan.preferredCarers && plan.preferredCarers.length > 0 ? (
+              {plan.preferredCarersDetails &&
+              plan.preferredCarersDetails.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {plan.preferredCarers.map((carer: string, idx: number) => (
+                  {plan.preferredCarersDetails.map((carer, idx: number) => (
                     <span
                       key={idx}
                       className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full"
                     >
-                      {carer}
+                      <User size={12} className="inline-block mr-1" />
+                      {`${carer.user.firstname} ${carer.user.lastname}` ||
+                        carer.preferredName}
                     </span>
                   ))}
                 </div>
@@ -143,14 +147,17 @@ export const CareSetupDetails = ({ data }: Props) => {
             </InfoRow>
 
             <InfoRow label="Avoid Carers">
-              {plan.avoidedCarers && plan.avoidedCarers.length > 0 ? (
+              {plan.avoidedCarersDetails &&
+              plan.avoidedCarersDetails.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {plan.avoidedCarers.map((carer: string, idx: number) => (
+                  {plan.avoidedCarersDetails.map((carer, idx: number) => (
                     <span
                       key={idx}
                       className="px-3 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full"
                     >
-                      {carer}
+                      <User size={12} className="inline-block mr-1" />
+                      {`${carer.user.firstname} ${carer.user.lastname}` ||
+                        carer.preferredName}
                     </span>
                   ))}
                 </div>

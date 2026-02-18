@@ -6,7 +6,7 @@ import { z } from "zod";
  */
 const optionalString = z.preprocess(
   (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
-  z.string().optional()
+  z.string().optional(),
 );
 
 // from the left menu + api example
@@ -54,10 +54,7 @@ export const assessmentSchema = z.object({
 
   needs: z.string().min(1, "Needs is required"),
   goal: z.string().min(1, "Goal is required"),
-  expectedOutcomes: z
-    .string()
-    .min(1, "Expected outcomes is required")
-    .describe("Text description of the expected outcomes"),
+  expectedOutcomes: z.string().optional(),
 
   outcomeStatus: z.enum(OUTCOME_STATUSES).default("not-started").optional(),
 

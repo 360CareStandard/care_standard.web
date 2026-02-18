@@ -136,7 +136,9 @@ export function CarePlanDetailsSheet({
               <InfoRow label="Needs">{plan.needs || "—"}</InfoRow>
               <InfoRow label="Review Date">{reviewDate}</InfoRow>
               <InfoRow label="Responsible">
-                {plan.responsiblePersonId || "Not assigned"}
+                {plan.responsiblePerson
+                  ? `${plan.responsiblePerson.user.firstname} ${plan.responsiblePerson.user.lastname}`
+                  : "Not assigned"}
               </InfoRow>
             </div>
           </TabsContent>
@@ -163,7 +165,7 @@ export function CarePlanDetailsSheet({
                         <span
                           className={cn(
                             "inline-flex text-[11px] px-2 py-0.5 rounded-full font-medium mt-1",
-                            SEVERITY_CLASS[r.severity]
+                            SEVERITY_CLASS[r.severity],
                           )}
                         >
                           {r.severity.toUpperCase()}

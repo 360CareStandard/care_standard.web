@@ -13,6 +13,24 @@ export interface ClientCarePlanResponse {
   };
 }
 
+export interface CarerDetails {
+  id: string;
+  staffRole: string;
+  primaryPhoneNumber: string;
+  primaryPhoneNumberType: string;
+  profilePicture: string | null;
+  preferredName: string;
+  gender: string;
+  status: string;
+  user: {
+    id: string;
+    firstname: string;
+    lastname: string;
+    email: string;
+    phone: string;
+  };
+}
+
 export interface ClientClientCarePlan {
   id: string; // UUID
   clientId: string;
@@ -46,6 +64,8 @@ export interface ClientClientCarePlan {
   escalationContactId: string; // UUID
   visitDurationPreset?: "15" | "30" | "45" | "60";
   visitPeriodPreset?: string;
+  preferredCarersDetails: CarerDetails[];
+  avoidedCarersDetails: CarerDetails[];
 }
 
 export interface ClientCarePlanDetails {

@@ -29,4 +29,10 @@ export const VisitScheduleApi = {
     ),
   delete: (clientId: string, scheduleId: string) =>
     apiDelete(`/visit-schedule/clients/${clientId}/schedules/${scheduleId}`),
+  createNote: (scheduleId: string, note: string) =>
+    apiPost(`/visit-schedule/schedules/${scheduleId}/notes`, {
+      note,
+    }),
+  getNote: (scheduleId: string) =>
+    apiGet(`/visit-schedule/schedules/${scheduleId}/notes`),
 };

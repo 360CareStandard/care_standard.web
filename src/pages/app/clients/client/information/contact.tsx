@@ -23,6 +23,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/shared/spinner";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import SinglePageLoader from "@/components/loading/single-page-loader";
 
 type Props = {
   clientId: string;
@@ -42,7 +43,7 @@ const ContactNextOfKin: React.FC<Props> = ({ clientId }) => {
 
   const [open, setOpen] = React.useState(false);
   const [editingContactId, setEditingContactId] = React.useState<string | null>(
-    null
+    null,
   );
 
   // alert dialog state
@@ -63,7 +64,7 @@ const ContactNextOfKin: React.FC<Props> = ({ clientId }) => {
     useClientContact(
       clientId,
       editingContactId ?? "",
-      Boolean(editingContactId)
+      Boolean(editingContactId),
     );
 
   // populate form for editing
@@ -141,6 +142,9 @@ const ContactNextOfKin: React.FC<Props> = ({ clientId }) => {
     e.preventDefault();
     void methods.handleSubmit(onSubmit)();
   };
+  if (isLoadingDetails && editingContactId) {
+    return <SinglePageLoader text="contact details..." />;
+  }
   return (
     <>
       <Card>
@@ -264,18 +268,10 @@ const ContactNextOfKin: React.FC<Props> = ({ clientId }) => {
         bodyClassName="space-y-4"
       >
         {/* show inline loader while single contact being fetched */}
-        {isLoadingDetails && editingContactId ? (
-          <div className="p-6">
-            <Skeleton className="h-6 w-1/3 mb-3" />
-            <Skeleton className="h-6 w-full mb-2" />
-            <Skeleton className="h-6 w-full mb-2" />
-            <Skeleton className="h-6 w-3/4" />
-          </div>
-        ) : (
-          <FormProvider {...methods}>
-            <AddContact />
-          </FormProvider>
-        )}
+
+        <FormProvider {...methods}>
+          <AddContact />
+        </FormProvider>
       </SheetForm>
       <ConfirmDialog
         open={confirmOpen}

@@ -17,6 +17,18 @@ export interface CarePlanRisk {
   severity: CarePlanSeverity;
 }
 
+export interface ResponsiblePerson {
+  id: string;
+  userId: string;
+  agencyId: string;
+  user: {
+    id: string;
+    firstname: string;
+    lastname: string;
+    email: string;
+    phone: string;
+  };
+}
 export interface CarePlan {
   id: string;
   clientId: string;
@@ -46,7 +58,7 @@ export interface CarePlan {
 
   tasks: CarePlanTask[];
   risks: CarePlanRisk[];
-
+  responsiblePerson?: ResponsiblePerson;
   // extra optional fields that may be present on some records
   tags?: string[];
   notesSummary?: string;

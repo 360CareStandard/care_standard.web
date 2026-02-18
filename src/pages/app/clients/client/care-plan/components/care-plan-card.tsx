@@ -145,7 +145,9 @@ export function CarePlanCard({ plan, onView, onEdit, onArchive }: Props) {
             <InfoRow label="Goal">{plan.goal || "—"}</InfoRow>
             <InfoRow label="Responsible Person">
               {" "}
-              {plan.responsiblePersonId || "Not assigned"}
+              {plan.responsiblePerson
+                ? `${plan.responsiblePerson.user.firstname} ${plan.responsiblePerson.user.lastname}`
+                : "Not assigned"}
             </InfoRow>
           </div>
           <div>
@@ -166,7 +168,7 @@ export function CarePlanCard({ plan, onView, onEdit, onArchive }: Props) {
                   <span
                     className={cn(
                       "text-xs px-2 py-0.5 rounded-full font-medium",
-                      SEVERITY_CLASS[firstRisk.severity]
+                      SEVERITY_CLASS[firstRisk.severity],
                     )}
                   >
                     {firstRisk.severity}
