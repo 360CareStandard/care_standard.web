@@ -34,7 +34,7 @@ export const VisitScheduleSchema = z
     requiredSkills: z.array(z.string()).default([]),
     activitiesRequired: z.array(z.string()).default([]),
     fundingSource: z.string().optional(),
-    notes: z.string().optional(),
+    // notes: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     // 1) End date logic
@@ -71,3 +71,16 @@ export const VisitScheduleSchema = z
   });
 
 export type VisitScheduleForm = z.infer<typeof VisitScheduleSchema>;
+
+export const VisitScheduleNoteSchema = z
+  .object({
+    
+
+    note: z.string().min(1, "Note is required"),
+  
+  })
+  
+
+
+
+export type VisitScheduleNoteForm = z.infer<typeof VisitScheduleNoteSchema>;

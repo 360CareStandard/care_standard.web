@@ -28,6 +28,9 @@ const StaffClients = lazy(() => import("@/pages/app/staff/clients"));
 const StaffAvailability = lazy(() => import("@/pages/app/staff/availability"));
 const StaffVisit = lazy(() => import("@/pages/app/staff/visits"));
 
+//Shift Roster
+const ShiftRoster = lazy(() => import("@/pages/app/shift-roaster"));
+
 const appChildRoutes = (
   <>
     <Route index element={<Navigate to="clients" replace />} />
@@ -36,6 +39,9 @@ const appChildRoutes = (
     <Route element={<ContainerLayout />}>
       <Route path="clients" element={<Clients />} />
       <Route path="staff" element={<Staff />} />
+    </Route>
+    <Route >
+      <Route path="shift-roster" element={<ShiftRoster />} />
     </Route>
 
     {/* client profile: its own layout & spacing */}

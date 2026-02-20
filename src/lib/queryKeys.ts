@@ -62,4 +62,13 @@ export const qk = {
   staffDocument: (staffId?: string) => ["staff-document", staffId] as const,
   staffAvailability: (staffId?: string) =>
     ["staff-employment", staffId] as const,
+
+  //Shift Roster
+  shiftRosterList: (params?: { view?: string; date?: string; endDate?: string }) => [
+  "shift-roster",
+  params?.view ?? "daily",
+  params?.date ?? "",
+  params?.endDate ?? "",
+] as const,
+  shiftRoster: (id: string) => ["shift-roster", id],
 };

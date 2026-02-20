@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, Resolver, useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useCalendarContext } from "../calendar-context";
 
@@ -31,6 +31,23 @@ const toHHmm = (time?: string) => {
   if (time.length >= 5) return time.slice(0, 5);
   return time;
 };
+const defaultValues: VisitScheduleForm = {
+  visitFrequency: "daily",
+  daysOfWeek: [],
+  repeatEveryWeeks: undefined,
+  visitStartTime: "",
+  visitEndTime: "",
+  duration: 0,
+  startDate: "",
+  endDate: undefined,
+  noEndDate: false,
+  carersNeeded: 1,
+  preferredCarers: [],
+  requiredSkills: [],
+  activitiesRequired: [],
+  fundingSource: "",
+};
+
 
 export default function CalendarManageEventDialog() {
   const {
@@ -44,11 +61,12 @@ export default function CalendarManageEventDialog() {
 
   const [editOpen, setEditOpen] = useState(false);
   const [editingScheduleId, setEditingScheduleId] = useState<string | null>(null);
+  const [pendingEditVisit, setPendingEditVisit] =
+    useState<VisitScheduleType | null>(null);
   const deleteVisitSchedule = useDeleteVisitSchedule(clientId as string);
-  const updateVisitSchedule = useUpdateVisitSchedule(
-    clientId as string,
-    editingScheduleId ?? selectedEvent?.id ?? "",
-  );
+  const scheduleId = editingScheduleId || selectedEvent?.id;
+  const updateVisitSchedule = useUpdateVisitSchedule(clientId as string, scheduleId ?? "");
+
   // fetch single contact details only when editing
   const { data: visitScheduleDetails, isLoading: isLoadingDetails } =
     useSingleVisitSchedule(
@@ -57,12 +75,42 @@ export default function CalendarManageEventDialog() {
       Boolean(selectedEvent?.id),
     );
   const methods = useForm<VisitScheduleForm>({
-    resolver: zodResolver(VisitScheduleSchema) as unknown as Resolver<
-      VisitScheduleForm,
-      any
-    >,
+    resolver: zodResolver(VisitScheduleSchema) as unknown as Resolver<VisitScheduleForm, any>,
     mode: "onChange",
+    defaultValues,
   });
+  const resetAndValidate = async (values: VisitScheduleForm) => {
+    methods.reset(values, {
+      keepDirty: false,
+      keepTouched: false,
+      keepErrors: false,
+    });
+    await methods.trigger();
+  };
+
+  // const {
+  //   formState: { errors }
+  // } = useForm({
+  //   // ... your configuration
+  // });
+
+
+  // useEffect(() => {
+  //   const subscription = methods.watch((value) => {
+  //     console.log("Form values changed:", value);
+  //   });
+  //   return () => subscription.unsubscribe();
+  // }, [methods]);
+
+  // useEffect(() => {
+  //   console.log("Form errors:", errors);
+  // }, [errors]);
+  // useEffect(() => {
+  //   if (!editOpen) return;
+  //   console.log("EDIT values:", methods.getValues());
+  //   console.log("EDIT errors:", methods.formState.errors);
+  //   console.log("EDIT isValid:", methods.formState.isValid);
+  // }, [editOpen]);
 
   const openDeleteDialog = () => {
     setManageEventDialogOpen(false);
@@ -73,19 +121,19 @@ export default function CalendarManageEventDialog() {
     visitFrequency: visit.visitFrequency,
     daysOfWeek: visit.daysOfWeek ?? [],
     repeatEveryWeeks: visit.repeatEveryWeeks ?? undefined,
-    visitStartTime: toHHmm(visit.visitStartTime) as string,
-    visitEndTime: toHHmm(visit.visitEndTime) as string,
-    duration: visit.duration,
-    startDate: visit.startDate,
-    endDate: visit.endDate ?? "",
-    noEndDate: visit.noEndDate,
-    carersNeeded: visit.carersNeeded,
+    visitStartTime: toHHmm(visit.visitStartTime) ?? "",
+    visitEndTime: toHHmm(visit.visitEndTime) ?? "",
+    duration: Number(visit.duration ?? 0),
+    startDate: visit.startDate ?? "",
+    endDate: visit.endDate ?? undefined,
+    noEndDate: Boolean(visit.noEndDate),
+    carersNeeded: Number(visit.carersNeeded ?? 1),
     preferredCarers: visit.preferredCarers ?? [],
     requiredSkills: visit.requiredSkills ?? [],
     activitiesRequired: visit.activitiesRequired ?? [],
     fundingSource: visit.fundingSource ?? "",
-    notes: visit.notes ?? "",
   });
+
 
   function toApiPayload(values: VisitScheduleForm) {
     const base = {
@@ -100,7 +148,6 @@ export default function CalendarManageEventDialog() {
       requiredSkills: values.requiredSkills ?? [],
       activitiesRequired: values.activitiesRequired ?? [],
       fundingSource: values.fundingSource,
-      notes: values.notes,
       ...(values.noEndDate ? {} : { endDate: values.endDate }),
     };
 
@@ -158,12 +205,24 @@ export default function CalendarManageEventDialog() {
     }
   };
 
-  const openForEdit = (visit: VisitScheduleType) => {
-    const mapped = mapApiToFormValues(visit);
-    methods.reset(mapped as any);
+  const openForEdit = async (visit: VisitScheduleType) => {
     setEditingScheduleId(visit.id);
+    await resetAndValidate(mapApiToFormValues(visit));
     setEditOpen(true);
   };
+
+
+
+  useEffect(() => {
+    if (manageEventDialogOpen || !pendingEditVisit) return;
+
+    const timer = setTimeout(() => {
+      openForEdit(pendingEditVisit);
+      setPendingEditVisit(null);
+    }, 220);
+
+    return () => clearTimeout(timer);
+  }, [manageEventDialogOpen, pendingEditVisit]);
 
   const handleSheetSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -194,7 +253,10 @@ export default function CalendarManageEventDialog() {
         open={editOpen}
         onOpenChange={(v) => {
           setEditOpen(v);
-          if (!v) setEditingScheduleId(null);
+          if (!v) {
+            setEditingScheduleId(null);
+            setPendingEditVisit(null);
+          }
         }}
         title={"Edit Visit"}
         description={`Schedule visits for this client. Choose frequency and configure details.`}

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@/lib/queryKeys";
 import { VisitScheduleApi } from "@/api/client/visit-schedule";
-import { VisitScheduleForm } from "@/pages/app/clients/schemas/visit-schedule";
+import { VisitScheduleForm, VisitScheduleNoteForm } from "@/pages/app/clients/schemas/visit-schedule";
 
 export function useVisitScheduleList(clientId: string, enabled = false) {
   return useQuery({
@@ -81,5 +81,34 @@ export function useDeleteVisitSchedule(clientId: string) {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: qk.clientVisitSchedules(clientId) });
     },
+  });
+}
+
+export function useCreateVisitNote(id: string) {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: VisitScheduleNoteForm) => {
+      if (!id)
+        throw new Error("Id is required to create a visit schedule note");
+      return VisitScheduleApi.createNote(id, body);
+    },
+    onSuccess: () => {
+      // Refresh visit schedule queries after note creation.
+      qc.invalidateQueries({
+        queryKey: ["client-visit-schedule"],
+      });
+      return qc.invalidateQueries({
+        queryKey: ["visit-schedule-note", id],
+      });
+    },
+  });
+}
+
+export function useVisitNote(scheduleId: string, enabled = false) {
+  return useQuery({
+    queryKey: ["visit-schedule-note", scheduleId],
+    queryFn: () => VisitScheduleApi.getNote(scheduleId),
+    enabled: Boolean(scheduleId && enabled),
   });
 }
