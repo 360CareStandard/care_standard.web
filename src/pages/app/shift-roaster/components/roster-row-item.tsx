@@ -9,7 +9,7 @@ export function RosterRowItem({
     onOpenShift: (shift: Shift) => void;
 }) {
     return (
-        <div className="grid grid-cols-[260px_1fr] border-b">
+        <div className="grid grid-cols-[260px_1fr] border">
             <div className="p-3 border-r bg-white sticky left-0 z-10">
                 <div className="text-sm font-medium">{row.title}</div>
                 {row.subtitle && (
@@ -21,6 +21,7 @@ export function RosterRowItem({
                 {/* …grid lines… */}
 
                 {row.shifts.map((shift) => (
+
                     <ShiftBar
                         key={shift.id}
                         shift={shift}

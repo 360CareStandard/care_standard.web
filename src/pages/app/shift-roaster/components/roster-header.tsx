@@ -4,7 +4,7 @@ const HOURS = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, "0")
 export function RosterHeader() {
     return (
         <div
-            className="grid"
+            className="grid "
             style={{ gridTemplateColumns: `repeat(24, minmax(0, 1fr))` }}
         >
             {HOURS.map((h) => (
