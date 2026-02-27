@@ -2,12 +2,16 @@ export type Day = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
 export interface StaffAvailability {
   id: string;
   staffId: string;
+  type: "availability" | "absent";
+  absenceType: string | null;
+  reason: string | null;
   frequency: string;
-  repeatEvery: number;
+  repeatEvery: number | null;
   repeatUnit: string;
-  selectedDays: string[];
+  selectedDays: string[] | null;
   startTime: string;
   endTime: string;
+  isFullDay?: boolean;
   startDate: string;
   endDate: string | null;
   noEndDate: boolean;

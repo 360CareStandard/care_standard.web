@@ -26,7 +26,7 @@ export const staffColumns: ColumnDef<Staff>[] = [
       const fullName = `${c.firstname ?? ""} ${c.lastname ?? ""}`.trim();
       return (
         <Link className="flex items-center gap-3" to={`/app/staff/${username}`}>
-          <Avatar className="h-12 w-12">
+          <Avatar className="h-10 w-10">
             {src ? (
               <AvatarImage
                 src={src}

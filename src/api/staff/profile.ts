@@ -1,6 +1,7 @@
 // src/api/staff/profile.ts
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/utils/api-connect";
 import { StaffListResponse, StaffResponse } from "@/types/staff";
+import { GetStaffWithAssignedClientsResponse } from "@/types/staff/assigned-client";
 
 export const StaffProfileApi = {
   list: (params?: { q?: string; page?: number; limit?: number }) => {
@@ -26,4 +27,7 @@ export const StaffProfileApi = {
 
   remove: (id: string) =>
     apiDelete<{ status: "success" }>(`/staff/staffRecord/${id}`),
+
+  getStaffWithClients: (id: string) =>
+    apiGet<GetStaffWithAssignedClientsResponse>(`/staff/staff-with-clients/${id}`).then((r) => r.data),
 };

@@ -1,48 +1,55 @@
 import { useMemo, useState } from "react";
-import { useShiftRosterList } from "@/hooks/roster/useShiftRoster";
-import { ShiftRosterBoard } from "./components/shift-roster-board";
-import { toCarerRows, toClientRows } from "./utils/roster-mappers";
-import { addDays, formatPretty, toYMD } from "./utils/date-utils";
+
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Calendar } from "@/components/ui/calendar";
+import SinglePageLoader from "@/components/loading/single-page-loader";
+import { useShiftRosterList } from "@/hooks/roster/useShiftRoster";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Check, ChevronDown, ChevronLeft } from "lucide-react";
-import SinglePageLoader from "@/components/loading/single-page-loader";
+
+import { ShiftRosterBoard } from "./components/shift-roster-board";
+import { addDays, formatPretty, fromYMD, toYMD } from "./utils/date-utils";
+import { toCarerRows, toClientRows } from "./utils/roster-mappers";
+import { ErrorStateCard } from "../staff/components/error-state";
 
 const ShiftRoaster = () => {
     const [mode, setMode] = useState<"carer" | "client">("carer");
-    const [date, setDate] = useState<Date>(new Date());
-
+    const [dateYMD, setDateYMD] = useState<string>(() => toYMD(new Date()));
     const [dateOpen, setDateOpen] = useState(false);
 
-    const dateYMD = useMemo(() => toYMD(date), [date]);
+    const date = useMemo(() => fromYMD(dateYMD), [dateYMD]);
+    const params = useMemo(() => ({ view: "daily", date: dateYMD }), [dateYMD]);
 
-    const params = useMemo(
-        () => ({ view: "daily", date: dateYMD }),
-        [dateYMD]
-    );
-
-    const { data, isLoading, error } = useShiftRosterList(params);
+    const { data, isLoading, isFetching, error, refetch } = useShiftRosterList(params);
 
     const rows = useMemo(() => {
         if (!data) return [];
-        return mode === "carer" ? toCarerRows(data.roster) : toClientRows(data);
-    }, [data, mode]);
+        return mode === "carer"
+            ? toCarerRows(data.roster, dateYMD)
+            : toClientRows(data, dateYMD);
+    }, [data, dateYMD, mode]);
 
-    const goToday = () => setDate(new Date());
-    const goPrev = () => setDate((d) => addDays(d, -1));
-    const goNext = () => setDate((d) => addDays(d, 1));
+    const goToday = () => setDateYMD(toYMD(new Date()));
+    const goPrev = () => setDateYMD((value) => toYMD(addDays(fromYMD(value), -1)));
+    const goNext = () => setDateYMD((value) => toYMD(addDays(fromYMD(value), 1)));
 
-    if (error) return <div className="p-6 text-red-600">Failed to load roster</div>;
+    if (error) return <div className="flex mt-52 justify-center items-center">
+        <ErrorStateCard
+            className="shadow-none !border-0 !bg-transparent"
+            title="Unable to load shift roster"
+            onClick={() => refetch()}
+            size="lg"
+        />
+    </div>;
 
     return (
-        <div className="p-6 space-y-4">
+        <div className="space-y-4 p-6">
             <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                     <Button variant="outline" onClick={goToday}>
@@ -61,9 +68,7 @@ const ShiftRoaster = () => {
                 <Popover open={dateOpen} onOpenChange={setDateOpen}>
                     <PopoverTrigger asChild>
                         <Button variant="ghost" className="gap-2">
-                            <span className="text-sm font-medium text-green-800">
-                                {formatPretty(date)}
-                            </span>
+                            <span className="text-sm font-medium text-green-800">{formatPretty(date)}</span>
                             <ChevronDown className="h-4 w-4" />
                         </Button>
                     </PopoverTrigger>
@@ -74,14 +79,13 @@ const ShiftRoaster = () => {
                             selected={date}
                             onSelect={(d) => {
                                 if (!d) return;
-                                setDate(d);
-                                setDateOpen(false); // ✅ closes on select
+                                setDateYMD(toYMD(d));
+                                setDateOpen(false);
                             }}
                             initialFocus
                         />
                     </PopoverContent>
                 </Popover>
-
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -111,8 +115,8 @@ const ShiftRoaster = () => {
                 </DropdownMenu>
             </div>
 
-            {isLoading ? (
-                <SinglePageLoader text=" shift roster..." />
+            {isLoading || isFetching ? (
+                <SinglePageLoader text="shift roster..." />
             ) : (
                 <ShiftRosterBoard rows={rows} height={650} />
             )}

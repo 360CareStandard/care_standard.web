@@ -47,6 +47,7 @@ export function useStaff(params?: {
     placeholderData: keepPreviousData,
   });
 }
+
 export function useStaffDetails(id?: string, enabled = true) {
   return useQuery({
     queryKey: id ? qk.staff(id) : ["staff", "nil"],
@@ -83,5 +84,14 @@ export function useUpdateStaff(staffId: string) {
       qc.invalidateQueries({ queryKey: ["staff"] });
       qc.invalidateQueries({ queryKey: qk.staff(staffId) });
     },
+  });
+}
+export function useStaffWithClients(id: string) {
+  return useQuery({
+    queryKey: qk.staffWithClients(id),
+    queryFn: () => StaffProfileApi.getStaffWithClients(id),
+    select: (res) => res,
+    staleTime: 60_000,
+    placeholderData: keepPreviousData,
   });
 }

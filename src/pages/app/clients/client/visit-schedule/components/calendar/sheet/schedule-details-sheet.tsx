@@ -356,12 +356,12 @@ export function ScheduleDetailsSheet({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 ">
-                    <InfoRow label="">
+                  <div className=" w-full">
+                    <InfoRow label="" className="flex flex-wrap gap-2 ">
                       {schedule.requiredSkills?.map((skill) => (
                         <span
                           key={skill}
-                          className="capitalize bg-gray-200 px-2 py-1 rounded-full"
+                          className="capitalize  bg-gray-200 px-2 py-1 rounded-full"
                         >
                           {skill}
                         </span>

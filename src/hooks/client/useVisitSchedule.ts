@@ -8,7 +8,7 @@ export function useVisitScheduleList(clientId: string, enabled = false) {
     // unique key for a single contact
     queryKey: clientId
       ? qk.clientVisitSchedules(clientId)
-      : ["staff-availability"],
+      : ["client-schedule"],
     queryFn: () => VisitScheduleApi.list(clientId),
     enabled: Boolean(clientId && enabled),
     // staleTime: 60_000,

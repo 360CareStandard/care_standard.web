@@ -1,6 +1,6 @@
 
 
-export type ShiftStatus = "scheduled" | "completed" | "missed" | "ongoing" | string;
+export type ShiftStatus = "scheduled" | "completed" | "missed" | "ongoing" | "leave" | string;
 
 export type Shift = {
     id: string;
@@ -11,6 +11,11 @@ export type Shift = {
     scheduleType: string;
     client: { id: string; firstname: string; lastname: string };
     isSecondary: boolean;
+    counterpartyName?: string;
+    note?: string;
+    startDate?: string;
+    endDate?: string;
+    date?: string;
 };
 
 
