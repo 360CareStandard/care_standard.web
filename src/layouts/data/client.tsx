@@ -5,7 +5,9 @@ import {
   NoteIcon,
   CapsuleIcon,
   PeopleIcon,
+  DocumentDownloadIcon,
 } from "@/assets/icons";
+import { Settings } from "lucide-react";
 import React from "react";
 
 type Item = {
@@ -36,11 +38,11 @@ export const CLIENT_NAV: Group[] = [
       { title: "Care Circle", slug: "care-circle", icon: PeopleIcon },
     ],
   },
-  // {
-  //   heading: "More Actions",
-  //   items: [
-  //     { title: "Settings", slug: "settings", icon: Settings },
-  //     { title: "Download Info", slug: "download", icon: DocumentDownloadIcon },
-  //   ],
-  // },
+  {
+    heading: "More Actions",
+    items: [
+      { title: "Settings", slug: "settings", icon: Settings },
+      { title: "Download Info", slug: "download", icon: DocumentDownloadIcon },
+    ],
+  },
 ];

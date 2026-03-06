@@ -29,6 +29,10 @@ export const qk = {
     ["client-home-enviroment", clientId] as const,
   clientPreferences: (clientId?: string) =>
     ["client-preferences", clientId] as const,
+  clientSettings: (clientId?: string) =>
+    ["client-settings", clientId] as const,
+  clientAccess: (clientId?: string) =>
+    ["client-access", clientId] as const,
 
   carePlan: (clientId?: string, carePlanId?: string) =>
     ["care-plan", clientId, carePlanId] as const,

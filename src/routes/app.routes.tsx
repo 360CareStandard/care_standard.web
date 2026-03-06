@@ -19,6 +19,9 @@ const VisitSchedule = lazy(
 const CarePlan = lazy(() => import("@/pages/app/clients/client/care-plan"));
 const Medication = lazy(() => import("@/pages/app/clients/client/medications"));
 const CareCircle = lazy(() => import("@/pages/app/clients/client/care-circle"));
+const ClientSettings = lazy(
+  () => import("@/pages/app/clients/client/settings"),
+);
 
 //Staff
 const StaffOverview = lazy(() => import("@/pages/app/staff/overview"));
@@ -40,7 +43,7 @@ const appChildRoutes = (
       <Route path="clients" element={<Clients />} />
       <Route path="staff" element={<Staff />} />
     </Route>
-    <Route >
+    <Route>
       <Route path="shift-roster" element={<ShiftRoster />} />
     </Route>
 
@@ -53,6 +56,8 @@ const appChildRoutes = (
       <Route path="care-plan" element={<CarePlan />} />
       <Route path="medication" element={<Medication />} />
       <Route path="care-circle" element={<CareCircle />} />
+      <Route path="settings" element={<ClientSettings />} />
+      <Route path="download" element={<h1>Download info</h1>} />
       <Route path="*" element={<Navigate to="/app/clients" replace />} />
     </Route>
     <Route path="staff/:staffId" element={<StaffProfileLayout />}>

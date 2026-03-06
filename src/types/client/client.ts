@@ -69,4 +69,4 @@ export interface ClientDetailResponse {
   data?: Client;
 }
 
-export interface UpdateClientBody extends Partial<Client> {}
+export interface UpdateClientBody extends Partial<Client> { }
