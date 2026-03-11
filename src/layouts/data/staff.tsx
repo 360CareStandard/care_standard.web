@@ -5,13 +5,14 @@ import {
   Clock,
   DocumentText,
   People,
+  Setting2,
 } from "iconsax-react";
 type Item = {
   title: string;
   slug: string; // appended to /app/clients/:clientId
   icon:
-  | React.ComponentType<React.SVGProps<SVGSVGElement>>
-  | React.JSXElementConstructor<any>;
+    | React.ComponentType<React.SVGProps<SVGSVGElement>>
+    | React.JSXElementConstructor<any>;
   end?: boolean; // exact match (Overview should be exact)
 };
 type Group = { heading?: string; items: Item[] };
@@ -35,11 +36,11 @@ export const STAFF_NAV: Group[] = [
       { title: "Visits", slug: "visits", icon: Clock },
     ],
   },
-  // {
-  //   heading: "Access & Activity",
-  //   items: [
-  //     { title: "Permissions", slug: "permissions", icon: Setting2 },
-  //     { title: "Activity Log", slug: "activity-log", icon: Activity },
-  //   ],
-  // },
+  {
+    heading: "Access & Activity",
+    items: [
+      { title: "Permissions", slug: "permissions", icon: Setting2 },
+      // { title: "Activity Log", slug: "activity-log", icon: Activity },
+    ],
+  },
 ];

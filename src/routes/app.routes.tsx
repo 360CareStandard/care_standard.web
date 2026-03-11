@@ -22,6 +22,9 @@ const CareCircle = lazy(() => import("@/pages/app/clients/client/care-circle"));
 const ClientSettings = lazy(
   () => import("@/pages/app/clients/client/settings"),
 );
+const ClientInfoDownload = lazy(
+  () => import("@/pages/app/clients/client/download-info"),
+);
 
 //Staff
 const StaffOverview = lazy(() => import("@/pages/app/staff/overview"));
@@ -30,6 +33,7 @@ const StaffDocuments = lazy(() => import("@/pages/app/staff/document"));
 const StaffClients = lazy(() => import("@/pages/app/staff/clients"));
 const StaffAvailability = lazy(() => import("@/pages/app/staff/availability"));
 const StaffVisit = lazy(() => import("@/pages/app/staff/visits"));
+const StaffPermissions = lazy(() => import("@/pages/app/staff/permissions"));
 
 //Shift Roster
 const ShiftRoster = lazy(() => import("@/pages/app/shift-roaster"));
@@ -57,7 +61,7 @@ const appChildRoutes = (
       <Route path="medication" element={<Medication />} />
       <Route path="care-circle" element={<CareCircle />} />
       <Route path="settings" element={<ClientSettings />} />
-      <Route path="download" element={<h1>Download info</h1>} />
+      <Route path="download" element={<ClientInfoDownload />} />
       <Route path="*" element={<Navigate to="/app/clients" replace />} />
     </Route>
     <Route path="staff/:staffId" element={<StaffProfileLayout />}>
@@ -68,6 +72,7 @@ const appChildRoutes = (
       <Route path="clients" element={<StaffClients />} />
       <Route path="availability" element={<StaffAvailability />} />
       <Route path="visits" element={<StaffVisit />} />
+      <Route path="permissions" element={<StaffPermissions />} />
       <Route path="*" element={<Navigate to="/app/staff" replace />} />
     </Route>
   </>

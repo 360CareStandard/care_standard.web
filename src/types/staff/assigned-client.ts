@@ -1,3 +1,5 @@
+import { ClientStatus } from "../client/client";
+
 // You can swap these to enums later if your backend is strict.
 export type PhoneNumberType = "mobile" | "work" | string;
 export type StaffStatus = "Active" | "Inactive" | string;
@@ -60,6 +62,8 @@ export interface AssignedClient {
 
     phone: string;
     imageUrl: string | null;
+    carePackageName: string;
+    status: ClientStatus;
 
     totalSchedules: number;
     activeSchedules: number;

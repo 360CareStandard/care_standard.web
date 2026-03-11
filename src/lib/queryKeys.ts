@@ -31,8 +31,13 @@ export const qk = {
     ["client-preferences", clientId] as const,
   clientSettings: (clientId?: string) =>
     ["client-settings", clientId] as const,
-  clientAccess: (clientId?: string) =>
+
+  clientExport: (clientId?: string) =>
+    ["client-export", clientId] as const,
+  clientFamilyAccessList: (clientId?: string) =>
     ["client-access", clientId] as const,
+  clientFamilyAccess: (clientId?: string, accessId?: string) =>
+    ["client-access", clientId, accessId] as const,
 
   carePlan: (clientId?: string, carePlanId?: string) =>
     ["care-plan", clientId, carePlanId] as const,
@@ -80,4 +85,6 @@ export const qk = {
     params?.endDate ?? "",
   ] as const,
   shiftRoster: (id: string) => ["shift-roster", id],
+  StaffPermission: (clientId?: string) =>
+    ["staff-permission", clientId] as const,
 };
