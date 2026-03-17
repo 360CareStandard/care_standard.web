@@ -73,10 +73,17 @@ const VisitScheduleFormField = () => {
     return calculateDuration(startTime, endTime);
   }, [startTime, endTime]);
   useEffect(() => {
-    setValue("duration", durationMinutes ?? 0, { shouldValidate: true });
+    if (durationMinutes == null) return;
+    setValue("duration", durationMinutes, { shouldValidate: true });
   }, [durationMinutes, setValue]);
+
   return (
     <div className="space-y-6">
+      {errors.root?.message && (
+        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">
+          {errors.root.message}
+        </div>
+      )}
       {/* Frequency */}
       <div className="space-y-2">
         <Label>Visit frequency *</Label>

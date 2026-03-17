@@ -1,7 +1,6 @@
 import React from "react";
 import { HomeIcon, UserSquareIcon } from "@/assets/icons";
 import {
-  Activity,
   Calendar2,
   Clock,
   DocumentText,
@@ -41,7 +40,7 @@ export const STAFF_NAV: Group[] = [
     heading: "Access & Activity",
     items: [
       { title: "Permissions", slug: "permissions", icon: Setting2 },
-      { title: "Activity Log", slug: "activity-log", icon: Activity },
+      // { title: "Activity Log", slug: "activity-log", icon: Activity },
     ],
   },
 ];

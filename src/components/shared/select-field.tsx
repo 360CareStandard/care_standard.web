@@ -51,7 +51,10 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   return (
     <div className={cn("w-full", containerClassName)}>
       {label ? (
-        <Label id={labelId} className="mb-2 block ">
+        <Label
+          id={labelId}
+          className="mb-2 block text-sm font-normal text-slate-700"
+        >
           {label}
         </Label>
       ) : null}
@@ -61,14 +64,14 @@ export const SelectField: React.FC<SelectFieldProps> = ({
           aria-invalid={hasError || undefined}
           aria-describedby={cn(
             hint ? helpId : undefined,
-            hasError ? errorId : undefined
+            hasError ? errorId : undefined,
           )}
           className={cn(
             "!h-11 text-sm w-full ",
             hasError
               ? "border-red-300 capitalize bg-red-50 text-red-900 placeholder:text-red-400 focus-visible:ring-red-500 focus-visible:border-red-500"
               : "focus-visible:ring-2 placeholder:text-sm",
-            triggerClassName
+            triggerClassName,
           )}
         >
           <SelectValue placeholder={placeholder} className="capitalize" />

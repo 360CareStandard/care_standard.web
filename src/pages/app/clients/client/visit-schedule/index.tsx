@@ -85,7 +85,7 @@ export default function VisitSchedule() {
       requiredSkills: values.requiredSkills ?? [],
       activitiesRequired: values.activitiesRequired ?? [],
       fundingSource: values.fundingSource,
-      notes: values.notes,
+      // notes: values.notes,
       ...(values.noEndDate ? {} : { endDate: values.endDate }),
     };
 
@@ -187,7 +187,7 @@ export default function VisitSchedule() {
             <Calendar
               events={calendarEvents}
               // If your calendar allows editing events, keep these:
-              setEvents={() => {}}
+              setEvents={() => { }}
               mode={mode}
               setMode={setMode}
               date={date}

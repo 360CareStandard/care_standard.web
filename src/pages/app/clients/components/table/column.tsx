@@ -43,7 +43,7 @@ export const clientsColumns: ColumnDef<Client>[] = [
           className="flex items-center gap-3"
           to={`/app/clients/${username}`}
         >
-          <Avatar className="h-12 w-12">
+          <Avatar className="h-10 w-10">
             {src ? <AvatarImage src={src} alt={`${fullName} avatar`} /> : null}
             <AvatarFallback className="font-semibold">
               {initials.toUpperCase()}

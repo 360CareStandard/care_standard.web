@@ -73,7 +73,7 @@ export default function Overview() {
         onValueChange={onTabChange}
         className="mt-12 w-[933px]"
       >
-        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
+        <TabsList className="justify-start rounded-none border-b bg-transparent p-0">
           <TabsTrigger
             value="personal"
             className="relative rounded-none border-b-2 border-b-transparent !bg-transparent px-4 pb-3 pt-2 text-muted-foreground shadow-none transition-none focus-visible:ring-0 data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"

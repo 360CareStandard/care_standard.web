@@ -4,11 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { SheetForm } from "@/components/shared/sheet-form";
-import { Clock, Edit, Health, InfoCircle, People, Trash } from "iconsax-react";
+import { Add, Clock, Edit, Health, InfoCircle, People, Trash } from "iconsax-react";
 import { VisitScheduleType } from "@/types/client/visit-schedule";
 import { Card, CardContent } from "@/components/ui/card";
 import { InfoRow } from "../../../../components/info-row";
 import dayjs from "dayjs";
+import { VisitNoteField } from "../../form/visit-note";
+import { FormProvider, Resolver, useForm } from "react-hook-form";
+import { VisitScheduleNoteForm, VisitScheduleNoteSchema } from "@/pages/app/clients/schemas/visit-schedule";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useCreateVisitNote, useVisitNote } from "@/hooks/client/useVisitSchedule";
+import { toast } from "react-hot-toast";
+import { handleFormApiError } from "@/lib/handle-form-error";
+import { useEffect, useRef, useState } from "react";
+import { Spinner } from "@/components/shared/spinner";
 
 type Props = {
   open: boolean;
@@ -67,6 +76,86 @@ export function ScheduleDetailsSheet({
       avatarUrl: carer.profilePicture ?? null, // if/when BE provides
     }));
   }
+
+  const methods = useForm<VisitScheduleNoteForm>({
+    resolver: zodResolver(VisitScheduleNoteSchema) as unknown as Resolver<
+      VisitScheduleNoteForm,
+      any
+    >,
+    mode: "onChange",
+    defaultValues: {
+      note: "",
+    },
+  });
+  const createVisitNote = useCreateVisitNote(schedule.id);
+  const { data: visitNoteData, isLoading: isLoadingVisitNote } = useVisitNote(
+    schedule.id,
+    open,
+  );
+  const visitNote = visitNoteData?.notes ?? [];
+  const [showNoteEditor, setShowNoteEditor] = useState(false);
+  const hydratedNoteRef = useRef<string | null>(null);
+
+  const extractNote = (payload: any): string => {
+    if (!payload) return "";
+    if (typeof payload === "string") return payload;
+
+    if (Array.isArray(payload)) {
+      const first = payload[0];
+      if (typeof first === "string") return first;
+      if (first && typeof first.note === "string") return first.note;
+      return "";
+    }
+
+    if (typeof payload.note === "string") return payload.note;
+
+    if (payload.data) {
+      if (typeof payload.data === "string") return payload.data;
+      if (typeof payload.data.note === "string") return payload.data.note;
+      if (Array.isArray(payload.data) && payload.data.length > 0) {
+        const first = payload.data[0];
+        if (typeof first === "string") return first;
+        if (first && typeof first.note === "string") return first.note;
+      }
+    }
+
+    return "";
+  };
+
+  useEffect(() => {
+    hydratedNoteRef.current = null;
+    methods.reset({ note: "" });
+  }, [schedule.id]);
+
+  useEffect(() => {
+    if (!open || hydratedNoteRef.current === schedule.id) return;
+    methods.reset({ note: extractNote(visitNoteData) });
+    hydratedNoteRef.current = schedule.id;
+  }, [open, schedule.id, visitNoteData, methods]);
+
+  useEffect(() => {
+    if (!open || isLoadingVisitNote) return;
+    setShowNoteEditor(false);
+  }, [open, isLoadingVisitNote, schedule.id]);
+
+  const onSubmitNote = async (values: VisitScheduleNoteForm) => {
+    try {
+      await createVisitNote.mutateAsync(values);
+      toast.success("Visit note saved");
+      methods.reset();
+      setShowNoteEditor(false);
+    } catch (err) {
+      handleFormApiError<VisitScheduleNoteForm>(
+        err,
+        methods.setError,
+        "Failed to save visit note",
+      );
+    }
+  };
+
+  const handleNoteSubmit = () => {
+    void methods.handleSubmit(onSubmitNote)();
+  };
 
   return (
     <SheetForm
@@ -267,12 +356,12 @@ export function ScheduleDetailsSheet({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 ">
-                    <InfoRow label="">
+                  <div className=" w-full">
+                    <InfoRow label="" className="flex flex-wrap gap-2 ">
                       {schedule.requiredSkills?.map((skill) => (
                         <span
                           key={skill}
-                          className="capitalize bg-gray-200 px-2 py-1 rounded-full"
+                          className="capitalize  bg-gray-200 px-2 py-1 rounded-full"
                         >
                           {skill}
                         </span>
@@ -394,9 +483,84 @@ export function ScheduleDetailsSheet({
           </TabsContent>
 
           {/* AUDIT */}
-          {/* <TabsContent value="audit" className="mt-4">
-              <div className="border rounded-2xl px-5 py-2 bg-white "></div>
-            </TabsContent> */}
+          <TabsContent value="notes & observations" >
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <InfoCircle size={18} color="#025134" />
+                <h3 className="font-medium text-sm">Visit Notes</h3>
+              </div>
+              <div className="space-y-3" >
+                {!showNoteEditor ? (
+                  <div className="flex justify-end mb-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowNoteEditor(true)}
+                      disabled={isLoadingVisitNote}
+                    >
+                      <Add size={16} />
+                      Add Note
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <FormProvider {...methods}>
+                      <VisitNoteField />
+                    </FormProvider>
+                    <div className="flex justify-end gap-2 mb-2">
+                      {(
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowNoteEditor(false)}
+                          disabled={createVisitNote.isPending}
+                        >
+                          Cancel
+                        </Button>
+                      )}
+                      <Button
+                        type="button"
+                        onClick={handleNoteSubmit}
+                        disabled={
+                          isLoadingVisitNote ||
+                          createVisitNote.isPending ||
+                          methods.formState.isSubmitting
+                        }
+                      >
+                        {createVisitNote.isPending ? <Spinner /> : "Save Note"}
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+              {
+                visitNote.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-2 flex justify-center items-center flex-col gap-2">
+                      <p className="text-sm font-semibold">No notes yet</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Add first note with observations, task and incidents.
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="space-y-4 mb-6">
+                    {visitNote.map((note) => (
+                      <Card key={note.id}>
+                        <CardContent>
+                          <p className="text-sm whitespace-pre-wrap">{note.note}</p>
+                          <p className="text-xs text-muted-foreground mt-2">
+                            {dayjs(note.createdAt).format("DD MMM YYYY, h:mm A")}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )
+              }
+            </div>
+
+          </TabsContent>
         </Tabs>
       </div>
     </SheetForm>

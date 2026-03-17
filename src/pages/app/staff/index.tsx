@@ -13,7 +13,7 @@ const Staff = () => {
           <StaffPrimaryAction />
         </div>
         <div
-          className="-mx-4 mt-20 flex-1 overflow-auto px-4 py-4 lg:flex-row lg:space-y-0 lg:space-x-12 bg-white shadow
+          className="-mx-4 mt-12 flex-1 overflow-auto px-4 py-4 lg:flex-row lg:space-y-0 lg:space-x-12 bg-white shadow
       rounded-lg
       "
         >

@@ -92,7 +92,7 @@ export const clientSchema = z.object({
     .max(400, "Maximum 400 characters"),
   riskLevel: z.string().trim().min(1, "Select a risk level"),
 
-  status: z.string().trim().min(1, "Please enter a status"),
+  status: z.string().trim().min(1, "Please select a status"),
   metadata: z.record(z.string(), z.unknown()).optional(),
 });
 

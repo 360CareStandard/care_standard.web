@@ -1,5 +1,6 @@
 // src/api/.ts
-import { VisitScheduleForm } from "@/pages/app/clients/schemas/visit-schedule";
+import { VisitScheduleForm, VisitScheduleNoteForm } from "@/pages/app/clients/schemas/visit-schedule";
+import { VisitScheduleNotesResponse } from "@/types/client/visit-notes";
 import {
   VisitScheduleResponse,
   VisitSchedulesResponse,
@@ -29,10 +30,8 @@ export const VisitScheduleApi = {
     ),
   delete: (clientId: string, scheduleId: string) =>
     apiDelete(`/visit-schedule/clients/${clientId}/schedules/${scheduleId}`),
-  createNote: (scheduleId: string, note: string) =>
-    apiPost(`/visit-schedule/schedules/${scheduleId}/notes`, {
-      note,
-    }),
+  createNote: (scheduleId: string, body: VisitScheduleNoteForm) =>
+    apiPost(`/visit-schedule/schedules/${scheduleId}/notes`, body),
   getNote: (scheduleId: string) =>
-    apiGet(`/visit-schedule/schedules/${scheduleId}/notes`),
+    apiGet<VisitScheduleNotesResponse>(`/visit-schedule/schedules/${scheduleId}/notes`).then((r) => r.data)
 };

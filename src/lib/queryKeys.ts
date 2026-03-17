@@ -29,6 +29,15 @@ export const qk = {
     ["client-home-enviroment", clientId] as const,
   clientPreferences: (clientId?: string) =>
     ["client-preferences", clientId] as const,
+  clientSettings: (clientId?: string) =>
+    ["client-settings", clientId] as const,
+
+  clientExport: (clientId?: string) =>
+    ["client-export", clientId] as const,
+  clientFamilyAccessList: (clientId?: string) =>
+    ["client-access", clientId] as const,
+  clientFamilyAccess: (clientId?: string, accessId?: string) =>
+    ["client-access", clientId, accessId] as const,
 
   carePlan: (clientId?: string, carePlanId?: string) =>
     ["care-plan", clientId, carePlanId] as const,
@@ -52,6 +61,7 @@ export const qk = {
   ],
 
   staff: (id: string) => ["staff", "detail", id],
+  staffWithClients: (id: string) => ["staff", "staff-with-client", id],
   staffContacts: (staffId?: string) => ["staff-contacts", staffId] as const,
   // unique key for a single contact
   staffContact: (staffId?: string, contactId?: string) =>
@@ -61,5 +71,20 @@ export const qk = {
   staffSkill: (staffId?: string) => ["staff-skill", staffId] as const,
   staffDocument: (staffId?: string) => ["staff-document", staffId] as const,
   staffAvailability: (staffId?: string) =>
-    ["staff-employment", staffId] as const,
+    ["staff-availability", staffId] as const,
+  staffAbsence: (staffId?: string) =>
+    ["staff-absence", staffId] as const,
+  staffVisitSchedules: (staffId?: string) =>
+    ["staff-visit", staffId] as const,
+
+  //Shift Roster
+  shiftRosterList: (params?: { view?: string; date?: string; endDate?: string }) => [
+    "shift-roster",
+    params?.view ?? "daily",
+    params?.date ?? "",
+    params?.endDate ?? "",
+  ] as const,
+  shiftRoster: (id: string) => ["shift-roster", id],
+  StaffPermission: (clientId?: string) =>
+    ["staff-permission", clientId] as const,
 };

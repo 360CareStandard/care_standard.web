@@ -1,4 +1,3 @@
-import { Settings } from "lucide-react";
 import {
   HomeIcon,
   UserSquareIcon,
@@ -8,6 +7,7 @@ import {
   PeopleIcon,
   DocumentDownloadIcon,
 } from "@/assets/icons";
+import { Settings } from "lucide-react";
 import React from "react";
 
 type Item = {
