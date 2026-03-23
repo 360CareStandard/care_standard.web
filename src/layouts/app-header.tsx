@@ -47,7 +47,7 @@ const links = [
   { title: "Clients", href: "/clients" },
   { title: "Staff", href: "/staff" },
   { title: "Shift Roster", href: "/shift-roster" },
-  { title: "Inbox", href: "/inbox" },
+  // { title: "Inbox", href: "/inbox" },
   { title: "Activity", href: "/activity" },
   { title: "Finance", href: "/finance" },
   { title: "Safeguarding", href: "/safeguarding" },
@@ -83,7 +83,7 @@ export function AppHeader() {
         meta: mapRole(a.roles), // "Owner" | "Admin" | ...
         avatar: a.logoUrl, // if you have one; harmless if undefined
       })),
-    [agencies]
+    [agencies],
   );
 
   /** Currently active workspace id (fallback to first if absent) */
@@ -104,7 +104,7 @@ export function AppHeader() {
   const buildPath = React.useCallback(
     (id: string, subpath: string) =>
       `/app/w/${encodeURIComponent(id)}${subpath}`,
-    []
+    [],
   );
 
   /** When user chooses a workspace in the popover */
@@ -117,10 +117,10 @@ export function AppHeader() {
           onSuccess: () => navigate(buildPath(w.id, sub), { replace: true }),
           onError: () =>
             alert("Unable to switch workspace right now. Please try again."),
-        }
+        },
       );
     },
-    [selectAgency, navigate, buildPath, sub]
+    [selectAgency, navigate, buildPath, sub],
   );
 
   return (
@@ -190,8 +190,8 @@ export function AppHeader() {
             onOpenOrgSettings={() =>
               navigate(
                 `/app/w/${encodeURIComponent(
-                  activeWsFromState?.id ?? ""
-                )}/settings`
+                  activeWsFromState?.id ?? "",
+                )}/settings`,
               )
             }
           >
