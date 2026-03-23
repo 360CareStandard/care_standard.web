@@ -37,6 +37,8 @@ const StaffPermissions = lazy(() => import("@/pages/app/staff/permissions"));
 
 //Shift Roster
 const ShiftRoster = lazy(() => import("@/pages/app/shift-roaster"));
+//Activity
+const Activity = lazy(() => import("@/pages/app/activity"));
 
 const appChildRoutes = (
   <>
@@ -46,6 +48,7 @@ const appChildRoutes = (
     <Route element={<ContainerLayout />}>
       <Route path="clients" element={<Clients />} />
       <Route path="staff" element={<Staff />} />
+      <Route path="activity" element={<Activity />} />
     </Route>
     <Route>
       <Route path="shift-roster" element={<ShiftRoster />} />
