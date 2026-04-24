@@ -39,7 +39,10 @@ const StaffPermissions = lazy(() => import("@/pages/app/staff/permissions"));
 const ShiftRoster = lazy(() => import("@/pages/app/shift-roaster"));
 //Activity
 const Activity = lazy(() => import("@/pages/app/activity"));
-
+//Safeguarding
+const Safeguarding = lazy(() => import("@/pages/app/safeguarding"));
+//Finance
+const Finance = lazy(() => import("@/pages/app/finance"));
 const appChildRoutes = (
   <>
     <Route index element={<Navigate to="clients" replace />} />
@@ -49,9 +52,11 @@ const appChildRoutes = (
       <Route path="clients" element={<Clients />} />
       <Route path="staff" element={<Staff />} />
       <Route path="activity" element={<Activity />} />
+      <Route path="safeguarding" element={<Safeguarding />} />
     </Route>
     <Route>
       <Route path="shift-roster" element={<ShiftRoster />} />
+      <Route path="finance" element={<Finance />} />
     </Route>
 
     {/* client profile: its own layout & spacing */}

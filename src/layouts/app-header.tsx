@@ -91,7 +91,7 @@ export function AppHeader() {
     activeWsFromState?.id ?? (workspaces.length ? workspaces[0].id : undefined);
 
   /**
-   * Build path & preserve subpath like your switcher does.
+   * Build path & preserve subpath like the switcher does.
    * Example: /app/w/abc/clients -> sub: /clients
    */
   const sub = React.useMemo(() => {
