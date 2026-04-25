@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { callTypes } from "../data/data"; // keep your existing color map
 import { DataTableColumnHeader } from "./data-table-column-header";
-import { DataTableRowActions } from "./data-table-row-actions";
 import { LongText } from "@/components/shared/long-text";
 import { Link } from "react-router-dom";
 import { riskColorMap } from "@/helpers/risk-colors";
@@ -171,9 +170,9 @@ export const clientsColumns: ColumnDef<Client>[] = [
     enableSorting: false,
   },
 
-  {
-    id: "actions",
-    // render row actions component (it receives the row internally)
-    cell: DataTableRowActions,
-  },
+  // {
+  //   id: "actions",
+  //   // render row actions component (it receives the row internally)
+  //   cell: DataTableRowActions,
+  // },
 ];

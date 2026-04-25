@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DataTableColumnHeader } from "./data-table-column-header";
-import { DataTableRowActions } from "./data-table-row-actions";
 import { LongText } from "@/components/shared/long-text";
 import { Link } from "react-router-dom";
 import { callTypes } from "@/pages/app/clients/components/data/data";
@@ -154,9 +153,9 @@ export const staffColumns: ColumnDef<Staff>[] = [
   //   enableSorting: false,
   // },
 
-  {
-    id: "actions",
-    // render row actions component (it receives the row internally)
-    cell: DataTableRowActions,
-  },
+  // {
+  //   id: "actions",
+  //   // render row actions component (it receives the row internally)
+  //   cell: DataTableRowActions,
+  // },
 ];

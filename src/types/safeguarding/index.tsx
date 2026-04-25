@@ -54,7 +54,7 @@ export interface SafeguardingReport {
   agencyId: string;
   reportedByStaffId: string;
   clientId: string;
-
+  title: string;
   incidentType: IncidentType;
   priority: Priority;
 
@@ -90,4 +90,42 @@ export interface SafeguardingListResponse {
   status: "success" | "error";
   message: string;
   data: SafeguardingListData;
+}
+
+export interface SafeguardingDetailResponse {
+  status: "success" | "error";
+  message: string;
+  data: SafeguardingReport;
+}
+
+export interface SafeguardingReportAuditResponse {
+  status: "success" | "error";
+  message: string;
+  data: {
+    total: number;
+    timeline: SafeguardingReportAudit[];
+    totalPages: number;
+    currentPage: number;
+  };
+}
+
+export interface SafeguardingReportAudit {
+  id: string;
+  agencyId: string;
+  userId: string;
+  module: string;
+  entityType: string;
+  entityId: string;
+  action: string;
+  description: string;
+  previousValue: string | null;
+  newValue: string | null;
+  ipAddress: string | null;
+  userAgent: string | null;
+  metadata: Record<string, any>;
+  createdAt: string;
+  user: {
+    firstname: string;
+    lastname: string;
+  };
 }

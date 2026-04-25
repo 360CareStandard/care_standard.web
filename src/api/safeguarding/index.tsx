@@ -1,8 +1,13 @@
-import { SafeguardingListResponse } from "@/types/safeguarding";
+import {
+  SafeguardingDetailResponse,
+  SafeguardingListResponse,
+  SafeguardingReportAuditResponse,
+} from "@/types/safeguarding";
 import { apiGet, apiPatch, apiPost } from "@/utils/api-connect";
 
 export const SafeguardingApi = {
   list: async (params?: {
+    search?: string;
     status?: string;
     priority?: string;
     dateFrom?: string;
@@ -11,6 +16,7 @@ export const SafeguardingApi = {
     limit?: number;
   }) => {
     const safe = {
+      search: params?.search ?? undefined,
       page: Number(params?.page ?? 1),
       limit: Number(params?.limit ?? 10),
       status: params?.status ?? undefined,
@@ -24,7 +30,9 @@ export const SafeguardingApi = {
   },
 
   get: (id: string) =>
-    apiGet<SafeguardingListResponse>(`/safeguarding/${id}`).then((r) => r.data),
+    apiGet<SafeguardingDetailResponse>(`/safeguarding/${id}`).then(
+      (r) => r.data,
+    ),
   action: (
     id: string,
     payload: {
@@ -36,4 +44,10 @@ export const SafeguardingApi = {
 
   post: (formData: FormData) =>
     apiPost<{ status: "success" }>("/safeguarding", formData),
+
+  listReport: async (id: string) => {
+    return apiGet<SafeguardingReportAuditResponse>(
+      `/safeguarding/${id}/audit-log`,
+    ).then((r) => r?.data);
+  },
 };

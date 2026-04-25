@@ -315,7 +315,7 @@ const StaffPermission = () => {
             </p>
           </div>
 
-          <Card>
+          <Card className="shadow-none">
             <CardHeader>
               <div className="flex items-start gap-2">
                 <span className="rounded-md bg-primary-accent p-2">
@@ -358,7 +358,7 @@ const StaffPermission = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="shadow-none">
             <CardHeader>
               <div className="flex items-start gap-2">
                 <span className="rounded-md bg-primary-accent p-2">
@@ -396,7 +396,7 @@ const StaffPermission = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="shadow-none">
             <CardHeader>
               <div className="flex items-start gap-2">
                 <span className="rounded-md bg-primary-accent p-2">

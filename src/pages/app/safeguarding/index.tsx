@@ -18,6 +18,7 @@ import {
   useSafeguarding,
   useSafeguardingAction,
   useSafeguardingInfinite,
+  useSafeguardingReport,
 } from "@/hooks/safeguarding";
 import toast from "react-hot-toast";
 import { handleFormApiError } from "@/lib/handle-form-error";
@@ -43,6 +44,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { EmptyState } from "./components/ui/empty-state";
+import { SafeguardDetailsSheet } from "./components/ui/sheet";
 const TAB_KEYS = ["cases", "reports"] as const;
 type TabKey = (typeof TAB_KEYS)[number];
 
@@ -89,6 +91,16 @@ const SafeGuarding = () => {
     id: null,
     status: "under-review", // default
   });
+
+  const [open, setOpen] = React.useState(false);
+  const [selectedReportId, setSelectedReportId] = React.useState<
+    string | undefined
+  >(undefined);
+
+  const openDetailSheet = (reportId: string) => {
+    setSelectedReportId(reportId);
+    setOpen(true);
+  };
 
   const [actionText, setActionText] = React.useState("");
   const [activeId, setActiveId] = React.useState<string | null>(null);
@@ -141,13 +153,19 @@ const SafeGuarding = () => {
     dateTo: dateRange?.to?.toISOString(),
   });
 
-  const { data } = useSafeguarding(undefined, false); // disable auto-fetch
+  const { data: safeguardDetails, isLoading: safeguardDetailsLoading } =
+    useSafeguarding(selectedReportId, Boolean(selectedReportId)); // disable auto-fetch
+
+  const { data: safeguardReportData } = useSafeguardingReport(
+    selectedReportId!,
+  );
+
   const reports = safeguardingData?.pages.flatMap((p) => p.reports) ?? [];
   const mappedReports = React.useMemo(() => {
     return reports.map((r) => ({
       id: r.id,
       type: r.incidentType,
-      title: "Safeguard",
+      title: r.title,
       client: `${r.client.firstname} ${r.client.lastname}`,
       carer: `${r.reportedBy.user.firstname} ${r.reportedBy.user.lastname}`,
       description: r.description,
@@ -292,11 +310,7 @@ const SafeGuarding = () => {
 
                 return (
                   <div ref={isLast ? lastItemRef : null} key={item.id}>
-                    <AlertRow
-                      item={item}
-                      onTakeAction={() => openActionModal(item.id, item.status)}
-                      isUpdating={activeId === item.id}
-                    />
+                    <AlertRow openDetailSheet={openDetailSheet} item={item} />
                   </div>
                 );
               })
@@ -339,11 +353,7 @@ const SafeGuarding = () => {
 
                 return (
                   <div ref={isLast ? lastItemRef : null} key={item.id}>
-                    <AlertRow
-                      item={item}
-                      onTakeAction={() => openActionModal(item.id, item.status)}
-                      isUpdating={activeId === item.id}
-                    />
+                    <AlertRow openDetailSheet={openDetailSheet} item={item} />
                   </div>
                 );
               })
@@ -432,7 +442,11 @@ const SafeGuarding = () => {
                   });
                   setActionText("");
                 } catch (err) {
-                  console.error(err);
+                  handleFormApiError<SafeguardingFormData>(
+                    err,
+                    methods.setError,
+                    "Action failed",
+                  );
                 } finally {
                   setActiveId(null);
                 }
@@ -458,6 +472,16 @@ const SafeGuarding = () => {
           <SafeguardingFormField />
         </FormProvider>
       </SheetForm>
+
+      <SafeguardDetailsSheet
+        open={open}
+        onOpenChange={setOpen}
+        item={safeguardDetails}
+        isLoading={safeguardDetailsLoading}
+        openActionModal={openActionModal}
+        isUpdating={isUpdating}
+        auditLog={safeguardReportData?.timeline}
+      />
     </Main>
   );
 };

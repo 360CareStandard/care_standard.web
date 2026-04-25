@@ -1,25 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Clock3, ShieldAlert } from "lucide-react";
+import { badgeStyles, formatStatus, statusStyles } from "../../utils";
 
-const badgeStyles = {
-  low: "bg-gray-50 text-gray-700 hover:bg-gray-50 border-transparent",
-  high: "bg-red-50 text-red-700 hover:bg-red-50 border-transparent",
-  medium: "bg-orange-50 text-orange-700 hover:bg-orange-50 border-transparent",
-  completed: "bg-green-50 text-green-700 hover:bg-green-50 border-transparent",
-  critical: "bg-red-50 text-red-700 hover:bg-red-50 border-transparent",
-};
-
-const statusStyles: Record<string, string> = {
-  open: "bg-gray-100 text-gray-700 border-transparent",
-  "under-review": "bg-yellow-50 text-yellow-700 border-transparent",
-  "action-taken": "bg-blue-50 text-blue-700 border-transparent",
-  closed: "bg-green-50 text-green-700 border-transparent",
-};
 export function AlertRow({
   item,
-  onTakeAction,
-  isUpdating,
+  openDetailSheet,
 }: {
   item: {
     id: string;
@@ -40,23 +26,9 @@ export function AlertRow({
     priority: string;
     location: string;
   };
-  onTakeAction: () => void;
-  isUpdating: boolean;
+
+  openDetailSheet: (reportId: string) => void;
 }) {
-  const formatStatus = (status: string) => {
-    switch (status) {
-      case "open":
-        return "Open";
-      case "under-review":
-        return "Under Review";
-      case "action-taken":
-        return "Action Taken";
-      case "closed":
-        return "Closed";
-      default:
-        return status;
-    }
-  };
   return (
     <div className="flex gap-4 border-b px-4 py-5 last:border-b-0">
       <div className="w-1 rounded-full bg-red-500" />
@@ -68,7 +40,7 @@ export function AlertRow({
           </div>
 
           <div className="min-w-0">
-            <div className="font-medium text-sm">{"Safeguard"}</div>
+            <div className="font-bold text-base">{item.title}</div>
 
             <div className="mt-2 grid grid-cols-2 gap-x-8 gap-y-2 text-xs">
               <div>
@@ -160,7 +132,7 @@ export function AlertRow({
                 {item.carer}
               </div>
               <div className=" flex items-center gap-1 text-[11px] text-muted-foreground">
-                <Clock3 className="h-3.5 w-3.5" />
+                <Clock3 className="h-3 w-3" stroke="#62748E" />
                 {item.time ? new Date(item.time).toLocaleString() : "N/A"}
               </div>
             </div>
@@ -191,8 +163,8 @@ export function AlertRow({
               variant="ghost"
               size="icon"
               className="h-8 w-8 shrink-0"
-              onClick={onTakeAction}
-              disabled={isUpdating}
+              onClick={() => openDetailSheet(item.id)}
+              // disabled={isUpdating}
             >
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </Button>

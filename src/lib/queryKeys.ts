@@ -95,6 +95,7 @@ export const qk = {
 
   //safeguarding
   safeguardingList: (params?: {
+    search?: string;
     status?: string;
     priority?: string;
     dateFrom?: string;
@@ -102,5 +103,6 @@ export const qk = {
     page?: number; limit?: number;
   }) => ["safeguarding", "list", params] as const,
   safeguarding: (id: string) => ["safeguarding", id] as const,
+  safeguardingReport: (id: string) => ["safeguarding", "report", id] as const,
 
 };

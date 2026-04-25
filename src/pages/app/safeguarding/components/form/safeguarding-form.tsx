@@ -12,7 +12,7 @@ const incidentTypeOptions = [
   { value: "safeguarding-concern", label: "Safeguarding Concern" },
   { value: "incident", label: "Incident" },
   { value: "accident", label: "Accident" },
-  { value: "near-miss", label: "Near-Miss" },
+  { value: "near-miss", label: "Near Miss" },
   { value: "complaint", label: "Complaint" },
   { value: "compliment", label: "Compliment" },
   { value: "other", label: "Other" },
@@ -46,6 +46,13 @@ const SafeguardingFormField = () => {
         </span>
         <SafeguardStaffSelector />
       </div>
+      <TextField
+        required
+        label="Title"
+        placeholder="Brief title for the incident"
+        {...register("title")}
+        error={errors.title?.message}
+      />
       <div className="grid grid-cols-2 gap-4">
         <RHFSelectField
           control={control}

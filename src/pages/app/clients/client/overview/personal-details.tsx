@@ -33,7 +33,7 @@ const PersonalDetails = ({ personal, openSheet }: Props) => {
     <>
       <div className="space-y-5">
         {/* Profile Photo card */}
-        <Card>
+        <Card className="shadow-none">
           <CardContent className="grid grid-cols-1 items-center sm:grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
               <h2 className="font-bold text-xl">Profile Photo</h2>
@@ -78,7 +78,7 @@ const PersonalDetails = ({ personal, openSheet }: Props) => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-none">
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-16">
             <div className="flex flex-col gap-4">
               <h2 className="font-bold text-xl"> Personal Information</h2>
@@ -99,7 +99,7 @@ const PersonalDetails = ({ personal, openSheet }: Props) => {
               </div>
             </div>
 
-            <Card>
+            <Card className="shadow-none">
               <CardContent className="p-0">
                 {isLoading ? (
                   <div className="space-y-2 px-4">

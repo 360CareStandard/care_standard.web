@@ -6,8 +6,10 @@ import { ApiError } from "@/types/api-error";
 import { SafeguardingApi } from "@/api/safeguarding";
 import { SafeguardingFormData } from "@/pages/schemas/safeguarding";
 
+
 export function useSafeguardingInfinite(params?: {
     status?: string;
+    page?: number;
     priority?: string;
     dateFrom?: string;
     dateTo?: string;
@@ -95,5 +97,14 @@ export function useSafeguarding(id?: string, enabled = true) {
 
         enabled: Boolean(id) && enabled,
         staleTime: 60_000,
+    });
+}
+
+export function useSafeguardingReport(id: string) {
+    return useQuery({
+        queryKey: id ? qk.safeguardingReport(id) : ["safeguarding", "report", "nil"],
+        queryFn: () => SafeguardingApi.listReport(id),
+        staleTime: 60_000,
+        enabled: Boolean(id),
     });
 }
