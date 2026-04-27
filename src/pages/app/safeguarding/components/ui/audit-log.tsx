@@ -27,7 +27,7 @@ const AuditLogUi = ({ item }: { item: SafeguardingReportAudit[] }) => {
                       {formatStatus(i.newValue || "")}
                     </p>
                   </div>
-                  <span className="whitespace-nowrap text-sm">
+                  <span className="whitespace-nowrap text-xs">
                     by {i.user.firstname} {i.user.lastname},{" "}
                     {i.createdAt
                       ? dayjs(i.createdAt).format("D MMM YYYY, hh:mm A")

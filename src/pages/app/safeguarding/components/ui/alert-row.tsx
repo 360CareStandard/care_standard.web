@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Clock3, ShieldAlert } from "lucide-react";
 import { badgeStyles, formatStatus, statusStyles } from "../../utils";
+import dayjs from "@/lib/dayjs";
 
 export function AlertRow({
   item,
@@ -34,7 +35,7 @@ export function AlertRow({
       <div className="w-1 rounded-full bg-red-500" />
 
       <div className="flex flex-1 items-start justify-between gap-4">
-        <div className="flex min-w-0 gap-3">
+        <div className="flex  gap-3">
           <div className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-md border border-red-200 bg-red-50">
             <ShieldAlert className="h-4 w-4 text-red-500" />
           </div>
@@ -133,7 +134,9 @@ export function AlertRow({
               </div>
               <div className=" flex items-center gap-1 text-[11px] text-muted-foreground">
                 <Clock3 className="h-3 w-3" stroke="#62748E" />
-                {item.time ? new Date(item.time).toLocaleString() : "N/A"}
+                {item.time
+                  ? dayjs(item.time).format("D MMM YYYY, hh:mm A")
+                  : ""}
               </div>
             </div>
           </div>

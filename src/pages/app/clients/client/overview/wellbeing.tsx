@@ -22,7 +22,7 @@ const WellbeingOverview = ({ personal, openSheet }: Props) => {
       : { bg: "bg-gray-100", text: "text-gray-600" };
 
   return (
-    <Card>
+      <Card className="shadow-none">
       <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-16">
         <div className="flex flex-col gap-4">
           <h2 className="font-bold text-xl">Wellbeing Overview</h2>
@@ -43,7 +43,7 @@ const WellbeingOverview = ({ personal, openSheet }: Props) => {
           </div>
         </div>
 
-        <Card>
+          <Card className="shadow-none">
           <CardContent className="p-0">
             <InfoRow label="Details" icon={<NotebookText size={17.65} />}>
               {personal?.wellbeingDetails || "—"}

@@ -15,6 +15,7 @@ import { ChevronDown, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AuditLogUi from "./audit-log";
 import SinglePageLoader from "@/components/loading/single-page-loader";
+import dayjs from "@/lib/dayjs";
 
 type Props = {
   open: boolean;
@@ -131,8 +132,10 @@ export function SafeguardDetailsSheet({
                     </InfoRow>
                     <InfoRow label="Date & Time">
                       {item.incidentDateTime
-                        ? new Date(item.incidentDateTime).toLocaleString()
-                        : "N/A"}
+                        ? dayjs(item.incidentDateTime).format(
+                            "D MMM YYYY, hh:mm A",
+                          )
+                        : ""}
                     </InfoRow>
                   </div>
                 </CardContent>
