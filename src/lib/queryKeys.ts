@@ -105,4 +105,8 @@ export const qk = {
   safeguarding: (id: string) => ["safeguarding", id] as const,
   safeguardingReport: (id: string) => ["safeguarding", "report", id] as const,
 
+  //Agency settings
+  agencyLogo: () => ["agency-logo"] as const,
+  agencyDocument: () => ["agency-document"] as const,
+
 };

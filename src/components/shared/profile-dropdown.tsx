@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SignOutDialog } from "./signout-dialog";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 type ProfileDropdownProps = {
   /** The trigger (avatar pill) */
@@ -39,6 +40,7 @@ export default function ProfileDropdown({
 }: ProfileDropdownProps) {
   // const navigate = useNavigate();
   const [logoutModal, setLogoutModal] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -78,7 +80,7 @@ export default function ProfileDropdown({
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate("/app/company-settings")}>
             Company settings
             <DropdownMenuShortcut />
           </DropdownMenuItem>

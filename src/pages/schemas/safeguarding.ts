@@ -16,7 +16,7 @@ export const safeguardingSchema = z.object({
     incidentDateTime: z.string().min(1, "Please enter the date and time of the incident"),
     location: z.string().trim().min(1, "Please enter a location"),
     description: z.string().trim().min(10, "Please enter a description of at least 10 characters"),
-    evidence: z.any().optional(),
+    evidence: z.file().optional(),
 });
 
 

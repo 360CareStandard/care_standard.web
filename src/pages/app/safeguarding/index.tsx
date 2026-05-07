@@ -97,13 +97,12 @@ const SafeGuarding = () => {
     string | undefined
   >(undefined);
 
+  const [actionText, setActionText] = React.useState("");
+  const [activeId, setActiveId] = React.useState<string | null>(null);
   const openDetailSheet = (reportId: string) => {
     setSelectedReportId(reportId);
     setOpen(true);
   };
-
-  const [actionText, setActionText] = React.useState("");
-  const [activeId, setActiveId] = React.useState<string | null>(null);
   const openActionModal = (id: string, currentStatus: string) => {
     setActionModal({
       open: true,
