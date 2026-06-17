@@ -56,6 +56,14 @@ export interface ClientsData {
   clients: Client[];
   totalPages: number;
   currentPage: number | string;
+  pagination: Pagination;
+
+}
+export interface Pagination {
+  total: number;
+  page: string; // API returns string
+  limit: string; // API returns string
+  totalPages: number;
 }
 
 export interface ClientsResponse {

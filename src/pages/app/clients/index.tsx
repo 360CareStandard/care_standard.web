@@ -1,6 +1,7 @@
 import { Main } from "@/layouts/main";
 import { ClientsPrimaryButtons } from "./components/table/client-primary-button";
 import ClientsTable from "./components/table/client-table";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Clients = () => {
   return (
@@ -13,13 +14,12 @@ const Clients = () => {
           </div>
           <ClientsPrimaryButtons />
         </div>
-        <div
-          className="-mx-4 mt-12 flex-1 overflow-auto px-4 py-4 lg:flex-row lg:space-y-0 lg:space-x-12 bg-white shadow
-      rounded-lg
-      "
-        >
-          <ClientsTable initialPage={1} initialLimit={10} />
-        </div>
+
+        <Card className="mt-12 rounded-lg border shadow-none ">
+          <CardContent>
+            <ClientsTable initialPage={1} initialLimit={10} />
+          </CardContent>
+        </Card>
       </Main>
     </>
   );

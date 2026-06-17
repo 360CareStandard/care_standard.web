@@ -113,7 +113,7 @@ function SettingsSectionCard({
   onAutoSubmit,
 }: SettingsSectionCardProps) {
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader>
         <div className="flex gap-2 items-start">
           <span className="p-2 rounded-md bg-primary-accent">

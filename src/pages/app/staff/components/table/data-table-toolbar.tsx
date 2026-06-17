@@ -57,10 +57,6 @@ export function DataTableToolbar<TData>({
         table.getColumn("status") &&
           table.setSorting([{ id: "status", desc: false }]);
         break;
-      case "risk-desc":
-        table.getColumn("riskLevel") &&
-          table.setSorting([{ id: "riskLevel", desc: true }]);
-        break;
     }
   };
 
@@ -107,9 +103,6 @@ export function DataTableToolbar<TData>({
               </DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="status-asc">
                 Status
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="risk-desc">
-                Risk (High → Low)
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>

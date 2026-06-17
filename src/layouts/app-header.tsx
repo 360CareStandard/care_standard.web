@@ -12,7 +12,7 @@ import {
 import { useAuthStore } from "@/stores/auth-store";
 import { useWorkspace, useSelectWorkspace } from "@/hooks/useWorkspace";
 import * as React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 /** ===== Helpers to keep role/meta consistent with onboarding page ===== */
 type Role = "Owner" | "Admin" | "Coordinator" | "Viewer";
@@ -68,7 +68,6 @@ export function AppHeader() {
   const { mutate: selectAgency, isPending: selecting } = useSelectWorkspace();
 
   const navigate = useNavigate();
-  const loc = useLocation();
 
   /** Same robustness you used on onboarding */
   const agencies =
@@ -90,37 +89,18 @@ export function AppHeader() {
   const activeId =
     activeWsFromState?.id ?? (workspaces.length ? workspaces[0].id : undefined);
 
-  /**
-   * Build path & preserve subpath like your switcher does.
-   * Example: /app/w/abc/clients -> sub: /clients
-   */
-  const sub = React.useMemo(() => {
-    const m = loc.pathname.match(/^\/app\/w\/[^/]+(\/.*)?$/);
-    if (m?.[1]) return m[1];
-    const m2 = loc.pathname.match(/^\/app(\/.*)?$/);
-    return m2?.[1] ?? "/overview";
-  }, [loc.pathname]);
-
-  const buildPath = React.useCallback(
-    (id: string, subpath: string) =>
-      `/app/w/${encodeURIComponent(id)}${subpath}`,
-    [],
-  );
-
-  /** When user chooses a workspace in the popover */
   const handleSelect = React.useCallback(
     (w: Workspace) => {
-      // Optimistic UX: disable during mutation handled by `selecting`
       selectAgency(
         { agencyId: w.id },
         {
-          onSuccess: () => navigate(buildPath(w.id, sub), { replace: true }),
+          onSuccess: () => navigate("/app", { replace: true }), // ← your actual root route
           onError: () =>
             alert("Unable to switch workspace right now. Please try again."),
         },
       );
     },
-    [selectAgency, navigate, buildPath, sub],
+    [selectAgency, navigate],
   );
 
   return (
@@ -165,7 +145,7 @@ export function AppHeader() {
               "Select workspace"
             }
             onSelect={handleSelect}
-            buildPath={buildPath}
+            // ← remove buildPath, sub logic, and selecting/isLoading className — all handled inside handleSelect now
             className={
               selecting || isLoading ? "opacity-60 pointer-events-none" : ""
             }

@@ -8,7 +8,7 @@ import {
   Info,
   Monitor,
   Shield,
-  Smartphone,
+  // Smartphone,
   UserCog,
 } from "lucide-react";
 
@@ -315,7 +315,7 @@ const StaffPermission = () => {
             </p>
           </div>
 
-          <Card>
+          <Card className="shadow-none">
             <CardHeader>
               <div className="flex items-start gap-2">
                 <span className="rounded-md bg-primary-accent p-2">
@@ -358,7 +358,7 @@ const StaffPermission = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="shadow-none">
             <CardHeader>
               <div className="flex items-start gap-2">
                 <span className="rounded-md bg-primary-accent p-2">
@@ -396,7 +396,7 @@ const StaffPermission = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="shadow-none">
             <CardHeader>
               <div className="flex items-start gap-2">
                 <span className="rounded-md bg-primary-accent p-2">
@@ -493,7 +493,7 @@ const StaffPermission = () => {
         handleConfirm={handleConfirmDeactivate}
         title={
           <div className="flex items-center gap-2">
-            <Smartphone className="h-4 w-4 text-orange-500" />
+            {/* <Smartphone className="h-4 w-4 text-orange-500" /> */}
             <span className="text-sm">Deactivate Account?</span>
           </div>
         }
@@ -511,9 +511,9 @@ const StaffPermission = () => {
               <li>Allow reactivation at any time</li>
             </ul>
 
-            <div className="rounded-lg border border-[#B2DDFF] bg-[#EFF8FF] px-3 py-2 text-sm text-[#175CD3]">
-              This is temporary. You can reactivate this account later if
-              needed.
+            <div className="flex items-start gap-2 rounded-md border border-[#B2DDFF] bg-[#EFF8FF] px-3 py-2 text-sm text-[#175CD3]">
+              <Info size={14} color="#111" /> This is temporary. You can
+              reactivate this account later if needed.
             </div>
           </div>
         }

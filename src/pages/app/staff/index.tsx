@@ -1,6 +1,7 @@
 import { Main } from "@/layouts/main";
 import { StaffPrimaryAction } from "./components/table/primary-action";
 import StaffTable from "./components/table/staff-table";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Staff = () => {
   return (
@@ -12,13 +13,11 @@ const Staff = () => {
           </div>
           <StaffPrimaryAction />
         </div>
-        <div
-          className="-mx-4 mt-12 flex-1 overflow-auto px-4 py-4 lg:flex-row lg:space-y-0 lg:space-x-12 bg-white shadow
-      rounded-lg
-      "
-        >
-          <StaffTable initialPage={1} initialLimit={10} />
-        </div>
+        <Card className="mt-12 rounded-lg border shadow-none ">
+          <CardContent>
+            <StaffTable initialPage={1} initialLimit={10} />
+          </CardContent>
+        </Card>
       </Main>
     </>
   );

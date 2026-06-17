@@ -81,7 +81,7 @@ export function SheetForm({
       <SheetContent
         ref={sheetContentRef}
         side={side}
-        className={cn("sm:max-w-[520px] w-full", className)}
+        className={cn("sm:max-w-[500px] w-full", className)}
       >
         {/* Form fills the sheet so footer stays at bottom */}
         <form onSubmit={onSubmit} className="flex h-full flex-col">
@@ -97,7 +97,7 @@ export function SheetForm({
           <div
             className={cn(
               "flex-1 overflow-auto bg-white rounded-t-2xl px-4 py-4",
-              bodyClassName
+              bodyClassName,
             )}
           >
             {children}

@@ -49,7 +49,7 @@ export default function Addresses({
     : null;
 
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-16">
         <div className="flex flex-col gap-4">
           <h2 className="font-bold text-xl"> Address</h2>
@@ -70,7 +70,7 @@ export default function Addresses({
           </div>
         </div>
 
-        <Card>
+        <Card className="shadow-none">
           <CardContent className="p-0">
             {isLoading ? (
               <div className="space-y-4 p-4">

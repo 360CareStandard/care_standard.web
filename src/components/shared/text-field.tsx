@@ -24,7 +24,7 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
       required,
       ...inputProps
     },
-    ref
+    ref,
   ) => {
     const reactId = React.useId();
     const inputId = id ?? reactId;
@@ -53,14 +53,14 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
             aria-invalid={hasError || undefined}
             aria-describedby={cn(
               hint ? helpId : undefined,
-              hasError ? errorId : undefined
+              hasError ? errorId : undefined,
             )}
             className={cn(
-              "w-full text-base rounded-md border px-3 h-11 ",
+              "w-full text-sm rounded-md border px-3 h-11 ",
               hasError &&
                 "border-red-300 bg-red-50 text-red-900 placeholder:text-red-400 focus-visible:ring-red-500 focus-visible:border-red-500",
               hasError ? "pr-10" : undefined,
-              className
+              className,
             )}
           />
 
@@ -83,6 +83,6 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
         ) : null}
       </div>
     );
-  }
+  },
 );
 TextField.displayName = "TextField";

@@ -3,6 +3,11 @@ export const qk = {
   me: ["me"] as const,
   menu: (p?: any) => ["menu", p] as const,
   carePackage: (p?: any) => ["care-package", p] as const,
+  clientInfinite: (params?: { page?: number; limit?: number; q?: string }) => [
+    "client",
+    "infinite",
+    params,
+  ] as const,
   clientList: (params?: { page?: number; limit?: number; q?: string }) => [
     "client",
     "list",
@@ -87,4 +92,21 @@ export const qk = {
   shiftRoster: (id: string) => ["shift-roster", id],
   StaffPermission: (clientId?: string) =>
     ["staff-permission", clientId] as const,
+
+  //safeguarding
+  safeguardingList: (params?: {
+    search?: string;
+    status?: string;
+    priority?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    page?: number; limit?: number;
+  }) => ["safeguarding", "list", params] as const,
+  safeguarding: (id: string) => ["safeguarding", id] as const,
+  safeguardingReport: (id: string) => ["safeguarding", "report", id] as const,
+
+  //Agency settings
+  agencyLogo: () => ["agency-logo"] as const,
+  agencyDocument: () => ["agency-document"] as const,
+
 };

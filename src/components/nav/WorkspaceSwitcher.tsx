@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import {
   Popover,
   PopoverTrigger,
@@ -9,32 +8,22 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { Plus, Search, LayoutGrid } from "lucide-react";
+import { Search, LayoutGrid } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-/** Basic shape for workspaces */
 export type Workspace = {
   id: string;
   name: string;
-  meta?: string; // e.g. "Admin" / "Member" / plan name
-  avatar?: string; // optional logo
+  meta?: string;
+  avatar?: string;
 };
 
 type Props = {
   workspaces: Workspace[];
-  /** Current active workspace id */
   activeId?: string;
-  /** Text used as the trigger label (e.g., org name) */
   triggerLabel?: string;
-  /** Optional: override what happens when a workspace is selected */
-  onSelect?: (ws: Workspace) => void;
-  /**
-   * Optional: customize the dest path from current subpath
-   * Default: `/app/w/${id}${sub}`
-   */
-  buildPath?: (id: string, sub: string) => string;
-  /** Default subpath when none is present in URL */
-  defaultSubpath?: string; // default "/overview"
-  /** ClassName for the trigger wrapper in the header */
+  onSelect: (ws: Workspace) => void; // now required, no internal fallback
+  isPending?: boolean; // passed from parent so trigger shows "Switching..."
   className?: string;
 };
 
@@ -43,30 +32,15 @@ export function WorkspaceQuickSwitcher({
   activeId,
   triggerLabel,
   onSelect,
-  buildPath,
-  defaultSubpath = "/overview",
+  isPending = false,
   className,
 }: Props) {
   const navigate = useNavigate();
-  const loc = useLocation();
-
   const [open, setOpen] = React.useState(false);
   const [q, setQ] = React.useState("");
 
   const active =
     workspaces.find((w) => w.id === activeId) ?? workspaces[0] ?? undefined;
-
-  // Preserve whatever subpath the user is on after /app/w/:workspaceId
-  // Example: /app/w/abc/clients -> sub: /clients
-  // If not on that pattern, we still keep the tail after "/app"
-  const sub = React.useMemo(() => {
-    // Try to match /app/w/:id/(sub?)
-    const m = loc.pathname.match(/^\/app\/w\/[^/]+(\/.*)?$/);
-    if (m?.[1]) return m[1];
-    // Fallback: anything following "/app"
-    const m2 = loc.pathname.match(/^\/app(\/.*)?$/);
-    return m2?.[1] ?? defaultSubpath;
-  }, [loc.pathname, defaultSubpath]);
 
   const filtered = React.useMemo(() => {
     const t = q.trim().toLowerCase();
@@ -74,22 +48,15 @@ export function WorkspaceQuickSwitcher({
     return workspaces.filter(
       (w) =>
         w.name.toLowerCase().includes(t) ||
-        (w.meta ? w.meta.toLowerCase().includes(t) : false)
+        (w.meta ? w.meta.toLowerCase().includes(t) : false),
     );
   }, [q, workspaces]);
 
   const goTo = (w: Workspace) => {
-    if (onSelect) {
-      onSelect(w);
-    } else {
-      const dest =
-        buildPath?.(w.id, sub) ?? `/app/w/${encodeURIComponent(w.id)}${sub}`;
-      navigate(dest);
-    }
+    onSelect(w);
     setOpen(false);
   };
 
-  // keyboard nav
   const [hoverIdx, setHoverIdx] = React.useState(-1);
   React.useEffect(() => setHoverIdx(-1), [q, open]);
 
@@ -110,16 +77,18 @@ export function WorkspaceQuickSwitcher({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        {/* header trigger: org name + tiny triangle svg (your exact one) */}
         <button
           className={cn(
             "hidden md:flex gap-1 items-center text-sm font-semibold tracking-wide uppercase text-white/90 hover:text-white",
-            className
+            className,
           )}
           aria-haspopup="listbox"
           aria-expanded={open}
+          disabled={isPending}
         >
-          {triggerLabel ?? active?.name ?? "Select workspace"}
+          {isPending
+            ? "Switching..."
+            : (triggerLabel ?? active?.name ?? "Select workspace")}
           <span className="inline-flex h-5 w-5 items-center justify-center rounded hover:bg-white/10">
             <svg
               width={14}
@@ -144,7 +113,6 @@ export function WorkspaceQuickSwitcher({
         sideOffset={8}
         className="w-[320px] p-0 shadow-2xl"
       >
-        {/* Search */}
         <div className="flex items-center gap-2 border-b px-3 py-2">
           <Search className="h-4 w-4 text-muted-foreground" />
           <Input
@@ -156,7 +124,6 @@ export function WorkspaceQuickSwitcher({
           />
         </div>
 
-        {/* List */}
         <div role="listbox" className="max-h-72 overflow-y-auto px-1 py-1">
           <div className="px-3 pb-1 pt-2 text-xs font-medium text-muted-foreground">
             Your workspaces
@@ -169,12 +136,14 @@ export function WorkspaceQuickSwitcher({
                 key={w.id}
                 role="option"
                 aria-selected={isActive}
+                disabled={isPending}
                 onMouseEnter={() => setHoverIdx(i)}
                 onMouseLeave={() => setHoverIdx(-1)}
                 onClick={() => goTo(w)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-md px-3 py-2",
-                  isActive || isHover ? "bg-primary-accent" : "hover:bg-muted"
+                  isPending ? "opacity-50 cursor-not-allowed" : "",
+                  isActive || isHover ? "bg-primary-accent" : "hover:bg-muted",
                 )}
               >
                 <Avatar>
@@ -205,27 +174,14 @@ export function WorkspaceQuickSwitcher({
           )}
         </div>
 
-        {/* Footer actions */}
-        <div className="flex items-center justify-between gap-2 border-t px-3 py-2">
+        <div className="flex items-center gap-2 border-t px-3 py-2">
           <Button
             variant="ghost"
             size="sm"
             className="gap-2 text-sm"
             onClick={() => {
               setOpen(false);
-              navigate("/app/workspaces/new");
-            }}
-          >
-            <Plus className="h-4 w-4" />
-            Create workspace
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-2 text-sm"
-            onClick={() => {
-              setOpen(false);
-              navigate("/app/workspaces");
+              navigate("/select-workspace");
             }}
           >
             <LayoutGrid className="h-4 w-4" />
