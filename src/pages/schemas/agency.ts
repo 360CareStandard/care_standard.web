@@ -7,17 +7,7 @@ const existingDocumentSchema = z.object({
     type: z.string(),
 });
 
-const fileArrayPreprocess = z
-    .preprocess((v) => {
-        if (!v) return undefined;
-        // convert FileList -> Array<File> on the client
-        if (typeof File !== "undefined" && v instanceof FileList) {
-            return Array.from(v);
-        }
-        if (Array.isArray(v)) return v;
-        return undefined;
-    }, z.array(z.instanceof(File)))
-    .optional();
+
 
 export const agencyLogoSchema = z.object({
     logo: z.file().optional(),

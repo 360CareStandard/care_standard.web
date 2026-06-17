@@ -50,7 +50,12 @@ const CompanySettings = () => {
     mutateAsync: uploadAgencyDocuments,
     isPending: isCreatingAgencyDocuments,
   } = useUploadAgencyDocument();
-  const { data: agencyDocumentsFromAPI, refetch } = useAgencyDocument();
+  const {
+    data: agencyDocumentsFromAPI,
+    isLoading: agencyDocumentsLoading,
+    error: agencyDocumentsError,
+    refetch,
+  } = useAgencyDocument();
   const deleteAgencyDocument = useDeleteAgencyDocument();
   const [removeServerLogo, setRemoveServerLogo] = React.useState(false);
 
@@ -74,6 +79,10 @@ const CompanySettings = () => {
     } finally {
       setPendingDeleteDoc(null);
     }
+  };
+
+  const refetchDocuments = async () => {
+    await refetch();
   };
   const raw = searchParams.get("tab") ?? "logo";
   const currentTab: TabKey = (TAB_KEYS as readonly string[]).includes(raw)
@@ -233,6 +242,9 @@ const CompanySettings = () => {
               onFormSubmit={submitDocuments}
               isCreatingAgencyDocuments={isCreatingAgencyDocuments}
               onDelete={(doc) => openDeleteDialog(doc)}
+              onLoading={agencyDocumentsLoading}
+              onError={agencyDocumentsError}
+              refetchDocuments={refetchDocuments}
             />
           </FormProvider>
         </TabsContent>

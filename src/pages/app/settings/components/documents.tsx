@@ -6,6 +6,8 @@ import {
   Image as ImageIcon,
   AlertTriangle,
   Download,
+  X,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -20,29 +22,6 @@ import { Trash } from "iconsax-react";
 function bytesToMB(b: number) {
   return `${Math.round((b / (1024 * 1024)) * 10) / 10}MB`;
 }
-// function fmtDate(d: Date) {
-//   const months = [
-//     "Jan",
-//     "Feb",
-//     "Mar",
-//     "Apr",
-//     "May",
-//     "Jun",
-//     "Jul",
-//     "Aug",
-//     "Sep",
-//     "Oct",
-//     "Nov",
-//     "Dec",
-//   ];
-//   const hh = d.getHours();
-//   const mm = `${d.getMinutes()}`.padStart(2, "0");
-//   const ampm = hh >= 12 ? "pm" : "am";
-//   const h12 = hh % 12 || 12;
-//   return `${d.getDate()} ${
-//     months[d.getMonth()]
-//   }, ${d.getFullYear()} | ${h12}:${mm}${ampm}`;
-// }
 
 /**
  * Helper to guess filename from a URL
@@ -76,9 +55,15 @@ export function AgencyDocumentsUpload({
   isUploading,
 
   onDelete,
+  onError,
+  onLoading,
+  refetchDocuments,
 }: {
   isUploading: boolean;
   onDelete: (doc: DocumentItem) => void;
+  onError: Error | null;
+  onLoading: boolean;
+  refetchDocuments: () => Promise<void>;
 }) {
   const { setValue, getValues, watch } =
     useFormContext<AgencyDocumentFormData>();
@@ -289,80 +274,164 @@ export function AgencyDocumentsUpload({
 
       <Card>
         <CardContent>
-          <div className="flex items-center gap-2 mb-2">
-            <Label className="text-base font-medium">Documents</Label>
-            <span className="text-xs bg-primary/10 px-2 py-0.5 text-primary flex justify-center items-center rounded-full">
-              {items.length} document{items.length > 1 && "s"} uploaded
-            </span>
-          </div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Label className="text-base font-medium">Documents</Label>
+              {!onLoading && !onError && (
+                <span className="text-xs bg-primary/10 px-2 py-0.5 text-primary flex justify-center items-center rounded-full">
+                  {items.length} document{items.length !== 1 && "s"} uploaded
+                </span>
+              )}
+            </div>
 
-          <div className="space-y-4">
-            {items.map((it) => (
-              <div
-                key={it.id}
-                className="flex items-start justify-between py-2 bg-background"
+            {/* Refetch button — shown when not loading */}
+            {!onLoading && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                title="Refresh documents"
+                onClick={refetchDocuments}
+                aria-label="Refresh documents"
               >
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5">{renderIcon(it)}</div>
-                  <div>
-                    <div className="text-sm font-medium leading-5">
-                      {it.name}
-                    </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {/* {fmtDate(it.createdAt)} • */}
-                      {it.source === "local" && (
-                        <span className="text-xs text-yellow-600">Pending</span>
-                      )}
-                      {it.source === "server" && (
-                        <span className="text-xs text-green-600">Uploaded</span>
-                      )}{" "}
-                      • {bytesToMB(it.sizeBytes)}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  {it.source === "local" && isUploading && (
-                    <span className="text-xs text-muted-foreground">
-                      <Spinner />
-                    </span>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => previewItem(it)}
-                    aria-label="Preview"
-                  >
-                    <Download size={34} />
-                  </Button>
-                  {it.source === "local" && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeItem(it.id)}
-                    >
-                      <Trash size={24} />
-                    </Button>
-                  )}
-                  <Button
-                    variant="ghost"
-                    className="text-red-600 hover:bg-red-100 ml-2"
-                    size="icon"
-                    onClick={() => onDelete(it)}
-                    aria-label="Delete"
-                  >
-                    <Trash size={24} />
-                  </Button>
-                </div>
-              </div>
-            ))}
-
-            {items.length === 0 && (
-              <div className="text-xs text-muted-foreground">
-                No files staged for upload yet.
-              </div>
+                <RefreshCw size={16} />
+              </Button>
             )}
           </div>
+
+          {/* Loading state */}
+          {onLoading && (
+            <div className="flex flex-col items-center justify-center gap-3 rounded-xl bg-muted/30 py-10">
+              <Spinner size="lg" />
+              <p className="text-sm text-muted-foreground">
+                Loading documents...
+              </p>
+            </div>
+          )}
+
+          {/* Error state */}
+          {!onLoading && onError && (
+            <div className="flex flex-col items-center justify-center gap-3 rounded-xl bg-muted/30 py-10 text-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Failed to load documents</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  There was a problem retrieving your documents. Please try
+                  again.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={refetchDocuments}
+                className="mt-1 gap-2"
+              >
+                <RefreshCw size={14} />
+                Retry
+              </Button>
+            </div>
+          )}
+
+          {/* Empty state */}
+          {!onLoading && !onError && items.length === 0 && (
+            <div className="flex flex-col items-center justify-center gap-3 rounded-xl bg-muted/30 py-10 text-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                <FileText className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">No documents yet</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Upload PDF files above to make them available to clients.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Loaded — document list */}
+          {!onLoading && !onError && items.length > 0 && (
+            <div className="space-y-1">
+              {items.map((it) => (
+                <div
+                  key={it.id}
+                  className="flex items-start justify-between py-2 border-b last:border-0"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5">{renderIcon(it)}</div>
+                    <div>
+                      <div className="text-sm font-medium leading-5">
+                        {it.name}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {/* {fmtDate(it.createdAt)} • */}
+                        {it.source === "local" && (
+                          <span className="text-xs text-yellow-600">
+                            Pending
+                          </span>
+                        )}
+                        {it.source === "server" && (
+                          <span className="text-xs text-green-600">
+                            Uploaded
+                          </span>
+                        )}{" "}
+                        • {bytesToMB(it.sizeBytes)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    {it.source === "local" && isUploading && (
+                      <span className="text-xs text-muted-foreground">
+                        <Spinner />
+                      </span>
+                    )}
+                    {it.source === "server" && (
+                      <Button
+                        title="preview"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => previewItem(it)}
+                        aria-label="Preview"
+                      >
+                        <Download size={34} />
+                      </Button>
+                    )}
+                    {it.source === "local" && (
+                      <Button
+                        title="cancel"
+                        variant="ghost"
+                        className="text-red-600 hover:bg-red-100 ml-2"
+                        size="icon"
+                        onClick={() => removeItem(it.id)}
+                      >
+                        <X size={24} />
+                      </Button>
+                    )}
+                    {it.source === "server" && (
+                      <Button
+                        title="delete"
+                        variant="ghost"
+                        className="text-red-600 hover:bg-red-100 ml-2"
+                        size="icon"
+                        onClick={() => onDelete(it)}
+                        aria-label="Delete"
+                      >
+                        <Trash size={24} />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {items.length === 0 && (
+                <div className="text-xs text-muted-foreground">
+                  No files staged for upload yet.
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

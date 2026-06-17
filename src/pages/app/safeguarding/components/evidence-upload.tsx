@@ -1,7 +1,7 @@
 // components/shared/profile-image-field.tsx
 import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Trash, Edit, CloudUpload } from "lucide-react";
+import { Trash, CloudUpload } from "lucide-react";
 import type { UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import toast from "react-hot-toast";

@@ -92,7 +92,7 @@ export default function WorkspaceSelectionPage() {
         name: a.agencyName,
         role: mapRole(a.roles) as Role,
       })),
-    [agencies]
+    [agencies],
   );
 
   const filtered = React.useMemo(() => {
@@ -112,9 +112,9 @@ export default function WorkspaceSelectionPage() {
     selectAgency(
       { agencyId },
       {
-        onSuccess: () => navigate("/app", { replace: true }),
+        onSuccess: () => navigate("/app", { replace: true }), // fires AFTER invalidation settles
         onError: () => alert("Unable to select workspace. Please try again."),
-      }
+      },
     );
   };
 
@@ -256,7 +256,7 @@ export default function WorkspaceSelectionPage() {
                   className={cn(
                     "flex w-full items-center justify-between rounded-lg border bg-white px-3 py-4 text-left transition",
                     selecting ? "opacity-70 cursor-not-allowed" : "",
-                    hoverIdx === i ? "bg-emerald-50" : "hover:bg-muted"
+                    hoverIdx === i ? "bg-emerald-50" : "hover:bg-muted",
                   )}
                 >
                   <div className="flex min-w-0 items-center gap-3">
