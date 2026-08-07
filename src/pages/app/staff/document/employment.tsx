@@ -28,6 +28,7 @@ import { toDateInputValue } from "@/utils/date";
 
 const initialFormValues: Partial<EmploymentForm> = {
   employmentType: "Full-time",
+  status: "active",
 };
 
 type Props = {
