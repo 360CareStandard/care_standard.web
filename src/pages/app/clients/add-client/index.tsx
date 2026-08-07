@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from "react";
-import { FormProvider, useForm, FieldPath, Resolver } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { FormProvider, useForm, FieldPath } from "react-hook-form";
+// import { zodResolver } from "@hookform/resolvers/zod";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { Button } from "@/components/ui/button";
 import PersonalDetails from "./personal-details";
-import { clientSchema, type ClientFormData } from "../schemas/add-client";
+import { type ClientFormData } from "../schemas/add-client";
 import ContactDetails from "./contact-details";
 import Addresses from "./addresses";
 import WellbeingOverview from "./wellbeing-overview";
@@ -25,9 +25,9 @@ interface Props {
   clientId?: string;
   startStep: number; // 👈 new
 }
-const resolver = zodResolver(
-  clientSchema,
-) as unknown as Resolver<ClientFormData>;
+// const resolver = zodResolver(
+//   clientSchema,
+// ) as unknown as Resolver<ClientFormData>;
 
 const AddClient = ({ open, setOpen, clientId, startStep }: Props) => {
   const isEdit = Boolean(clientId);
@@ -66,7 +66,7 @@ const AddClient = ({ open, setOpen, clientId, startStep }: Props) => {
   }
 
   const methods = useForm<ClientFormData>({
-    resolver,
+    // resolver,
     defaultValues: {
       firstname: "",
       lastname: "",

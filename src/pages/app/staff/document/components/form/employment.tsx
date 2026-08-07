@@ -43,10 +43,10 @@ export const EmploymentField = () => {
       />
 
       <TextField
-        label="Weekly contracted hours(Optional)"
+        label="Weekly contracted hours"
         type="number"
         inputMode="numeric"
-        min="0"
+        min="1"
         {...register("weeklyContractedHours", {
           valueAsNumber: true,
         })}

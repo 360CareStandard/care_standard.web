@@ -6,11 +6,14 @@ export const EmploymentSchema = z
     employmentType: z.string().min(1, "Employment type is required"),
     status: z.string().min(1, "Status is required"),
 
-    weeklyContractedHours: z
-      .union([z.number(), z.nan()])
-      .transform((v) => (Number.isNaN(v) ? null : v))
-      .nullable()
-      .optional(),
+    weeklyContractedHours: z.preprocess(
+      (val) => (typeof val === "number" && Number.isNaN(val) ? undefined : val),
+      z
+        .number({
+          error: "Weekly contracted hours must be a number",
+        })
+        .positive("Weekly contracted hours must be greater than 0"),
+    ),
 
     reason: z.string().max(1000, "Reason is too long").optional(),
 
@@ -23,7 +26,6 @@ export const EmploymentSchema = z
       ),
   })
   .superRefine((data, ctx) => {
-    // 🔒 Conditional validation
     if (data.status === "terminated") {
       if (!data.terminatedDate) {
         ctx.addIssue({
