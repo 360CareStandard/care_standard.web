@@ -79,10 +79,9 @@ export const clientSchema = z.object({
   secondaryPhoneType: z.string().optional().nullable(),
 
   email: z
-    .string()
+    .email("Please enter a valid email address")
     .trim()
-    .min(1, "Please enter an email address")
-    .email("Please enter a valid email address"),
+    .min(1, "Please enter an email address"),
 
   // wellbeing / risk
   wellbeingDetails: z

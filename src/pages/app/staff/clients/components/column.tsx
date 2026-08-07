@@ -30,6 +30,7 @@ export const assignedcolumns: ColumnDef<AssignedClient>[] = [
         <Link
           className="flex items-center gap-3"
           to={`/app/clients/${username}`}
+          target="_blank"
         >
           <Avatar className="h-10 w-10">
             {src ? (

@@ -1,8 +1,5 @@
 // contact-details.tsx
-import {
-  
-  useFormContext,
-} from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import type { ClientFormData } from "../schemas/add-client";
 import { RHFPhone } from "@/components/shared/rhf-phone";
 import { RHFSelectField } from "@/components/shared/rhf-select-field";
@@ -35,12 +32,12 @@ const ContactDetails = ({ attemptedNext }: Props) => {
         />
       </div>
       <div className="grid gap-4">
-        <h4 className="font-normal">Additional phone details</h4>
+        <h4 className="font-normal">Secondary phone details</h4>
 
         <RHFPhone
           control={control}
           name="secondaryPhone"
-          label="Additional phone number"
+          label="Secondary phone number"
         />
         <RHFSelectField
           control={control}

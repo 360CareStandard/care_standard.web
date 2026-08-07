@@ -43,7 +43,13 @@ export const clientsColumns: ColumnDef<Client>[] = [
           to={`/app/clients/${username}`}
         >
           <Avatar className="h-10 w-10">
-            {src ? <AvatarImage src={src} alt={`${fullName} avatar`} /> : null}
+            {src ? (
+              <AvatarImage
+                className="object-cover"
+                src={src}
+                alt={`${fullName} avatar`}
+              />
+            ) : null}
             <AvatarFallback className="font-semibold">
               {initials.toUpperCase()}
             </AvatarFallback>
