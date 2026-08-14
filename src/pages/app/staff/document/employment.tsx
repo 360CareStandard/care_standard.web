@@ -25,6 +25,7 @@ import { EmploymentField } from "./components/form/employment";
 import { employmentDetails } from "@/types/staff/employment";
 import { EmploymentDetails } from "./components/details/employment";
 import { toDateInputValue } from "@/utils/date";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 const initialFormValues: Partial<EmploymentForm> = {
   employmentType: "Full-time",
@@ -102,9 +103,14 @@ const Employment = ({ staffId }: Props) => {
       setOpen(false);
       setEditingId(null);
       methods.reset(initialFormValues as any);
-    } catch (err: any) {
-      console.error("Save failed", err);
-      toast.error(err?.message ?? "Save failed, try again");
+    } catch (err) {
+      handleFormApiError<EmploymentForm>(
+        err,
+        methods.setError,
+        editingId
+          ? "Failed to update employment details"
+          : "Failed to create employment details",
+      );
     }
   }
 

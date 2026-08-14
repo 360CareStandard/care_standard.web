@@ -65,18 +65,34 @@ const Medications = () => {
     "Emergency contact": `/app/clients/${clientId}/info?tab=contact-next-of-kin`,
     Allergies: `/app/clients/${clientId}/info?tab=health`,
   };
-  const { data: gp, isLoading: gpLoading } = useClientGpSupport(
-    clientId as string,
-    Boolean(clientId)
-  );
+  const {
+    data: gp,
+    isLoading: gpLoading,
+    // isError: gpError,
+  } = useClientGpSupport(clientId as string, Boolean(clientId));
 
-  const { data: contacts, isLoading: contactsLoading } = useClientContacts(
-    clientId as string
-  );
-  const { data: allergies, isLoading: allergiesLoading } =
-    useClientHealthDetails(clientId as string, Boolean(clientId));
+  const {
+    data: contacts,
+    isLoading: contactsLoading,
+    // isError: contactsError,
+  } = useClientContacts(clientId as string);
 
-  const { data, isLoading } = useMedications(clientId as string);
+  const {
+    data: allergies,
+    isLoading: allergiesLoading,
+    // isError: allergiesError,
+  } = useClientHealthDetails(clientId as string, Boolean(clientId));
+
+  const {
+    data,
+    isLoading: medicationsLoading,
+    // isError: medicationsError,
+  } = useMedications(clientId as string);
+  const isInitialLoading =
+    gpLoading || contactsLoading || allergiesLoading || medicationsLoading;
+
+  // const hasLoadError =
+  //   gpError || contactsError || allergiesError || medicationsError;
   const medications: Medication[] = data?.medications ?? [];
 
   const createMedication = useCreateMedication(clientId as string);
@@ -210,7 +226,23 @@ const Medications = () => {
     void methods.handleSubmit(onSubmit)();
   };
   const hasMedications = medications.length > 0;
-
+  if (isInitialLoading) {
+    return (
+      <div className="w-full flex-1 flex items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+          <Spinner size="lg" />
+          <p className="text-sm">Checking client information...</p>
+        </div>
+      </div>
+    );
+  }
+  // if (hasLoadError) {
+  //   return (
+  //     <div className="w-full flex-1">
+  //       <MedicationPageFallback />
+  //     </div>
+  //   );
+  // }
   return (
     <div className="space-y-6 w-full flex-1 ">
       {/* Header */}
@@ -241,7 +273,7 @@ const Medications = () => {
 
       {/* Empty state when no plans */}
       {/* LOADING */}
-      {isHealthInfoLoading && isLoading && (
+      {isHealthInfoLoading && (
         <div
           className=" mt-20  overflow-auto pb-4  bg-white shadow
       rounded-lg
@@ -258,7 +290,7 @@ const Medications = () => {
       )}
 
       {/* EMPTY */}
-      {hasRequiredHealthInfo && !hasMedications && !isLoading && (
+      {hasRequiredHealthInfo && !hasMedications && (
         <MedicationEmptyState
           hasRequiredHealthInfo={hasRequiredHealthInfo}
           openForAdd={openForAdd}
@@ -453,3 +485,33 @@ const Capsule = () => {
     </svg>
   );
 };
+
+// const MedicationPageFallback = ({ onRetry }: { onRetry?: () => void }) => {
+//   return (
+//     <Card className="w-full mt-8">
+//       <CardContent className="flex flex-col items-center justify-center py-12 gap-3">
+//         <div className="rounded-full bg-muted p-3">
+//           <CloseCircle className="w-6 h-6 text-destructive" />
+//         </div>
+
+//         <h4 className="font-semibold">Unable to load medication information</h4>
+
+//         <p className="text-sm text-muted-foreground text-center max-w-md">
+//           We couldn't retrieve the client's medication information right now.
+//           Please try again.
+//         </p>
+
+//         {onRetry && (
+//           <Button
+//             variant="outline"
+//             size="sm"
+//             onClick={onRetry}
+//             className="mt-2"
+//           >
+//             Try Again
+//           </Button>
+//         )}
+//       </CardContent>
+//     </Card>
+//   );
+// };

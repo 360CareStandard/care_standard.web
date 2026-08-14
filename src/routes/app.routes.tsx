@@ -45,6 +45,8 @@ const Safeguarding = lazy(() => import("@/pages/app/safeguarding"));
 const Finance = lazy(() => import("@/pages/app/finance"));
 //Company Settings
 const CompanySettings = lazy(() => import("@/pages/app/settings"));
+//Care Packages
+const CarePackages = lazy(() => import("@/pages/app/settings/care-package"));
 const appChildRoutes = (
   <>
     <Route index element={<Navigate to="clients" replace />} />
@@ -56,6 +58,7 @@ const appChildRoutes = (
       <Route path="activity" element={<Activity />} />
       <Route path="safeguarding" element={<Safeguarding />} />
       <Route path="company-settings" element={<CompanySettings />} />
+      <Route path="care-packages" element={<CarePackages />} />
     </Route>
     <Route>
       <Route path="shift-roster" element={<ShiftRoster />} />

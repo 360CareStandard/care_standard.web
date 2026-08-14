@@ -85,6 +85,11 @@ export default function ProfileDropdown({
             <DropdownMenuShortcut />
           </DropdownMenuItem>
 
+          <DropdownMenuItem onClick={() => navigate("/app/care-packages")}>
+            Care packages
+            <DropdownMenuShortcut />
+          </DropdownMenuItem>
+
           <DropdownMenuItem
             className="mt-2"
             // onClick={

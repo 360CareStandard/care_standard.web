@@ -24,6 +24,7 @@ import { EmptyStateCard } from "../components/empty-state";
 import { workDetails } from "@/types/staff/work";
 import { StaffWorkDetails } from "./components/details/work";
 import { ErrorStateCard } from "../components/error-state";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 const initialFormValues: Partial<StaffWorkForm> = {};
 
@@ -99,9 +100,14 @@ const Work = ({ staffId }: Props) => {
       setOpen(false);
       setEditingId(null);
       methods.reset(initialFormValues as any);
-    } catch (err: any) {
-      console.error("Save failed", err);
-      toast.error(err?.message ?? "Save failed, try again");
+    } catch (err) {
+      handleFormApiError<StaffWorkForm>(
+        err,
+        methods.setError,
+        editingId
+          ? "Failed to update work details"
+          : "Failed to create work details",
+      );
     }
   }
 

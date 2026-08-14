@@ -25,6 +25,7 @@ import { formatUpdatedAt } from "@/helpers/last-updated";
 import { GPSupportDetails } from "./components/details/gp-support";
 import { ClientGPAndSupport } from "@/types/client/gp-support";
 import { Edit } from "iconsax-react";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 const initialFormValues: Partial<GpSupportForm> = {
   gpDetails: {
@@ -118,9 +119,14 @@ const GPsupport = ({ clientId }: Props) => {
       setOpen(false);
       setEditingId(null);
       methods.reset(initialFormValues as any);
-    } catch (err: any) {
-      console.error("Save failed", err);
-      toast.error(err?.message ?? "Save failed, try again");
+    } catch (err) {
+      handleFormApiError<GpSupportForm>(
+        err,
+        methods.setError,
+        editingId
+          ? "Failed to update GP & support"
+          : "Failed to create GP & support",
+      );
     }
   }
 

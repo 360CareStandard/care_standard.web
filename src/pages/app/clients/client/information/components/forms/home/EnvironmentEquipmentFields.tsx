@@ -64,25 +64,19 @@ function ToggleChip({
 export function EnvironmentEquipmentFields() {
   const { control, setValue, getValues } =
     useFormContext<HomeEnvironmentForm>();
-
+  const [petsPresent, setPetsPresent] = React.useState(false);
   const env = useWatch({
     control,
     name: "environmentAndEquipment",
     defaultValue: {
       equipmentPresent: [],
-      // assistiveTechnology: [],
-      petsPresent: false,
       pets: "",
       knownHazards: [],
-      // hazardNotes: "",
-    } as any,
+    },
   }) as {
     equipmentPresent?: string[];
-    // assistiveTechnology?: string[];
-    petsPresent?: boolean;
     pets?: string;
     knownHazards?: string[];
-    // hazardNotes?: string;
   };
 
   const equipmentPresent = React.useMemo(
@@ -99,33 +93,41 @@ export function EnvironmentEquipmentFields() {
   );
 
   // helpers to update nested arrays safely
-  const toggleArrayValue = (
-    key: keyof NonNullable<typeof env>,
-    value: string,
-  ) => {
+  type ArrayFieldKey = "equipmentPresent" | "knownHazards";
+
+  const toggleArrayValue = (key: ArrayFieldKey, value: string) => {
     const current = getValues("environmentAndEquipment") ?? {};
+
     const arr: string[] = Array.isArray(current[key]) ? current[key]! : [];
+
     const next = arr.includes(value)
       ? arr.filter((a) => a !== value)
       : [...arr, value];
-    setValue(
-      "environmentAndEquipment",
-      { ...current, [key]: next },
-      { shouldDirty: true },
-    );
-  };
-  const togglePetsPresent = (on: boolean) => {
-    const current = getValues("environmentAndEquipment") ?? {};
-    // when switching off, clear pet details
+
     setValue(
       "environmentAndEquipment",
       {
         ...current,
-        petsPresent: Boolean(on),
-        pets: on ? (current.pets ?? "") : "",
+        [key]: next,
       },
       { shouldDirty: true },
     );
+  };
+  const togglePetsPresent = (on: boolean) => {
+    setPetsPresent(on);
+
+    if (!on) {
+      const current = getValues("environmentAndEquipment") ?? {};
+
+      setValue(
+        "environmentAndEquipment",
+        {
+          ...current,
+          pets: "",
+        },
+        { shouldDirty: true },
+      );
+    }
   };
   const setPets = (v: string) => {
     const current = getValues("environmentAndEquipment") ?? {};
@@ -196,10 +198,7 @@ export function EnvironmentEquipmentFields() {
               Are there any pets at the property?
             </p>
           </div>
-          <Switch
-            checked={Boolean(env?.petsPresent)}
-            onCheckedChange={(v) => togglePetsPresent(Boolean(v))}
-          />
+          <Switch checked={petsPresent} onCheckedChange={togglePetsPresent} />
         </div>
         <div className="space-y-1.5">
           <Label>Pet Details</Label>
@@ -207,7 +206,7 @@ export function EnvironmentEquipmentFields() {
             placeholder="Describe pets (type, temperament, any special considerations)…"
             value={env?.pets ?? ""}
             onChange={(e) => setPets(e.target.value)}
-            disabled={!Boolean(env?.petsPresent)}
+            disabled={!petsPresent}
             className="min-h-[84px] resize-y"
           />
         </div>
