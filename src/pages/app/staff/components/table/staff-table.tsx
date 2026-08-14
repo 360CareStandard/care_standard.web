@@ -74,7 +74,7 @@ export function StaffTable({
     data: staffData,
     isLoading,
     isError,
-    error,
+    // error,
     refetch,
   } = useStaff({
     page: pageIndex + 1,
@@ -167,8 +167,8 @@ export function StaffTable({
                 Failed to load staff records
               </p>
               <p className="text-sm text-red-700">
-                {(error as any)?.message ??
-                  "An unexpected error occurred while fetching staff records."}
+                {/* {(error as any)?.message ?? */}
+                An unexpected error occurred while fetching staff records.
               </p>
             </div>
             <div className="flex items-center space-x-2">

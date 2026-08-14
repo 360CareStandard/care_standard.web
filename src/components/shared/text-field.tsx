@@ -35,10 +35,7 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
     return (
       <div className={cn("w-full", containerClassName)}>
         {label ? (
-          <Label
-            htmlFor={inputId}
-            className="mb-2 block text-sm font-normal text-slate-700"
-          >
+          <Label htmlFor={inputId} className="mb-2 block text-sm font-normal ">
             {label}
             {required ? <span className="ml-0.5 text-red-600">*</span> : null}
           </Label>

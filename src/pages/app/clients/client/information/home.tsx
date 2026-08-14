@@ -27,6 +27,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { HomeEnvironmentDetails } from "./components/details/home-environment";
 import { Edit } from "iconsax-react";
 import { ClientHomeEnvironment } from "@/types/client/home-environment";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 const initialFormValues: Partial<HomeEnvironmentForm> = {
   livingSituation: {
@@ -45,7 +46,7 @@ const initialFormValues: Partial<HomeEnvironmentForm> = {
     equipmentPresent: [],
     pets: "",
     knownHazards: [],
-    petsPresent: false,
+    // petsPresent: false,
     // new fields added to match schema
     // assistiveTechnology: [],
     // hazardNotes: "",
@@ -77,12 +78,12 @@ export default function HomeEnvironment({ clientId }: Props) {
     defaultValues: initialFormValues as HomeEnvironmentForm,
   });
 
-  React.useEffect(() => {
-    const sub = methods.watch((v) => {
-      console.log("HOME FORM (live):", v);
-    });
-    return () => sub.unsubscribe();
-  }, [methods]);
+  // React.useEffect(() => {
+  //   const sub = methods.watch((v) => {
+  //     console.log("HOME FORM (live):", v);
+  //   });
+  //   return () => sub.unsubscribe();
+  // }, [methods]);
 
   function mapApiToFormValues(
     api?: ClientHomeEnvironment,
@@ -112,7 +113,7 @@ export default function HomeEnvironment({ clientId }: Props) {
         )
           ? api.environmentAndEquipment.equipmentPresent
           : [],
-        petsPresent: Boolean(api.environmentAndEquipment?.pets), // new
+        // petsPresent: Boolean(api.environmentAndEquipment?.pets), // new
         pets: api.environmentAndEquipment?.pets ?? "",
         knownHazards: Array.isArray(api.environmentAndEquipment?.knownHazards)
           ? api.environmentAndEquipment.knownHazards
@@ -156,9 +157,14 @@ export default function HomeEnvironment({ clientId }: Props) {
       setOpen(false);
       setEditingId(null);
       methods.reset(initialFormValues as any);
-    } catch (err: any) {
-      console.error(err);
-      toast.error("Save failed");
+    } catch (err) {
+      handleFormApiError<HomeEnvironmentForm>(
+        err,
+        methods.setError,
+        editingId
+          ? "Failed to update home environment"
+          : "Failed to create home environment",
+      );
     }
   };
 
@@ -166,6 +172,20 @@ export default function HomeEnvironment({ clientId }: Props) {
     e.preventDefault();
     void methods.handleSubmit(onSubmit)();
   };
+
+  // const handleSheetSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  //   e.preventDefault();
+
+  //   methods.handleSubmit(
+  //     (values) => {
+  //       console.log("VALID:", values);
+  //       onSubmit(values);
+  //     },
+  //     (errors) => {
+  //       console.log("INVALID:", errors);
+  //     },
+  //   )(e);
+  // };
 
   return (
     <>

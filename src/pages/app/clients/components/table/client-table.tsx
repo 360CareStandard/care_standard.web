@@ -69,7 +69,7 @@ export function ClientsTable({
     isLoading,
     // isFetching,
     isError,
-    error,
+    // error,
     refetch,
   } = useClients({
     page: pageIndex + 1,
@@ -163,14 +163,14 @@ export function ClientsTable({
         <div className="rounded-md border border-red-200 bg-red-50 p-3">
           <div className="flex items-start justify-between">
             <div>
-              <p className="font-medium text-red-800">Failed to load clients</p>
+              <p className="font-medium text-red-800">Failed to load data</p>
               <p className="text-sm text-red-700">
-                {(error as any)?.message ??
-                  "An unexpected error occurred while fetching clients."}
+                {/* {(error as any)?.message ?? */}
+                An unexpected error occurred while fetching data.
               </p>
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" onClick={() => refetch()}>
+              <Button variant="outline" onClick={() => refetch()}>
                 Retry
               </Button>
             </div>

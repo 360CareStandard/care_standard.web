@@ -21,3 +21,9 @@ export interface CarePackageResponse {
   message?: string;
   data?: CarePackageData;
 }
+export interface CarePackageSingleResponse {
+  status: "success" | "error" | string;
+  message?: string;
+  data?: CarePackage;
+}
+

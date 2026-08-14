@@ -35,11 +35,8 @@ const accessAndSecuritySchema = z.object({
 
 const environmentAndEquipmentSchema = z.object({
   equipmentPresent: z.array(z.string()).optional().default([]),
-  petsPresent: z.boolean().optional().default(false), // <- new
   pets: optionalString,
   knownHazards: z.array(z.string()).optional().default([]),
-  // assistiveTechnology: z.array(z.string()).optional().default([]),
-  // hazardNotes: optionalString,
 });
 
 // Top-level schema with typed defaults to avoid the TS overload error

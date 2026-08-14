@@ -4,7 +4,7 @@ import { FormProvider, useForm, FieldPath } from "react-hook-form";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { Button } from "@/components/ui/button";
 import PersonalDetails from "./personal-details";
-import { type ClientFormData } from "../schemas/add-client";
+import { clientSchema, type ClientFormData } from "../schemas/add-client";
 import ContactDetails from "./contact-details";
 import Addresses from "./addresses";
 import WellbeingOverview from "./wellbeing-overview";
@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import { Spinner } from "@/components/shared/spinner";
 import { handleFormApiError } from "@/lib/handle-form-error";
 import { Client } from "@/types/client/client";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface Props {
   open: boolean;
@@ -66,24 +67,50 @@ const AddClient = ({ open, setOpen, clientId, startStep }: Props) => {
   }
 
   const methods = useForm<ClientFormData>({
-    // resolver,
+    resolver: zodResolver(clientSchema),
+
     defaultValues: {
+      clientPicture: undefined,
+
       firstname: "",
       lastname: "",
       middlename: "",
       preferredname: "",
       title: "",
-      status: "active",
+      pronouns: "",
+      gender: "",
+
       dob: "",
+
+      nationality: "",
+
+      phone: "",
+      phoneType: "",
+      secondaryPhone: "",
+      secondaryPhoneType: "",
+      email: "",
+
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      county: "",
+      state: "",
+      zip: "",
+      country: "",
+      accessDetails: "",
+
       latitude: 51.5074,
       longitude: -0.1278,
       secureCheckInZone: 200,
-      phone: "",
-      phoneType: "",
-      email: "",
-      riskLevel: "",
+
       wellbeingDetails: "",
+      riskLevel: "",
+
+      status: "active",
+
+      // metadata: {},
     },
+
     mode: "onSubmit",
     reValidateMode: "onChange",
     shouldUnregister: false,
@@ -105,13 +132,15 @@ const AddClient = ({ open, setOpen, clientId, startStep }: Props) => {
   const firstStep = steps[0].id;
   const lastStep = steps[steps.length - 1].id;
 
-  // fields to validate per step
   const stepFields: Record<number, readonly FieldPath<ClientFormData>[]> = {
     1: ["title", "firstname", "lastname", "dob", "status"],
+
     2: ["nationality", "phone", "phoneType", "email"],
+
     3: ["addressLine1", "city", "state", "zip"],
+
     4: ["wellbeingDetails", "riskLevel"],
-  } as const;
+  };
 
   const [currentStep, setCurrentStep] = useState<number>(firstStep);
   React.useEffect(() => {
@@ -185,7 +214,14 @@ const AddClient = ({ open, setOpen, clientId, startStep }: Props) => {
 
       Object.entries(payload).forEach(([key, value]) => {
         if (value == null) return;
-        formData.append(key, value instanceof File ? value : String(value));
+
+        if (value instanceof File) {
+          formData.append(key, value);
+        } else if (typeof value === "object") {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, String(value));
+        }
       });
 
       if (isEdit) {

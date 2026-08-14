@@ -5,6 +5,7 @@ import {
   ClientGPAndSupport,
   ClientGPAndSupportResponse,
 } from "@/types/client/gp-support";
+import { apiPatch, apiPost } from "@/utils/api-connect";
 
 export const GpSupportApi = {
   get: (id: string) =>
@@ -20,12 +21,9 @@ export const GpSupportApi = {
       }),
 
   update: (id: string, body: GpSupportForm) =>
-    api
-      .patch<{ status: "success" }>(`/client/${id}/gp-and-support`, body)
-      .then((r) => r.data),
-
+    apiPatch<{ status: "success" }>(`/client/${id}/gp-and-support`, body)
+  ,
   post: (id: string, body: GpSupportForm) =>
-    api
-      .post<{ status: "success" }>(`/client/${id}/gp-and-support`, body)
-      .then((r) => r.data), // ← FIXED
+    apiPost<{ status: "success" }>(`/client/${id}/gp-and-support`, body)
+
 };

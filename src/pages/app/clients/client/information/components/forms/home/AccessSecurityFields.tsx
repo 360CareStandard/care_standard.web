@@ -81,7 +81,7 @@ export function AccessSecurityFields() {
       <div className="space-y-1.5">
         <Label>Key Safe Code</Label>
         <Input
-          type="password"
+          type={showBuzzer ? "text" : "password"}
           {...register("accessAndSecurity.keySafeCode")}
           value={keySafeCode}
           onChange={(e) =>

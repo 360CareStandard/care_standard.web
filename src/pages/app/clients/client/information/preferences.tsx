@@ -20,6 +20,7 @@ import { formatUpdatedAt } from "@/helpers/last-updated";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ClientPreferencesDetails } from "./components/details/preference";
 import { Edit } from "iconsax-react";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 export const initialPreferencesValues: Partial<PreferencesForm> = {
   morningRoutine: "",
@@ -52,7 +53,7 @@ const Preferences = ({ clientId }: Props) => {
 
   const { data: clientPreference, isLoading } = usePreferences(
     clientId,
-    Boolean(clientId)
+    Boolean(clientId),
   );
 
   // console.log(clientPreference);
@@ -72,7 +73,7 @@ const Preferences = ({ clientId }: Props) => {
       dailyActivities: api.dailyActivities ?? "",
       preferredVisitTimes: Array.isArray(api.preferredVisitTimes)
         ? api.preferredVisitTimes.filter((p: string) =>
-            ["Morning", "Afternoon", "Evening"].includes(p)
+            ["Morning", "Afternoon", "Evening"].includes(p),
           )
         : [],
       religionOrFaith: api.religionOrFaith ?? "",
@@ -120,9 +121,14 @@ const Preferences = ({ clientId }: Props) => {
       setOpen(false);
       setEditingId(null);
       methods.reset(initialPreferencesValues as any);
-    } catch (err: any) {
-      console.error("Save failed", err);
-      toast.error(err?.message ?? "Save failed, try again");
+    } catch (err) {
+      handleFormApiError<PreferencesForm>(
+        err,
+        methods.setError,
+        editingId
+          ? "Failed to update preferences"
+          : "Failed to create preferences",
+      );
     }
   }
 

@@ -3,7 +3,6 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import {
   Sheet,
-  SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -75,55 +74,61 @@ export function SheetForm({
   children,
 }: SheetFormProps) {
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      {trigger ? <SheetTrigger asChild>{trigger}</SheetTrigger> : null}
+    <>
+      {trigger ? trigger : null}
 
-      <SheetContent
-        ref={sheetContentRef}
-        side={side}
-        className={cn("sm:max-w-[500px] w-full", className)}
-      >
-        {/* Form fills the sheet so footer stays at bottom */}
-        <form onSubmit={onSubmit} className="flex h-full flex-col">
-          <SheetHeader className={cn(headerClassName)}>
-            <SheetTitle>{title}</SheetTitle>
-            {description ? (
-              <SheetDescription className="text-xs">
-                {description}
-              </SheetDescription>
-            ) : null}
-          </SheetHeader>
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent
+          ref={sheetContentRef}
+          side={side}
+          className={cn("sm:max-w-[500px] w-full", className)}
+        >
+          {/* Form fills the sheet so footer stays at bottom */}
+          <form onSubmit={onSubmit} className="flex h-full flex-col">
+            <SheetHeader className={cn(headerClassName)}>
+              <SheetTitle>{title}</SheetTitle>
+              {description ? (
+                <SheetDescription className="text-xs">
+                  {description}
+                </SheetDescription>
+              ) : null}
+            </SheetHeader>
 
-          <div
-            className={cn(
-              "flex-1 overflow-auto bg-white rounded-t-2xl px-4 py-4",
-              bodyClassName,
-            )}
-          >
-            {children}
-          </div>
-
-          <SheetFooter className={cn("border-t px-4 py-3 ", footerClassName)}>
-            <div className="ml-auto flex items-center gap-3">
-              {footerExtra}
-
-              {!hideCancel && (
-                <SheetClose asChild>
-                  <Button type="button" variant="outline">
-                    {cancelLabel}
-                  </Button>
-                </SheetClose>
+            <div
+              className={cn(
+                "flex-1 overflow-auto bg-white rounded-t-2xl px-4 py-4",
+                bodyClassName,
               )}
-              {submitLabel && (
-                <Button type="submit" disabled={submitDisabled}>
-                  {/* {submitLoading ? <Spinner size="sm" /> : null} */}
-                  {submitLabel}
-                </Button>
-              )}
+            >
+              {children}
             </div>
-          </SheetFooter>
-        </form>
-      </SheetContent>
-    </Sheet>
+
+            <SheetFooter className={cn("border-t px-4 py-3 ", footerClassName)}>
+              <div className="ml-auto flex items-center gap-3">
+                {footerExtra}
+
+                {!hideCancel && (
+                  <SheetClose asChild>
+                    <Button type="button" variant="outline">
+                      {cancelLabel}
+                    </Button>
+                  </SheetClose>
+                )}
+                {submitLabel && (
+                  <Button
+                    type="submit"
+                    disabled={submitDisabled}
+                    className="disabled:opacity-60 disabled:pointer-events-none"
+                  >
+                    {/* {submitLoading ? <Spinner size="sm" /> : null} */}
+                    {submitLabel}
+                  </Button>
+                )}
+              </div>
+            </SheetFooter>
+          </form>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }

@@ -24,6 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatUpdatedAt } from "@/helpers/last-updated";
 import { HealthInfo } from "./components/details/health-info";
 import { Edit } from "iconsax-react";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 const initialFormValues: Partial<MedicalForm> = {
   diagnosedConditions: [],
@@ -46,11 +47,11 @@ const Health = ({ clientId }: Props) => {
   const createHealthDetails = useCreateHealthDetails(clientId);
   const updateHealthDetails = useUpdateHealthDetails(clientId);
   const [editingHealthId, setEditingHealthId] = React.useState<string | null>(
-    null
+    null,
   );
   const { data: clientHealthDetails, isLoading } = useClientHealthDetails(
     clientId,
-    Boolean(clientId)
+    Boolean(clientId),
   );
 
   const methods = useForm<MedicalForm>({
@@ -127,9 +128,14 @@ const Health = ({ clientId }: Props) => {
       setOpen(false);
       setEditingHealthId(null);
       methods.reset(initialFormValues as any);
-    } catch (err: any) {
-      console.error("Save failed", err);
-      toast.error(err?.message ?? "Save failed, try again");
+    } catch (err) {
+      handleFormApiError<MedicalForm>(
+        err,
+        methods.setError,
+        editingHealthId
+          ? "Failed to update health details"
+          : "Failed to create health details",
+      );
     }
   };
 
@@ -160,8 +166,8 @@ const Health = ({ clientId }: Props) => {
                     clientHealthDetails.overallRiskLevel === "high"
                       ? "bg-red-100 text-red-800"
                       : clientHealthDetails.overallRiskLevel === "medium"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : "bg-green-100 text-green-800"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-green-100 text-green-800"
                   }`}
                 >
                   {clientHealthDetails.overallRiskLevel || "-"}

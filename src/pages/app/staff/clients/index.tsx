@@ -3,18 +3,14 @@ import { useParams } from "react-router-dom";
 import { DataTable } from "./components/data-table";
 import { assignedcolumns } from "./components/column";
 import { useMemo, useState } from "react";
+import { norm } from "@/utils/norm";
 /** Normalize for case/diacritics-insensitive search */
-function norm(s?: string) {
-  return (s ?? "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "");
-}
+
 const Clients = () => {
   const { staffId } = useParams<{ staffId: string }>();
   const { data, isLoading } = useStaffWithClients(staffId as string);
   const [searchText] = useState<string>("");
-  const assignedClientData = data?.assignedClients ?? []
+  const assignedClientData = data?.assignedClients ?? [];
 
   const filtered = useMemo(() => {
     const q = norm(searchText);
@@ -30,36 +26,32 @@ const Clients = () => {
   // const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
   //   setSearchText(event.target.value);
   // };
-  return <div>
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-
-        <div>
-          <h1 className="text-2xl font-semibold">
-            Clients
-          </h1>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Care recipients assigned to this staff member
-          </p>
+  return (
+    <div>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-semibold">Clients</h1>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Care recipients assigned to this staff member
+            </p>
+          </div>
         </div>
-
-      </div>
-      {/* Desktop table */}
-      <div
-        className="-mx-4 mt-12 flex-1 overflow-auto px-4 py-4 lg:flex-row lg:space-y-0 lg:space-x-12 bg-white shadow
+        {/* Desktop table */}
+        <div
+          className="-mx-4 mt-12 flex-1 overflow-auto px-4 py-4 lg:flex-row lg:space-y-0 lg:space-x-12 bg-white shadow
       rounded-lg
       "
-      >
-        <DataTable
-          columns={assignedcolumns}
-          data={filtered}
-          loading={isLoading}
-
-        />
+        >
+          <DataTable
+            columns={assignedcolumns}
+            data={filtered}
+            loading={isLoading}
+          />
+        </div>
       </div>
     </div>
-
-  </div>;
+  );
 };
 
 export default Clients;

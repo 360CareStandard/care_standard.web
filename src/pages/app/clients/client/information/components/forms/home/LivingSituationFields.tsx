@@ -29,8 +29,7 @@ const SUPPORT_TYPES = [
 ] as const;
 
 export function LivingSituationFields() {
-  const { control, register, watch, getValues } =
-    useFormContext<HomeEnvironmentForm>();
+  const { control, register, watch } = useFormContext<HomeEnvironmentForm>();
 
   // field array for livingSituation.householdMembers
   const { fields, append, remove, replace } = useFieldArray({
@@ -38,45 +37,34 @@ export function LivingSituationFields() {
     name: "livingSituation.householdMembers",
   });
 
-  // ensure at least one blank row on mount
-  React.useEffect(() => {
-    if (!fields || fields.length === 0) {
-      replace([{ name: "", relationship: "" }]);
-    }
-    // don't include replace/fields in deps intentionally (mount-only)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // livesAlone switch from form
   const livesAlone = watch("livingSituation.livesAlone");
 
-  // when livesAlone turns on -> clear members and keep one blank
   React.useEffect(() => {
     if (livesAlone) {
-      replace([{ name: "", relationship: "" }]);
+      replace([]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [livesAlone]);
+  }, [livesAlone, replace]);
 
-  const isEmpty = (m: { name?: string; relationship?: string }) =>
-    !m?.name?.toString().trim() && !m?.relationship?.toString().trim();
+  // const isEmpty = (m: { name?: string; relationship?: string }) =>
+  //   !m?.name?.toString().trim() && !m?.relationship?.toString().trim();
 
   // compute lastIsBlank from live form values (not the static fields snapshot)
-  const computeLastIsBlank = React.useCallback(() => {
-    const current = getValues("livingSituation.householdMembers") as
-      | { name?: string; relationship?: string }[]
-      | undefined;
-    if (!current || current.length === 0) return true;
-    const last = current[current.length - 1];
-    return isEmpty(last);
-  }, [getValues]);
+  // const computeLastIsBlank = React.useCallback(() => {
+  //   const current = getValues("livingSituation.householdMembers") as
+  //     | { name?: string; relationship?: string }[]
+  //     | undefined;
+  //   if (!current || current.length === 0) return true;
+  //   const last = current[current.length - 1];
+  //   return isEmpty(last);
+  // }, [getValues]);
 
   // Local state so UI re-renders when inputs change — we watch the whole array for that
-  const watchedMembers = watch("livingSituation.householdMembers");
-  const lastIsBlank = React.useMemo(
-    () => computeLastIsBlank(),
-    [computeLastIsBlank, watchedMembers],
-  );
+  // const watchedMembers = watch("livingSituation.householdMembers");
+  // const lastIsBlank = React.useMemo(
+  //   () => computeLastIsBlank(),
+  //   [computeLastIsBlank, watchedMembers],
+  // );
 
   return (
     <div className="space-y-4">
@@ -130,13 +118,7 @@ export function LivingSituationFields() {
                     variant="outline"
                     size="icon"
                     aria-label="Remove household member"
-                    onClick={() => {
-                      if (fields.length === 1) {
-                        replace([{ name: "", relationship: "" }]);
-                      } else {
-                        remove(idx);
-                      }
-                    }}
+                    onClick={() => remove(idx)}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -150,7 +132,7 @@ export function LivingSituationFields() {
             variant="outline"
             className="mt-1 gap-2"
             onClick={() => append({ name: "", relationship: "" })}
-            disabled={lastIsBlank}
+            // disabled={lastIsBlank}
           >
             <Plus className="h-4 w-4" />
             Add Household Member
