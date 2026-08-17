@@ -7,11 +7,13 @@ import "leaflet/dist/leaflet.css";
 
 import AppProvider from "./provider/index.tsx";
 import AppRoutes from "./routes/index.routes.tsx";
+import OnlineStatus from "./hooks/onlineStatus.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AppProvider>
       <AppRoutes />
+      <OnlineStatus />
     </AppProvider>
   </StrictMode>,
 );

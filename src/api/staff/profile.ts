@@ -4,7 +4,7 @@ import { StaffListResponse, StaffResponse } from "@/types/staff";
 import { GetStaffWithAssignedClientsResponse } from "@/types/staff/assigned-client";
 
 export const StaffProfileApi = {
-  list: (params?: { q?: string; page?: number; limit?: number }) => {
+  list: async (params?: { q?: string; page?: number; limit?: number }) => {
     const safe = {
       page: Number(params?.page ?? 1),
       limit: Number(params?.limit ?? 10),

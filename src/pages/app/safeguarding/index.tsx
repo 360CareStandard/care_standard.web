@@ -45,6 +45,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { EmptyState } from "./components/ui/empty-state";
 import { SafeguardDetailsSheet } from "./components/ui/sheet";
+import { ActivitySkeleton } from "../activity/components/activity-skeleton";
 const TAB_KEYS = ["cases", "reports"] as const;
 type TabKey = (typeof TAB_KEYS)[number];
 
@@ -290,9 +291,7 @@ const SafeGuarding = () => {
             }
           >
             {isSafeguardingDataLoading ? (
-              <div className="flex justify-center py-4">
-                <Spinner />
-              </div>
+              <ActivitySkeleton />
             ) : cases.length === 0 ? (
               <EmptyState
                 title="No cases reported yet"
@@ -333,9 +332,7 @@ const SafeGuarding = () => {
             }
           >
             {isSafeguardingDataLoading ? (
-              <div className="flex justify-center py-10">
-                <Spinner />
-              </div>
+              <ActivitySkeleton />
             ) : reportsOnly.length === 0 ? (
               <EmptyState
                 title="No reports found"

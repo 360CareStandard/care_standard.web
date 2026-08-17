@@ -109,4 +109,17 @@ export const qk = {
   agencyLogo: () => ["agency-logo"] as const,
   agencyDocument: () => ["agency-document"] as const,
 
+
+  // Activity
+
+  activity: ["activity"] as const,
+
+  activityAlerts: (params?: unknown) =>
+    ["activity", "alerts", params] as const,
+
+  careLogs: (params?: unknown) =>
+    ["activity", "care-logs", params] as const,
+
+  systemActivities: (params?: unknown) =>
+    ["activity", "system", params] as const,
 };

@@ -46,7 +46,11 @@ export function visitSchedulesToCalendarEvents(
               ? "orange"
               : s.status === "completed"
                 ? "green"
-                : "gray", // ✅ string
+                : s.status === "cancelled"
+                  ? "red"
+                  : s.status === "active"
+                    ? "blue"
+                    : "neutral", // ✅ string
         start,
         end,
         duration: s.duration,
