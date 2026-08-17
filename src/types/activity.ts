@@ -104,12 +104,39 @@ export interface CareLogListParams {
 /*                              SYSTEM ACTIVITY                               */
 /* -------------------------------------------------------------------------- */
 
+export type SystemActivityAction = "access-granted" | (string & {});
+
+export interface SystemActivityUser {
+    id: string;
+    name: string;
+    email: string;
+}
+
+export interface SystemActivityTarget {
+    userId: string;
+    staffId: string;
+    name: string;
+    email: string;
+}
+
 export interface SystemActivity {
     id: string;
+    action: SystemActivityAction;
+    description: string;
 
-    // The API response you supplied currently returns an empty array,
-    // so the actual fields are not known yet.
-    [key: string]: unknown;
+    changedBy: SystemActivityUser;
+    target: SystemActivityTarget;
+
+    fromRole: string;
+    toRole: string;
+
+    previousRoles: string[];
+    newRoles: string[];
+    addedRoles: string[];
+    removedRoles: string[];
+
+    ipAddress: string;
+    createdAt: string;
 }
 
 export interface SystemActivityListData extends Pagination {
@@ -123,3 +150,12 @@ export interface SystemActivityListParams {
     page?: number;
     limit?: number;
 }
+
+
+// "access-granted"
+// "access-revoked"
+// "role-changed"
+// "user-created"
+// "user-updated"
+// "user-deactivated"
+// "password-reset"

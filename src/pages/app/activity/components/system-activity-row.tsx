@@ -1,6 +1,6 @@
 // src/components/activity/SystemActivityRow.tsx
 
-import { ChevronRight, UserCog } from "lucide-react";
+import { ChevronRight, Settings } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -11,31 +11,57 @@ interface SystemActivityRowProps {
   onClick?: (item: SystemActivity) => void;
 }
 
+function formatActivityDate(date: string) {
+  if (!date) return "";
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  })
+    .format(parsedDate)
+    .replace(" at ", ", ");
+}
+
+function getActivityTitle(action: SystemActivity["action"]) {
+  switch (action) {
+    case "access-granted":
+      return "Permission Updated";
+
+    default:
+      return "System Activity";
+  }
+}
+
+function getActivityDescription(item: SystemActivity) {
+  if (item.fromRole && item.toRole) {
+    return `Role changed from ${item.fromRole} to ${item.toRole}`;
+  }
+
+  return item.description;
+}
+
 export function SystemActivityRow({ item, onClick }: SystemActivityRowProps) {
-  const title = typeof item.title === "string" ? item.title : "System Activity";
-
-  const description =
-    typeof item.description === "string" ? item.description : "";
-
-  const staff =
-    typeof item.staff === "string"
-      ? item.staff
-      : typeof item.staffName === "string"
-        ? item.staffName
-        : "";
-
-  const actor = typeof item.actor === "string" ? item.actor : "";
-
-  const time = typeof item.createdAt === "string" ? item.createdAt : "";
+  const title = getActivityTitle(item.action);
+  const description = getActivityDescription(item);
+  const staff = item.target?.name ?? "";
+  const actor = item.changedBy?.name ?? "";
+  const time = formatActivityDate(item.createdAt);
 
   return (
     <div className="flex gap-4 border-b px-4 py-5 last:border-b-0">
-      <div className="w-1 rounded-full bg-red-500" />
-
       <div className="flex flex-1 items-start justify-between gap-4">
         <div className="flex min-w-0 gap-3">
-          <div className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-md border border-red-200 bg-red-50">
-            <UserCog className="h-4 w-4 text-red-500" />
+          <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-red-200 bg-red-50">
+            <Settings className="h-4 w-4 text-red-500" />
           </div>
 
           <div className="min-w-0">
@@ -75,6 +101,7 @@ export function SystemActivityRow({ item, onClick }: SystemActivityRowProps) {
           size="icon"
           className="h-8 w-8 shrink-0"
           onClick={() => onClick?.(item)}
+          aria-label="View system activity"
         >
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </Button>
