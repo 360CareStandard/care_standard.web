@@ -161,7 +161,7 @@ const AddCarePackage = ({ open, onOpenChange, packageId }: Props) => {
       <FormProvider {...methods}>
         <div className="space-y-4">
           {isLoadingEditData ? (
-            <div className="flex min-h-40 flex-col items-center justify-center gap-3">
+            <div className="flex bg-n min-h-40 flex-col items-center justify-center gap-3">
               <Spinner />
               <p className="text-sm text-muted-foreground">
                 Loading care package...

@@ -12,7 +12,8 @@ export type VisitStatus =
   | "completed"
   | "missed"
   | "cancelled"
-  | "in-progress";
+  | "in-progress"
+  | "active";
 
 export type FundingSource = "private" | "nhs";
 
