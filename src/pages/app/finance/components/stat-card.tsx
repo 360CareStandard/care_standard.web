@@ -1,13 +1,23 @@
+import { Spinner } from "@/components/shared/spinner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type StatCardProps = {
   title: string;
   value: string | number;
   description: string;
-  icon: React.ReactNode;
+  icon: JSX.Element;
+  isLoading: boolean;
+  isError?: boolean;
 };
 
-const StatCard = ({ title, value, description, icon }: StatCardProps) => {
+const StatCard = ({
+  title,
+  value,
+  description,
+  icon,
+  isLoading,
+  isError,
+}: StatCardProps) => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
@@ -16,7 +26,13 @@ const StatCard = ({ title, value, description, icon }: StatCardProps) => {
       </CardHeader>
 
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        {isLoading ? (
+          <Spinner />
+        ) : isError ? (
+          <div className="text-2xl font-bold text-destructive">-</div>
+        ) : (
+          <div className="text-2xl font-bold">{value}</div>
+        )}
         <p className="text-xs text-muted-foreground">{description}</p>
       </CardContent>
     </Card>

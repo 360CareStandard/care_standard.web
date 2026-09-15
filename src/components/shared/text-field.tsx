@@ -1,4 +1,3 @@
-// components/shared/text-field.tsx
 import * as React from "react";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -7,7 +6,6 @@ import { CircleAlert } from "lucide-react";
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   hint?: string;
-  /** pass a string to show an error message; truthy boolean shows only styles */
   error?: string | boolean;
   containerClassName?: string;
 };
@@ -31,18 +29,18 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
     const helpId = `${inputId}-help`;
     const errorId = `${inputId}-error`;
     const hasError = !!error;
+    const isFileInput = inputProps.type === "file";
 
     return (
       <div className={cn("w-full", containerClassName)}>
         {label ? (
-          <Label htmlFor={inputId} className="mb-2 block text-sm font-normal ">
+          <Label htmlFor={inputId} className="mb-2 block text-sm font-normal">
             {label}
             {required ? <span className="ml-0.5 text-red-600">*</span> : null}
           </Label>
         ) : null}
 
         <div className="relative">
-          {/* Put inputProps first so our computed props win last */}
           <input
             {...inputProps}
             id={inputId}
@@ -53,15 +51,41 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
               hasError ? errorId : undefined,
             )}
             className={cn(
-              "w-full text-sm rounded-md border px-3 h-11 ",
-              hasError &&
-                "border-red-300 bg-red-50 text-red-900 placeholder:text-red-400 focus-visible:ring-red-500 focus-visible:border-red-500",
-              hasError ? "pr-10" : undefined,
+              "w-full text-sm rounded-md border px-3 h-11",
+
+              // File input styles
+              isFileInput && [
+                "cursor-pointer",
+                "file:mr-3",
+                "file:h-full",
+                "file:border-0",
+                "file:border-r",
+                "file:px-3",
+                "file:bg-muted",
+                "file:text-sm",
+                "file:font-medium",
+                "file:text-foreground",
+                "file:cursor-pointer",
+              ],
+
+              // Error styles
+              hasError && [
+                "border-red-300",
+                "bg-red-50",
+                "text-red-900",
+                "placeholder:text-red-400",
+                "focus-visible:ring-red-500",
+                "focus-visible:border-red-500",
+              ],
+
+              // Only add right padding when showing the error icon
+              hasError && !isFileInput ? "pr-10" : undefined,
+
               className,
             )}
           />
 
-          {hasError && (
+          {hasError && !isFileInput && (
             <CircleAlert
               aria-hidden
               className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-red-500"
@@ -82,4 +106,5 @@ export const TextField = React.forwardRef<HTMLInputElement, Props>(
     );
   },
 );
+
 TextField.displayName = "TextField";

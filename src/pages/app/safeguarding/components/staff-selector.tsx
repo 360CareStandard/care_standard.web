@@ -28,7 +28,8 @@ type Option = {
  * visually consistent with Preferred/Avoid Carers
  */
 export function SafeguardStaffSelector() {
-  const { control } = useFormContext<SafeguardingFormData>();
+  const { control, formState } = useFormContext<SafeguardingFormData>();
+  const { errors } = formState;
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useStaffScroll({ limit: 10 });
 
@@ -191,6 +192,11 @@ export function SafeguardStaffSelector() {
           );
         }}
       />
+      {errors.reportedByStaffId?.message && (
+        <p className="mt-1 text-xs text-red-600">
+          {String(errors.reportedByStaffId.message)}
+        </p>
+      )}
     </div>
   );
 }

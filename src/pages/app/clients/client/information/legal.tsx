@@ -24,6 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { formatUpdatedAt } from "@/helpers/last-updated";
 import { Spinner } from "@/components/shared/spinner";
 import { Edit } from "iconsax-react";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 function formatDateForInput(d?: string | null) {
   if (!d) return "";
@@ -128,7 +129,7 @@ const Legal = ({ clientId }: Props) => {
   const updateLegal = useUpdateClientLegalProfile(clientId);
   const { data: clientLegalProfile, isLoading } = useClientLegalProfile(
     clientId,
-    Boolean(clientId)
+    Boolean(clientId),
   );
 
   const methods = useForm<LegalForm>({
@@ -229,6 +230,10 @@ const Legal = ({ clientId }: Props) => {
   }
 
   const onSubmit = async (values: LegalForm) => {
+    // if (!values.legalDocumentsFiles) {
+    //   toast.error("Please upload at least one legal document.");
+    //   return;
+    // }
     try {
       // Build FormData using your helper
       const fd = buildFormData(values);
@@ -247,9 +252,14 @@ const Legal = ({ clientId }: Props) => {
       setOpen(false);
       setEditingData(null);
       methods.reset(initialFormValues as any);
-    } catch (err: any) {
-      console.error("Save failed", err);
-      toast.error(err?.message ?? "Save failed");
+    } catch (err) {
+      handleFormApiError<LegalForm>(
+        err,
+        methods.setError,
+        editingData
+          ? "Failed to update legal profile"
+          : "Failed to create legal profile",
+      );
     }
   };
 

@@ -1,9 +1,9 @@
 // src/components/activity/AlertRow.tsx
 
-import { ChevronRight, Clock3, ShieldAlert } from "lucide-react";
+import { Clock3, ShieldAlert } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 
 import type { ActivityAlert } from "@/types/activity";
 
@@ -27,7 +27,7 @@ function formatDateTime(value: string) {
   }).format(new Date(value));
 }
 
-export function AlertRow({ item, onClick }: AlertRowProps) {
+export function AlertRow({ item }: AlertRowProps) {
   return (
     <div className="flex gap-4 border-b px-4 py-5 last:border-b-0">
       <div className="w-1 rounded-full bg-red-500" />
@@ -71,7 +71,7 @@ export function AlertRow({ item, onClick }: AlertRowProps) {
           <Badge variant="outline" className={priorityStyles[item.priority]}>
             {item.priority}
           </Badge>
-
+          {/* 
           <Button
             variant="ghost"
             size="icon"
@@ -79,7 +79,7 @@ export function AlertRow({ item, onClick }: AlertRowProps) {
             onClick={() => onClick?.(item)}
           >
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>

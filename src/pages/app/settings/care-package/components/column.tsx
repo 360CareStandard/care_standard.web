@@ -35,6 +35,28 @@ export const carePackagecolumns: ColumnDef<CarePackage>[] = [
 
     enableHiding: false,
   },
+  {
+    accessorKey: "amount",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Amount" />
+    ),
+    cell: ({ row }) => {
+      const packageAmount = row.original.amount;
+
+      return <span>£{packageAmount.toFixed(2)}</span>;
+    },
+  },
+  {
+    accessorKey: "rate",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Rate" />
+    ),
+    cell: ({ row }) => {
+      const packageRate = row.original.rate;
+
+      return <span>{packageRate}</span>;
+    },
+  },
 
   {
     id: "actions",

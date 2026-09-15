@@ -27,7 +27,8 @@ type Option = {
  * Single-client select
  */
 export function SafeguardClientSelector() {
-  const { control } = useFormContext<SafeguardingFormData>();
+  const { control, formState } = useFormContext<SafeguardingFormData>();
+  const { errors } = formState;
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useClientScroll({ limit: 10 });
 
@@ -190,6 +191,11 @@ export function SafeguardClientSelector() {
           );
         }}
       />
+      {errors.clientId?.message && (
+        <p className="mt-1 text-xs text-red-600">
+          {String(errors.clientId.message)}
+        </p>
+      )}
     </div>
   );
 }

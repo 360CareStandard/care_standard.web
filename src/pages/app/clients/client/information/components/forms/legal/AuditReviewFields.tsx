@@ -1,22 +1,17 @@
 // components/legal/AuditReviewFields.tsx
 import * as React from "react";
-import { useFormContext, Controller, useWatch } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { LegalForm } from "../../../../../schemas/legal-setup";
 
-const PEOPLE = [
-  "Alice Brown (Manager)",
-  "John Smith (Senior Carer)",
-  "Sarah Jones (Care Coordinator)",
-];
+import { LegalForm } from "../../../../../schemas/legal-setup";
+// import { TextField } from "@/components/shared/text-field";
+
+// const PEOPLE = [
+//   "Alice Brown (Manager)",
+//   "John Smith (Senior Carer)",
+//   "Sarah Jones (Care Coordinator)",
+// ];
 
 const NOTES_MAX = 300;
 
@@ -29,10 +24,10 @@ export function AuditReviewFields() {
     name: "reviewDueDate",
   }) as string | undefined;
 
-  // const responsiblePerson = useWatch({
-  //   control,
-  //   name: "responsiblePerson",
-  // }) as string | undefined;
+  const responsiblePerson = useWatch({
+    control,
+    name: "responsiblePerson",
+  }) as string | undefined;
 
   const notesSummary = useWatch({
     control,
@@ -98,7 +93,19 @@ export function AuditReviewFields() {
           <Label>Responsible Person</Label>
 
           {/* select bound to responsiblePerson */}
-          <Controller
+          <input
+            type="text"
+            placeholder="Enter responsible person"
+            className="bg-white  w-full rounded-md border  h-9 px-3 py-1 text-sm shadow-xs"
+            {...register("responsiblePerson")}
+            value={responsiblePerson ?? ""}
+            onChange={(e) => {
+              setValue("responsiblePerson", e.target.value, {
+                shouldDirty: true,
+              });
+            }}
+          />
+          {/* <Controller
             control={control}
             name="responsiblePerson"
             render={({ field }) => (
@@ -115,7 +122,7 @@ export function AuditReviewFields() {
                 </SelectContent>
               </Select>
             )}
-          />
+          /> */}
         </div>
       </div>
 

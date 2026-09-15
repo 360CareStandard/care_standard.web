@@ -1,8 +1,8 @@
+import { RHFSelectField } from "@/components/shared/rhf-select-field";
 import { SheetForm } from "@/components/shared/sheet-form";
 import { Spinner } from "@/components/shared/spinner";
 import { TextField } from "@/components/shared/text-field";
 import { TextareaField } from "@/components/shared/textarea-field";
-import { Label } from "@/components/ui/label";
 import {
   useCreateCarePackage,
   useSingleCarePackage,
@@ -11,6 +11,7 @@ import {
 import { handleFormApiError } from "@/lib/handle-form-error";
 import {
   CarePackageFormData,
+  CarePackageFormInput,
   carePackageSchema,
 } from "@/pages/schemas/care-package";
 import { useAuthStore } from "@/stores/auth-store";
@@ -32,17 +33,21 @@ const AddCarePackage = ({ open, onOpenChange, packageId }: Props) => {
 
   const agencyId = useAuthStore((s) => s.workspace?.id);
 
-  const methods = useForm<CarePackageFormData>({
-    resolver: zodResolver(carePackageSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      agencyId: agencyId ?? "",
+  const methods = useForm<CarePackageFormInput, undefined, CarePackageFormData>(
+    {
+      resolver: zodResolver(carePackageSchema),
+      defaultValues: {
+        name: "",
+        description: "",
+        agencyId: agencyId ?? "",
+        rate: "hourly",
+        amount: 0,
+      },
+      mode: "onSubmit",
+      reValidateMode: "onChange",
+      shouldUnregister: false,
     },
-    mode: "onSubmit",
-    reValidateMode: "onChange",
-    shouldUnregister: false,
-  });
+  );
 
   React.useEffect(() => {
     if (agencyId && !isEdit) {
@@ -51,6 +56,7 @@ const AddCarePackage = ({ open, onOpenChange, packageId }: Props) => {
   }, [agencyId, isEdit, methods]);
   const {
     register,
+    control,
     formState: { errors },
   } = methods;
 
@@ -70,6 +76,8 @@ const AddCarePackage = ({ open, onOpenChange, packageId }: Props) => {
       name: data.name ?? "",
       description: data.description ?? "",
       agencyId: data.agencyId ?? "",
+      rate: data.rate ?? "",
+      amount: data.amount ?? 0,
     };
   }
 
@@ -179,15 +187,38 @@ const AddCarePackage = ({ open, onOpenChange, packageId }: Props) => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-normal">Description *</Label>
-
                 <TextareaField
+                  label="Description *"
                   placeholder="Enter description"
                   maxLength={500}
                   autoResize
                   {...register("description")}
                   error={errors.description?.message}
                 />
+                <div className="space-y-2">
+                  <TextField
+                    label="Amount (£)"
+                    type="number"
+                    inputMode="decimal"
+                    min="0.01"
+                    step="0.01"
+                    {...register("amount", {
+                      valueAsNumber: true,
+                    })}
+                    error={errors.amount?.message}
+                  />
+                  <RHFSelectField
+                    control={control}
+                    name="rate"
+                    label="Rate Type"
+                    placeholder="Select rate type"
+                    options={[
+                      { value: "hourly", label: "Hourly" },
+                      { value: "weekly", label: "Weekly" },
+                      { value: "monthly", label: "Monthly" },
+                    ]}
+                  />
+                </div>
               </div>
             </>
           )}

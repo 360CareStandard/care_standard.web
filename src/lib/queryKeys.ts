@@ -122,4 +122,20 @@ export const qk = {
 
   systemActivities: (params?: unknown) =>
     ["activity", "system", params] as const,
+
+  //Finance
+  financeOverview: () => ["finance", "overview"] as const,
+  financeInvoices: (params?: { page?: number; limit?: number; q?: string }) => [
+    "finance",
+    "invoices",
+    params,] as const,
+  financeCharges: (params?: { page?: number; limit?: number; q?: string }) => [
+    "finance",
+    "charges",
+    params,] as const,
+  financePayments: (params?: { page?: number; limit?: number; q?: string }) => [
+    "finance",
+    "payments",
+    params,
+  ] as const,
 };

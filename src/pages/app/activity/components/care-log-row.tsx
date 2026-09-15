@@ -1,9 +1,8 @@
 // src/components/activity/CareLogRow.tsx
 
-import { CalendarClock, ChevronRight, Clock3 } from "lucide-react";
+import { CalendarClock, Clock3 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 import type { CareLog } from "@/types/activity";
 
@@ -20,7 +19,7 @@ const statusStyles = {
   pending: "bg-orange-50 text-orange-700 hover:bg-orange-50 border-transparent",
 };
 
-export function CareLogRow({ item, onClick }: CareLogRowProps) {
+export function CareLogRow({ item }: CareLogRowProps) {
   const isCompleted = item.status === "completed";
 
   return (
@@ -82,14 +81,14 @@ export function CareLogRow({ item, onClick }: CareLogRowProps) {
             {item.status}
           </Badge>
 
-          <Button
+          {/* <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8 shrink-0"
             onClick={() => onClick?.(item)}
           >
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>
