@@ -35,12 +35,14 @@ interface PaymentTableProps {
   initialPage?: number;
   initialLimit?: number;
   openDetailSheet: (paymentId: string) => void;
+  openConfirmPaymentModal: (payment: Payment) => void;
   status?: string;
 }
 export function PaymentTable({
   initialPage = 1,
   initialLimit = 10,
   openDetailSheet,
+  openConfirmPaymentModal,
   status,
 }: PaymentTableProps) {
   const [pageIndex, setPageIndex] = useState(initialPage - 1);
@@ -50,7 +52,7 @@ export function PaymentTable({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns = paymentColumns(openDetailSheet);
+  const columns = paymentColumns(openDetailSheet, openConfirmPaymentModal);
 
   const {
     data: paymentsData,
@@ -157,7 +159,7 @@ export function PaymentTable({
       <div>
         <Table>
           {table.getRowModel().rows.length > 0 && (
-            <TableHeader className="bg-neutral-50">
+            <TableHeader className="bg-neutral-50 border-b-2 border-b-black/30">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (

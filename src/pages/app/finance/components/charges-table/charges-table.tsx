@@ -42,6 +42,7 @@ interface ChargesTableProps {
 export function ChargesTable({
   initialPage = 1,
   initialLimit = 10,
+  status,
 }: ChargesTableProps) {
   const [pageIndex, setPageIndex] = useState(initialPage - 1);
   const [pageSize, setPageSize] = useState(initialLimit);
@@ -59,7 +60,7 @@ export function ChargesTable({
   } = useChargesList({
     page: pageIndex + 1,
     limit: pageSize,
-    q: "",
+    q: status,
   });
 
   //   const {
@@ -171,7 +172,7 @@ export function ChargesTable({
       <div>
         <Table>
           {table.getRowModel().rows.length > 0 && (
-            <TableHeader className="bg-neutral-50">
+            <TableHeader className="bg-neutral-50 border-b-2 border-b-black/30">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (

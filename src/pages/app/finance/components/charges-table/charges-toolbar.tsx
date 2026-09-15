@@ -15,26 +15,19 @@ interface ChargesToolbarProps {
   onRateTypeChange: (value: string) => void;
 }
 
-const ChargesToolbar = ({
-  client,
-  status,
-  rateType,
-  onClientChange,
-  onStatusChange,
-  onRateTypeChange,
-}: ChargesToolbarProps) => {
+const ChargesToolbar = ({ status, onStatusChange }: ChargesToolbarProps) => {
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Select value={client} onValueChange={onClientChange}>
+      {/* <Select value={client} onValueChange={onClientChange}>
         <SelectTrigger className="w-[150px]">
           <SelectValue placeholder="All Clients" />
         </SelectTrigger>
 
         <SelectContent>
           <SelectItem value="all">All Clients</SelectItem>
-          {/* clients will go here */}
+          clients will go here
         </SelectContent>
-      </Select>
+      </Select> */}
 
       <Select value={status} onValueChange={onStatusChange}>
         <SelectTrigger className="w-[130px]">
@@ -42,13 +35,12 @@ const ChargesToolbar = ({
         </SelectTrigger>
 
         <SelectContent>
-          <SelectItem value="all">All Status</SelectItem>
           <SelectItem value="unbilled">Unbilled</SelectItem>
           <SelectItem value="billed">Billed</SelectItem>
         </SelectContent>
       </Select>
 
-      <Select value={rateType} onValueChange={onRateTypeChange}>
+      {/* <Select value={rateType} onValueChange={onRateTypeChange}>
         <SelectTrigger className="w-[140px]">
           <SelectValue placeholder="Rate Type" />
         </SelectTrigger>
@@ -61,7 +53,7 @@ const ChargesToolbar = ({
           <SelectItem value="weekend">Weekend</SelectItem>
           <SelectItem value="holiday">Holiday</SelectItem>
         </SelectContent>
-      </Select>
+      </Select> */}
     </div>
   );
 };

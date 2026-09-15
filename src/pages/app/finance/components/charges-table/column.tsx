@@ -59,7 +59,10 @@ export const chargesColumns = (): ColumnDef<Charge>[] => [
       return (
         <div className="flex flex-col">
           <span className="whitespace-nowrap">{charge.rate}</span>
-          <Badge variant="outline" className={cn("capitalize text-xs")}>
+          <Badge
+            variant="outline"
+            className={cn("capitalize text-xs text-secondary")}
+          >
             {charge.rateName}
           </Badge>
         </div>

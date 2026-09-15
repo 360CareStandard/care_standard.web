@@ -1,6 +1,6 @@
 import { FinanceApi } from "@/api/finance";
 import { qk } from "@/lib/queryKeys";
-import { FinanceFormData } from "@/pages/schemas/finance";
+import { FinanceFormData, InvoicePreferencesFormType } from "@/pages/schemas/finance";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function useFinanceOverview() {
@@ -69,6 +69,7 @@ export function useInvoice(id?: string, enabled = true) {
 }
 
 
+
 export function useGenerateInvoice() {
     const qc = useQueryClient();
 
@@ -82,4 +83,40 @@ export function useGenerateInvoice() {
             return qc.invalidateQueries({ queryKey: ["finance"] });
         },
     });
-} 
+}
+export function useCreateInvoicePreferences() {
+    const qc = useQueryClient();
+
+    return useMutation({
+        mutationFn: (body: InvoicePreferencesFormType) => {
+
+            return FinanceApi.createInvoicePreferences(body);
+        },
+        onSuccess: () => {
+            // optionally update client query detail cache if needed
+            return qc.invalidateQueries({ queryKey: ["invoice-preference"] });
+        },
+    });
+}
+export function useInvoicePreference() {
+    return useQuery({
+        queryKey: ["invoice-preference"],
+        queryFn: () => FinanceApi.getInvoicePreferences(),
+
+        staleTime: 60_000,
+    });
+}
+
+export function useConfirmPayment(id: string) {
+    const qc = useQueryClient();
+
+    return useMutation({
+        // Accept a FormData
+        mutationFn: (formData: FormData) => {
+            return FinanceApi.confirmPayment(formData, id);
+        },
+        onSuccess: () => {
+            return qc.invalidateQueries({ queryKey: qk.financePayments() });
+        },
+    });
+}

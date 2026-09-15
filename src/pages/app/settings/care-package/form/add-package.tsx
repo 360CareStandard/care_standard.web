@@ -3,7 +3,6 @@ import { SheetForm } from "@/components/shared/sheet-form";
 import { Spinner } from "@/components/shared/spinner";
 import { TextField } from "@/components/shared/text-field";
 import { TextareaField } from "@/components/shared/textarea-field";
-import { Label } from "@/components/ui/label";
 import {
   useCreateCarePackage,
   useSingleCarePackage,
@@ -188,9 +187,8 @@ const AddCarePackage = ({ open, onOpenChange, packageId }: Props) => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-normal">Description *</Label>
-
                 <TextareaField
+                  label="Description *"
                   placeholder="Enter description"
                   maxLength={500}
                   autoResize

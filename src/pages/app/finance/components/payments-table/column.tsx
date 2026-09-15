@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { Payment } from "@/types/finance/payments";
 import dayjs from "dayjs";
+import { Button } from "@/components/ui/button";
 
 const statusStyles: Record<Payment["status"], string> = {
   draft: "bg-gray-100 text-gray-700 border-gray-200",
@@ -23,6 +24,7 @@ const formatCurrency = (amount: number, currency: string) => {
 
 export const paymentColumns = (
   openDetailSheet: (paymentId: string) => void,
+  openConfirmPaymentModal: (payment: Payment) => void,
 ): ColumnDef<Payment>[] => [
   {
     id: "client",
@@ -116,5 +118,30 @@ export const paymentColumns = (
 
       return <div className="whitespace-nowrap">{payment.method}</div>;
     },
+  },
+
+  {
+    accessorKey: "actions",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="" />,
+    cell: ({ row }) => {
+      const payment = row.original;
+
+      return (
+        <>
+          {payment.status === "unpaid" ? (
+            <Button
+              type="button"
+              variant="link"
+              size="sm"
+              onClick={() => openConfirmPaymentModal(payment)}
+            >
+              Mark Paid
+            </Button>
+          ) : null}
+        </>
+      );
+    },
+    enableHiding: false,
+    enableSorting: false,
   },
 ];

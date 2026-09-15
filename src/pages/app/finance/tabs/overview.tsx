@@ -18,19 +18,20 @@ const OverviewTab = () => {
   const handleExport = async () => {
     try {
       const response = await FinanceApi.exportInvoice();
+      console.log(response);
 
-      const blob = new Blob([response?.data]);
+      // const blob = new Blob([response?.data]);
 
-      const url = window.URL.createObjectURL(blob);
+      // const url = window.URL.createObjectURL(blob);
 
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "invoices.xlsx";
-      document.body.appendChild(link);
-      link.click();
+      // const link = document.createElement("a");
+      // link.href = url;
+      // link.download = "invoices.xlsx";
+      // document.body.appendChild(link);
+      // link.click();
 
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      // link.remove();
+      // window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error exporting invoices:", error);
     }
@@ -82,7 +83,7 @@ const OverviewTab = () => {
 
       <div className="mt-12">
         <div className="flex items-center gap-4 justify-between">
-          <h2 className="text-xl font-semibold">Recent Invoices</h2>
+          <h2 className="text-lg font-semibold">Recent Invoices</h2>
           <Button
             variant="outline"
             onClick={() => handleExport()}

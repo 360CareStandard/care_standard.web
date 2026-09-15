@@ -75,7 +75,7 @@ export function DataTable<TData, TValue>({
       {!loading && (
         <div className="">
           <Table>
-            <TableHeader className="bg-neutral-50">
+            <TableHeader className="bg-neutral-50 border-b-2 border-b-black/30">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {

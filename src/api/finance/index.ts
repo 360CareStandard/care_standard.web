@@ -1,7 +1,8 @@
 
-import { FinanceFormData } from "@/pages/schemas/finance";
+import { FinanceFormData, InvoicePreferencesFormType } from "@/pages/schemas/finance";
 import { ChargesResponse } from "@/types/finance/charges";
 import { InvoicesResponse } from "@/types/finance/invoice";
+import { InvoicePreferencesResponse } from "@/types/finance/invoice-preference";
 import { FinanceOverviewResponse } from "@/types/finance/overview";
 import { PaymentsResponse } from "@/types/finance/payments";
 import { InvoiceResponse } from "@/types/finance/single-invoice";
@@ -28,7 +29,7 @@ export const FinanceApi = {
         const safe = {
             page: Number(params?.page ?? 1),
             limit: Number(params?.limit ?? 10),
-            search: params?.q ?? undefined,
+            status: params?.q ?? undefined,
         };
 
         return apiGet<ChargesResponse>("/finance/charges", safe).then(
@@ -62,15 +63,15 @@ export const FinanceApi = {
         apiPost<{ status: "success" }>(
             `/finance/invoices`,
             body),
+    createInvoicePreferences: async (body: InvoicePreferencesFormType) =>
+        apiPost<{ status: "success" }>(
+            `/finance/billing/settings`,
+            body),
+    confirmPayment: (formData: FormData, id: string) =>
+        apiPost<{ status: "success" }>(`/finance/payments/${id}/confirm`, formData),
 
-
-
-
-    // postDocument: (formData: FormData) =>
-    //     apiPost<{ status: "success" }>("/agency/settings/documents", formData),
-
-    // deleteDocument: (id: string) =>
-    //     apiDelete<{ status: "success" }>(`/agency/settings/documents/${id}`)
-
-
+    getInvoicePreferences: () =>
+        apiGet<InvoicePreferencesResponse>(`/finance/billing/settings`).then(
+            (r) => r.data,
+        ),
 };

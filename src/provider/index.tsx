@@ -30,7 +30,7 @@ export default function AppProvider({
           style: {
             // background: "#363636",
             // color: "#fff",
-            fontSize: 12,
+            fontSize: 13,
           },
 
           // Default options for specific types

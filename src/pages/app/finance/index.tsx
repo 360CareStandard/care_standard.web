@@ -16,15 +16,26 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FinanceFormData, financeSchema } from "@/pages/schemas/finance";
+import {
+  FinanceFormData,
+  financeSchema,
+  paymentFormSchema,
+  PaymentFormType,
+} from "@/pages/schemas/finance";
 import { FormProvider, Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FinanceFormField from "./form/generate-invoice";
-import { useGenerateInvoice, useInvoice } from "@/hooks/finance/useFinance";
+import {
+  useConfirmPayment,
+  useGenerateInvoice,
+  useInvoice,
+} from "@/hooks/finance/useFinance";
 import { handleFormApiError } from "@/lib/handle-form-error";
 import toast from "react-hot-toast";
 import { Spinner } from "@/components/shared/spinner";
 import { InvoiceDetailsSheet } from "./components/single-invoice";
+import { Payment } from "@/types/finance/payments";
+import PaymentFormField from "./form/confirm-payment";
 
 const TAB_KEYS = [
   "overview",
@@ -38,23 +49,44 @@ type TabKey = (typeof TAB_KEYS)[number];
 const resolver = zodResolver(
   financeSchema,
 ) as unknown as Resolver<FinanceFormData>;
+const paymentResolver = zodResolver(
+  paymentFormSchema,
+) as unknown as Resolver<PaymentFormType>;
 
 const Finance = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [modalOpen, setModalOpen] = React.useState(false);
   const [invoiceId, setSelectedInvoiceId] = React.useState<string | undefined>(
     undefined,
   );
+  const [payment, setSelectedPayment] = React.useState<Payment | null>(null);
   const { mutateAsync: generateInvoice, isPending: isCreating } =
     useGenerateInvoice();
+  const { mutateAsync: confirmPayment, isPending: isConfirming } =
+    useConfirmPayment(payment?.invoiceId ?? "");
   const { data: invoiceDetails, isLoading: invoiceDetailsLoading } = useInvoice(
     invoiceId,
     Boolean(invoiceId),
   ); // disable auto-fetch
+  React.useEffect(() => {
+    if (!payment) return;
+
+    paymentMethods.reset({
+      amount: payment.amount,
+      paymentMethod: payment.method ?? "",
+      datePaid: payment.datePaid ?? "",
+      paymentReference: "",
+    });
+  }, [payment]);
   const openDetailSheet = (invoiceId: string) => {
     setSelectedInvoiceId(invoiceId);
     setOpen(true);
+  };
+  const openConfirmPaymentModal = (payment: Payment) => {
+    setSelectedPayment(payment);
+    setModalOpen(true);
   };
   const methods = useForm<FinanceFormData>({
     resolver,
@@ -62,6 +94,20 @@ const Finance = () => {
       clientId: "",
       periodStart: "",
       periodEnd: "",
+    },
+    mode: "onSubmit",
+    reValidateMode: "onChange",
+    shouldUnregister: false,
+  });
+
+  const paymentMethods = useForm<PaymentFormType>({
+    resolver: paymentResolver,
+    defaultValues: {
+      paymentProof: undefined,
+      amount: 0,
+      paymentMethod: "",
+      datePaid: "",
+      paymentReference: "",
     },
     mode: "onSubmit",
     reValidateMode: "onChange",
@@ -108,6 +154,33 @@ const Finance = () => {
         err,
         methods.setError,
         "Failed to generate invoice",
+      );
+    }
+  };
+
+  const onPaymentSubmit = async (vals: PaymentFormType) => {
+    try {
+      const formData = new FormData();
+
+      formData.append("paymentProof", vals.paymentProof);
+      formData.append("paymentMethod", vals.paymentMethod);
+      formData.append("datePaid", vals.datePaid);
+      formData.append("amount", String(vals.amount));
+
+      if (vals.paymentReference) {
+        formData.append("paymentReference", vals.paymentReference);
+      }
+
+      await confirmPayment(formData);
+      toast?.success?.("Payment Confirmed");
+
+      setModalOpen(false);
+      paymentMethods.reset();
+    } catch (err) {
+      handleFormApiError<PaymentFormType>(
+        err,
+        paymentMethods.setError,
+        "Failed to submit request",
       );
     }
   };
@@ -177,7 +250,10 @@ const Finance = () => {
           <ChargesTab />
         </TabsContent>
         <TabsContent value="payments" className="mt-4">
-          <PaymentsTab openDetailSheet={openDetailSheet} />
+          <PaymentsTab
+            openDetailSheet={openDetailSheet}
+            openConfirmPaymentModal={openConfirmPaymentModal}
+          />
         </TabsContent>
         <TabsContent value="settings" className="mt-4">
           <SettingsTab />
@@ -214,6 +290,46 @@ const Finance = () => {
               </Button>
               <Button type="submit" disabled={isCreating}>
                 {isCreating ? <Spinner /> : "Generate Invoice"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <form
+            onSubmit={paymentMethods.handleSubmit(onPaymentSubmit)}
+            className="space-y-4"
+          >
+            <DialogHeader className="text-left">
+              <DialogTitle>Record Payment</DialogTitle>
+
+              {payment && (
+                <DialogDescription>
+                  Record payment for {payment.invoiceNumber} -{" "}
+                  {payment.client.firstname} {payment.client.lastname}
+                </DialogDescription>
+              )}
+            </DialogHeader>
+
+            <FormProvider {...paymentMethods}>
+              <PaymentFormField />
+            </FormProvider>
+
+            <DialogFooter className="w-full mt-10">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setModalOpen(false);
+                  paymentMethods.reset();
+                }}
+              >
+                Cancel
+              </Button>
+
+              <Button type="submit">
+                {isConfirming ? <Spinner /> : "Confirm Payment"}
               </Button>
             </DialogFooter>
           </form>

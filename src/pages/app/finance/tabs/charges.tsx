@@ -6,7 +6,7 @@ import { Info } from "lucide-react";
 
 const ChargesTab = () => {
   const [client, setClient] = useState("all");
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState("billed");
   const [rateType, setRateType] = useState("all");
 
   return (
@@ -27,7 +27,7 @@ const ChargesTab = () => {
             </div>
 
             <div>
-              <p className="text-sm font-medium text-blue-700">
+              <p className="text-sm font-medium text-blue-900">
                 Charges are automatically created from completed visits
               </p>
 
