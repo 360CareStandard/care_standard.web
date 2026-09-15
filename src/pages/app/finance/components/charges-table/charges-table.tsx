@@ -217,7 +217,7 @@ export function ChargesTable({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="p-0 !h-[55vh]">
-                  <div>
+                  <div className="flex flex-col items-center justify-center gap-3">
                     <img
                       src="/EmptyState.svg"
                       alt="No charges"

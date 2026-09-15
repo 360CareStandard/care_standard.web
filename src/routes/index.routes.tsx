@@ -1,12 +1,11 @@
 // routes/index.tsx
 import { Suspense, lazy } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import App from "@/App";
 import SplashVisual from "@/layouts/splash-visual";
 import AppLayout from "@/layouts/app-layout";
 import appChildRoutes from "./app.routes";
 import NotFound from "@/pages/404";
-import WorkspaceSelectionPage from "@/pages/workplace";
+import WorkspaceSelectionPage from "@/pages/workspace";
 import PublicOnlyRoute from "./public";
 import ProtectedRoute from "./protected";
 
@@ -19,8 +18,6 @@ export default function AppRoutes() {
   return (
     <Suspense fallback={<SplashVisual message="Loading…" />}>
       <Routes>
-        <Route path="/design" element={<App />} />
-
         {/* Auth layout wraps ALL auth pages */}
         <Route element={<AuthLayout />}>
           {/* Public-only pages get the gate */}

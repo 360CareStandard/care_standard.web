@@ -14,14 +14,14 @@ export default function MagicLinkCallback() {
   const next = "/select-workspace";
   // const next = qs.get("next") || "/select-workspace";
 
-  const { mutate, isPending } = useVerifyMagicCallback();
+  const { mutateAsync, isPending } = useVerifyMagicCallback();
 
   useEffect(() => {
     if (!token || !email) {
       navigate("/login?error=invalid-link", { replace: true });
       return;
     }
-    mutate(
+    mutateAsync(
       { token, email, agencyId },
       {
         onSuccess: () => navigate(next, { replace: true }),
@@ -34,9 +34,9 @@ export default function MagicLinkCallback() {
             navigate("/login?error=server", { replace: true });
           }
         },
-      }
+      },
     );
-  }, [token, email, agencyId, next, mutate, navigate]);
+  }, [token, email, agencyId, next, mutateAsync, navigate]);
 
   return (
     <section className="relative z-10 min-h-dvh grid place-items-center p-6 text-white">
