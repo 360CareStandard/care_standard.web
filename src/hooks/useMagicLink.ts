@@ -18,7 +18,7 @@ export function useVerifyMagicCallback() {
     mutationFn: AuthApi.verifyMagicToken, // ({ token, email, agencyId }) => Promise<AxiosResponse<LoginResponse>>
     retry: 0,
     onSuccess: (res) => {
-      console.log(res);
+      // console.log(res.data.data);
 
       const { token, user } = res.data.data;
       setAuth({ token, user }); // token persisted (or token-only if you chose that)
