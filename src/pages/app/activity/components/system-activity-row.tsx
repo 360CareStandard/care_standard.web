@@ -1,8 +1,6 @@
 // src/components/activity/SystemActivityRow.tsx
 
-import { ChevronRight, Settings } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { Settings } from "lucide-react";
 
 import type { SystemActivity } from "@/types/activity";
 
@@ -49,7 +47,7 @@ function getActivityDescription(item: SystemActivity) {
   return item.description;
 }
 
-export function SystemActivityRow({ item, onClick }: SystemActivityRowProps) {
+export function SystemActivityRow({ item }: SystemActivityRowProps) {
   const title = getActivityTitle(item.action);
   const description = getActivityDescription(item);
   const staff = item.target?.name ?? "";
@@ -96,7 +94,7 @@ export function SystemActivityRow({ item, onClick }: SystemActivityRowProps) {
           </div>
         </div>
 
-        <Button
+        {/* <Button
           variant="ghost"
           size="icon"
           className="h-8 w-8 shrink-0"
@@ -104,7 +102,7 @@ export function SystemActivityRow({ item, onClick }: SystemActivityRowProps) {
           aria-label="View system activity"
         >
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

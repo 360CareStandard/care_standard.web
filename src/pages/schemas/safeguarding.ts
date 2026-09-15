@@ -4,8 +4,8 @@ import z from "zod"
 
 
 export const safeguardingSchema = z.object({
-    clientId: z.string().uuid("Please enter a valid client ID"),
-    reportedByStaffId: z.string().uuid("Please enter a valid staff ID"),
+    clientId: z.string().uuid("Select a client"),
+    reportedByStaffId: z.string().uuid("Select a carer"),
     incidentType: z.enum(
         incidentTypeOptions.map((o) => o.value) as [string, ...string[]]
     ),

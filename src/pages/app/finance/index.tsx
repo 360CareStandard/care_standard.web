@@ -3,7 +3,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Add } from "iconsax-react";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
-import OverviewTab from "./components/overview";
+import OverviewTab from "./tabs/overview";
+import InvoicesTab from "./tabs/invoices";
+import ChargesTab from "./tabs/charges";
+import PaymentsTab from "./tabs/paymentsTab";
+import SettingsTab from "./tabs/settingsTab";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { FinanceFormData, financeSchema } from "@/pages/schemas/finance";
+import { FormProvider, Resolver, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import FinanceFormField from "./form/generate-invoice";
+import { useGenerateInvoice, useInvoice } from "@/hooks/finance/useFinance";
+import { handleFormApiError } from "@/lib/handle-form-error";
+import toast from "react-hot-toast";
+import { Spinner } from "@/components/shared/spinner";
+import { InvoiceDetailsSheet } from "./components/single-invoice";
+
 const TAB_KEYS = [
   "overview",
   "invoices",
@@ -12,9 +34,39 @@ const TAB_KEYS = [
   "settings",
 ] as const;
 type TabKey = (typeof TAB_KEYS)[number];
+
+const resolver = zodResolver(
+  financeSchema,
+) as unknown as Resolver<FinanceFormData>;
+
 const Finance = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [invoiceId, setSelectedInvoiceId] = React.useState<string | undefined>(
+    undefined,
+  );
+  const { mutateAsync: generateInvoice, isPending: isCreating } =
+    useGenerateInvoice();
+  const { data: invoiceDetails, isLoading: invoiceDetailsLoading } = useInvoice(
+    invoiceId,
+    Boolean(invoiceId),
+  ); // disable auto-fetch
+  const openDetailSheet = (invoiceId: string) => {
+    setSelectedInvoiceId(invoiceId);
+    setOpen(true);
+  };
+  const methods = useForm<FinanceFormData>({
+    resolver,
+    defaultValues: {
+      clientId: "",
+      periodStart: "",
+      periodEnd: "",
+    },
+    mode: "onSubmit",
+    reValidateMode: "onChange",
+    shouldUnregister: false,
+  });
   const raw = searchParams.get("tab") ?? "cases";
   const currentTab: TabKey = (TAB_KEYS as readonly string[]).includes(raw)
     ? (raw as TabKey)
@@ -40,6 +92,26 @@ const Finance = () => {
       );
     }
   }, [searchParams, setSearchParams]);
+
+  const onValidSubmit = async (vals: FinanceFormData) => {
+    const payload = {
+      ...vals,
+    };
+
+    try {
+      await generateInvoice(payload);
+      toast?.success?.("Invoice generated successfully");
+      setConfirmOpen(false);
+      methods.reset();
+    } catch (err) {
+      handleFormApiError<FinanceFormData>(
+        err,
+        methods.setError,
+        "Failed to generate invoice",
+      );
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
@@ -49,7 +121,11 @@ const Finance = () => {
             Manage billing, invoices, and payments
           </p>
         </div>
-        <Button>
+        <Button
+          onClick={() => setConfirmOpen(true)}
+          variant="default"
+          className="gap-2"
+        >
           <Add className="h-4 w-4" />
           Generate Invoice
         </Button>
@@ -95,18 +171,61 @@ const Finance = () => {
         </TabsContent>
 
         <TabsContent value="invoices" className="mt-4">
-          <div>2</div>
+          <InvoicesTab openDetailSheet={openDetailSheet} />
         </TabsContent>
         <TabsContent value="charges" className="mt-4">
-          <div>3</div>
+          <ChargesTab />
         </TabsContent>
         <TabsContent value="payments" className="mt-4">
-          <div>4</div>
+          <PaymentsTab openDetailSheet={openDetailSheet} />
         </TabsContent>
         <TabsContent value="settings" className="mt-4">
-          <div>5</div>
+          <SettingsTab />
         </TabsContent>
       </Tabs>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <form
+            onSubmit={methods.handleSubmit(onValidSubmit)}
+            className="space-y-4"
+          >
+            <DialogHeader className="text-left">
+              <DialogTitle>Generate invoice</DialogTitle>
+              <DialogDescription>
+                Select a client and date range to generate an invoice from
+                unbilled charges.
+              </DialogDescription>
+            </DialogHeader>
+
+            <FormProvider {...methods}>
+              <FinanceFormField />
+            </FormProvider>
+
+            <DialogFooter className="w-full mt-10">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setConfirmOpen(false);
+                  methods.reset();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isCreating}>
+                {isCreating ? <Spinner /> : "Generate Invoice"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <InvoiceDetailsSheet
+        open={open}
+        onOpenChange={setOpen}
+        item={invoiceDetails}
+        isLoading={invoiceDetailsLoading}
+      />
     </div>
   );
 };

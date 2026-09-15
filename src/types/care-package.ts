@@ -5,6 +5,8 @@ export interface CarePackage {
   agencyId: string;
   name: string;
   description: string;
+  rate: string;
+  amount: number;
   createdAt: string;
   updatedAt: string;
   agency: Workspace;
