@@ -87,13 +87,15 @@ export default function ProfileDropdown({
             <DropdownMenuShortcut />
           </DropdownMenuItem>
 
+          <DropdownMenuSeparator />
+
           {!isSuperAdmin && (
             <DropdownMenuItem onClick={() => navigate("/app/care-packages")}>
               Care packages
               <DropdownMenuShortcut />
             </DropdownMenuItem>
           )}
-
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             className="mt-2"
             // onClick={
@@ -117,9 +119,20 @@ export default function ProfileDropdown({
             What's New?
             <DropdownMenuShortcut />
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
           {!isSuperAdmin && (
             <DropdownMenuItem className="mt-2">
               Help and Support
+              <DropdownMenuShortcut />
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
+
+          {isSuperAdmin && (
+            <DropdownMenuItem
+              onClick={() => navigate("/care-standard360/agencies")}
+            >
+              Agencies
               <DropdownMenuShortcut />
             </DropdownMenuItem>
           )}
