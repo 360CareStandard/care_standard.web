@@ -185,7 +185,7 @@ export function StaffTable({
         search={search}
         onSearchChange={setSearch}
       />
-      <div>
+      <div className="rounded-md border">
         <Table>
           {table.getRowModel().rows?.length ? (
             <TableHeader className="bg-neutral-50">

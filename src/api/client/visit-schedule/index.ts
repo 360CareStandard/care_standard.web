@@ -10,7 +10,7 @@ import { apiDelete, apiGet, apiPatch, apiPost } from "@/utils/api-connect";
 export const VisitScheduleApi = {
   list: async (id: string) => {
     return apiGet<VisitSchedulesResponse>(
-      `visit-schedule/clients/${id}/schedules`,
+      `/visit-schedule/clients/${id}/schedules`,
     ).then((r) => r?.data);
   },
   get: (clientId: string, scheduleId: string) =>

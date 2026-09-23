@@ -170,7 +170,7 @@ const AddCarePackage = ({ open, onOpenChange, packageId }: Props) => {
         <div className="space-y-4">
           {isLoadingEditData ? (
             <div className="flex bg-n min-h-40 flex-col items-center justify-center gap-3">
-              <Spinner />
+              <Spinner size="lg" />
               <p className="text-sm text-muted-foreground">
                 Loading care package...
               </p>

@@ -22,6 +22,7 @@ type ProfileDropdownProps = {
   email: string;
   role?: string;
   workspaceName?: string;
+  isSuperAdmin?: boolean;
 
   /** Optional actions (wire from AppHeader) */
   onOpenWorkspaceSwitcher?: () => void;
@@ -34,6 +35,7 @@ export default function ProfileDropdown({
   name,
   email,
   role,
+  isSuperAdmin,
   // onOpenWorkspaceSwitcher,
   // onOpenAccount,
   // onOpenOrgSettings,
@@ -85,10 +87,12 @@ export default function ProfileDropdown({
             <DropdownMenuShortcut />
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => navigate("/app/care-packages")}>
-            Care packages
-            <DropdownMenuShortcut />
-          </DropdownMenuItem>
+          {!isSuperAdmin && (
+            <DropdownMenuItem onClick={() => navigate("/app/care-packages")}>
+              Care packages
+              <DropdownMenuShortcut />
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuItem
             className="mt-2"
@@ -113,10 +117,12 @@ export default function ProfileDropdown({
             What's New?
             <DropdownMenuShortcut />
           </DropdownMenuItem>
-          <DropdownMenuItem className="mt-2">
-            Help and Support
-            <DropdownMenuShortcut />
-          </DropdownMenuItem>
+          {!isSuperAdmin && (
+            <DropdownMenuItem className="mt-2">
+              Help and Support
+              <DropdownMenuShortcut />
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
