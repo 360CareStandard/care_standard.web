@@ -15,13 +15,12 @@ export function useVerifyMagicCallback() {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: AuthApi.verifyMagicToken, // ({ token, email, agencyId }) => Promise<AxiosResponse<LoginResponse>>
+    mutationFn: AuthApi.verifyMagicToken,
     retry: 0,
-    onSuccess: (res) => {
-      // console.log(res.data.data);
 
+    onSuccess: (res) => {
       const { token, user } = res.data.data;
-      setAuth({ token, user }); // token persisted (or token-only if you chose that)
+      setAuth({ token, user });
       qc.setQueryData(qk.me, { data: user });
     },
   });

@@ -12,3 +12,4 @@ export type User = {
   createdAt: string;
   updatedAt: string;
 };
+

@@ -5,13 +5,16 @@ import SplashVisual from "@/layouts/splash-visual";
 import AppLayout from "@/layouts/app-layout";
 import appChildRoutes from "./app.routes";
 import NotFound from "@/pages/404";
-import WorkspaceSelectionPage from "@/pages/workspace";
 import PublicOnlyRoute from "./public";
 import ProtectedRoute from "./protected";
+import AdminLayout from "@/layouts/admin-layout";
+import adminChildRoutes from "./admin.routes";
+import Forbidden from "@/pages/403";
 
 const AuthLayout = lazy(() => import("@/layouts/auth-layout"));
 const Login = lazy(() => import("@/pages/auth/login-page"));
 const CheckEmailPage = lazy(() => import("@/pages/auth/check-email-page"));
+const WorkspaceSelectionPage = lazy(() => import("@/pages/workspace"));
 const MagicLinkCallback = lazy(() => import("@/pages/auth/magic-link"));
 
 export default function AppRoutes() {
@@ -39,6 +42,7 @@ export default function AppRoutes() {
 
         {/* Always-accessible 404 */}
         <Route path="/404" element={<NotFound />} />
+        <Route path="/403" element={<Forbidden />} />
 
         {/* Workspace selection (protected) */}
         <Route
@@ -49,6 +53,17 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        {/* Workspace selection (protected) */}
+        <Route
+          path="care-standard360"
+          element={
+            <ProtectedRoute>
+              <AdminLayout></AdminLayout>
+            </ProtectedRoute>
+          }
+        >
+          {adminChildRoutes}
+        </Route>
 
         {/* Protected app */}
         <Route

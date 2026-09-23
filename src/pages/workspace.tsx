@@ -140,7 +140,7 @@ export default function WorkspaceSelectionPage() {
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Top brand bar */}
       <div className="fixed top-0 z-10 py-4 w-full flex justify-center bg-[#0A5A44] px-6">
-        <Link to="/app">
+        <Link to="#">
           <img
             src="/logo/logo-care-standard.svg"
             alt="Care Standard 360+"
@@ -151,9 +151,7 @@ export default function WorkspaceSelectionPage() {
 
       <main className="mx-auto max-w-4xl px-6 py-10 mt-20 space-y-6">
         <header className="mb-10">
-          <h1 className="text-xl font-semibold">
-            Care360 – Workspace Selection
-          </h1>
+          <h1 className="text-xl font-bold">Care360 – Workspace Selection</h1>
           <p className="text-sm text-muted-foreground">Browse all workspaces</p>
         </header>
 
@@ -178,14 +176,14 @@ export default function WorkspaceSelectionPage() {
                   onChange={(e) => setQ(e.target.value)}
                   onKeyDown={onKeyDown}
                   placeholder="Search for a workspace"
-                  className="pl-9 bg-white"
+                  className="pl-9 h-11 bg-white"
                   type="search"
                 />
               </div>
 
               <Popover open={openFilter} onOpenChange={setOpenFilter}>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" className="gap-2 h-11">
                     <FilterIcon className="h-4 w-4" />
                     Filter
                     {activeFilters.length > 0 && (

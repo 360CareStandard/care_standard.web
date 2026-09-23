@@ -174,7 +174,7 @@ export function InvoiceTable({
         onSearchChange={setSearch}
       />
 
-      <div>
+      <div className="rounded-md border">
         <Table>
           {table.getRowModel().rows.length > 0 && (
             <TableHeader className="bg-neutral-50 border-b-2 border-b-black/30">

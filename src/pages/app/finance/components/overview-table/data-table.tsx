@@ -73,7 +73,7 @@ export function DataTable<TData, TValue>({
       {/* <DataTableToolbar table={table} /> */}
       {loading && <DataTableSkeleton columnCount={10} />}
       {!loading && (
-        <div className="">
+        <div className="rounded-md border">
           <Table>
             <TableHeader className="bg-neutral-50 border-b-2 border-b-black/30">
               {table.getHeaderGroups().map((headerGroup) => (

@@ -138,4 +138,20 @@ export const qk = {
     "payments",
     params,
   ] as const,
+
+
+  //Agency
+  agencyList: (params?: { page?: number; limit?: number; q?: string }) => [
+    "agency",
+    "list",
+    params,
+  ],
+
+  agencyInfinite: (params?: { limit?: number; q?: string }) => [
+    "agency",
+    "infinite",
+    params,
+  ],
+
+  agencyDetail: (id: string) => ["agency", "detail", id],
 };

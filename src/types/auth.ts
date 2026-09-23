@@ -7,5 +7,5 @@ export type LoginBody = {
 };
 export type LoginResponse = {
   status: "success";
-  data: { token: string; user: User };
+  data: { token: string; user: User, isSuperAdmin: boolean };
 };

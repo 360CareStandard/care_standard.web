@@ -1,4 +1,3 @@
-// src/pages/auth/magic-link.tsx
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useVerifyMagicCallback } from "@/hooks/useMagicLink";
@@ -11,8 +10,6 @@ export default function MagicLinkCallback() {
   const token = qs.get("token") || "";
   const email = qs.get("email") || "";
   const agencyId = qs.get("agencyId") || undefined;
-  const next = "/select-workspace";
-  // const next = qs.get("next") || "/select-workspace";
 
   const { mutateAsync, isPending } = useVerifyMagicCallback();
 
@@ -21,23 +18,35 @@ export default function MagicLinkCallback() {
       navigate("/login?error=invalid-link", { replace: true });
       return;
     }
-    mutateAsync(
-      { token, email, agencyId },
-      {
-        onSuccess: () => navigate(next, { replace: true }),
-        onError: (err: any) => {
-          const code = err?.response?.status;
-          // Your API shows 404 with {status:"fail", message:"Invalid or expired token"}
-          if (code === 404 || code === 400 || code === 401) {
-            navigate("/login?error=expired", { replace: true });
-          } else {
-            navigate("/login?error=server", { replace: true });
-          }
-        },
-      },
-    );
-  }, [token, email, agencyId, next, mutateAsync, navigate]);
 
+    const verifyMagicLink = async () => {
+      try {
+        const response = await mutateAsync({
+          token,
+          email,
+          agencyId,
+        });
+
+        const { isSuperAdmin } = response.data.data;
+
+        if (isSuperAdmin) {
+          navigate("/care-standard360", { replace: true });
+        } else {
+          navigate("/select-workspace", { replace: true });
+        }
+      } catch (err: any) {
+        const code = err?.response?.status;
+
+        if (code === 404 || code === 400 || code === 401) {
+          navigate("/login?error=expired", { replace: true });
+        } else {
+          navigate("/login?error=server", { replace: true });
+        }
+      }
+    };
+
+    verifyMagicLink();
+  }, [token, email, agencyId, mutateAsync, navigate]);
   return (
     <section className="relative z-10 min-h-dvh grid place-items-center p-6 text-white">
       <div className="flex flex-col items-center gap-6">
@@ -46,8 +55,10 @@ export default function MagicLinkCallback() {
           alt="care-standard"
           className="h-16 w-auto drop-shadow-md"
         />
+
         <div className="flex items-center gap-3 text-sm opacity-90">
           <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/60 border-t-transparent" />
+
           {isPending ? "Signing you in…" : "Processing magic link…"}
         </div>
       </div>

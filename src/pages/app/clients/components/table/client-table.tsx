@@ -180,7 +180,7 @@ export function ClientsTable({
 
       <DataTableToolbar table={table} />
 
-      <div>
+      <div className="rounded-md border">
         <Table>
           {table.getRowModel().rows?.length ? (
             <TableHeader className="bg-neutral-50">
