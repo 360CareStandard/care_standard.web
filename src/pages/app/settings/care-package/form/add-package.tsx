@@ -214,6 +214,8 @@ const AddCarePackage = ({ open, onOpenChange, packageId }: Props) => {
                     placeholder="Select rate type"
                     options={[
                       { value: "hourly", label: "Hourly" },
+                      { value: "daily", label: "Daily" },
+                      { value: "nightly", label: "Nightly" },
                       { value: "weekly", label: "Weekly" },
                       { value: "monthly", label: "Monthly" },
                     ]}
