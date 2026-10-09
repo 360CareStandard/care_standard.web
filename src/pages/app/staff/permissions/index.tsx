@@ -29,6 +29,7 @@ import {
   StaffPermissionSchema,
   StaffPermissionForm,
 } from "../schemas/permissions";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 type RoleCardProps = {
   title: string;
@@ -290,7 +291,11 @@ const StaffPermission = () => {
 
       reset(data);
     } catch (error) {
-      console.error("Failed to save staff permissions:", error);
+      handleFormApiError<StaffPermissionForm>(
+        error,
+        methods.setError,
+        "Failed to save staff permissions",
+      );
     }
   };
 

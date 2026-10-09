@@ -20,6 +20,7 @@ import { Spinner } from "@/components/shared/spinner";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import AddContact from "../information/components/forms/add-contact";
 import ClientContactTable from "./components/table/care-circle-table";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 const initialFormValues: Partial<AddContactForm> = {
   relationshipToClient: "other",
@@ -36,7 +37,7 @@ const CareCircle = () => {
 
   const [open, setOpen] = React.useState(false);
   const [editingContactId, setEditingContactId] = React.useState<string | null>(
-    null
+    null,
   );
   // alert dialog state
   const [confirmOpen, setConfirmOpen] = React.useState(false);
@@ -55,7 +56,7 @@ const CareCircle = () => {
     useClientContact(
       clientId as string,
       editingContactId ?? "",
-      Boolean(editingContactId)
+      Boolean(editingContactId),
     );
 
   // populate form for editing
@@ -125,8 +126,13 @@ const CareCircle = () => {
       methods.reset(initialFormValues as any);
       setEditingContactId(null);
     } catch (err) {
-      console.error(err);
-      toast.error("Save failed, try again");
+      handleFormApiError<AddContactForm>(
+        err,
+        methods.setError,
+        editingContactId
+          ? "Failed to update contact"
+          : "Failed to create contact",
+      );
     }
   };
   const handleSheetSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
