@@ -28,6 +28,7 @@ import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { MedicationList } from "./components/medication-list";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 export const initialMedicationValues: MedicationForm = {
   // createdBy: "",
@@ -215,9 +216,14 @@ const Medications = () => {
       setOpen(false);
       setEditingId(null);
       methods.reset(initialMedicationValues as any);
-    } catch (err: any) {
-      console.error(err);
-      toast.error("Save failed");
+    } catch (err) {
+      handleFormApiError<MedicationForm>(
+        err,
+        methods.setError,
+        editingId
+          ? "Failed to update medication"
+          : "Failed to create medication",
+      );
     }
   };
 

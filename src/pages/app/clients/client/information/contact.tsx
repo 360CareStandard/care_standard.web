@@ -24,6 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/shared/spinner";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import SinglePageLoader from "@/components/loading/single-page-loader";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 type Props = {
   clientId: string;
@@ -134,8 +135,13 @@ const ContactNextOfKin: React.FC<Props> = ({ clientId }) => {
       methods.reset(initialFormValues as any);
       setEditingContactId(null);
     } catch (err) {
-      console.error(err);
-      toast.error("Save failed, try again");
+      handleFormApiError<AddContactForm>(
+        err,
+        methods.setError,
+        editingContactId
+          ? "Failed to update contact"
+          : "Failed to create contact",
+      );
     }
   };
   const handleSheetSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {

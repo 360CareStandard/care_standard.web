@@ -41,7 +41,9 @@ export const CareSetupDetails = ({ data }: Props) => {
           </div>
 
           <div className="grid grid-cols-2 gap-x-12 gap-y-4">
-            <InfoRow label="Package Type">{plan.carePlan?.name || "-"}</InfoRow>
+            <InfoRow label="Package Type">
+              {plan?.carePackage?.name || "-"}
+            </InfoRow>
             <InfoRow label="Visit Duration Presets">
               {plan.visitDurationPreset || "-"} Min
             </InfoRow>
@@ -65,6 +67,7 @@ export const CareSetupDetails = ({ data }: Props) => {
                 : "-"}
             </InfoRow>
             <InfoRow label="Overnight Care">
+              {/* {plan.overnightCareType ? plan.overnightCareType : "Not required"} */}
               {plan.overnightCareRequired
                 ? `${
                     plan.overnightCareType === "sleep-in"
@@ -79,7 +82,11 @@ export const CareSetupDetails = ({ data }: Props) => {
                       "hh:mm A",
                     ) || "-"
                   })`
-                : "-"}
+                : plan.overnightCareType
+                  ? plan.overnightCareType === "sleep-in"
+                    ? "Sleep-in"
+                    : "Waking night"
+                  : "-"}
             </InfoRow>
           </div>
         </CardContent>
@@ -268,7 +275,21 @@ export const CareSetupDetails = ({ data }: Props) => {
               </InfoRow>
 
               <InfoRow label="Escalation Contact">
-                {plan.escalationContact || "-"}
+                {plan.escalationContact ? (
+                  <div>
+                    <p className="font-medium">
+                      {plan.escalationContact.contactName}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {plan.escalationContact.contactEmail}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {plan.escalationContact.contactPhone}
+                    </p>
+                  </div>
+                ) : (
+                  "-"
+                )}
               </InfoRow>
 
               <InfoRow label="Lone Worker Alert">

@@ -43,10 +43,13 @@ import { handleFormApiError } from "@/lib/handle-form-error";
 
 export default function Availability() {
   const { staffId } = useParams<{ staffId: string }>();
-  const [openAvailabilitySheet, setOpenAvailabilitySheet] = React.useState(false);
+  const [openAvailabilitySheet, setOpenAvailabilitySheet] =
+    React.useState(false);
   const [openAbsenceSheet, setOpenAbsenceSheet] = React.useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-  const [deleteMode, setDeleteMode] = React.useState<"instance" | "future">("instance");
+  const [deleteMode, setDeleteMode] = React.useState<"instance" | "future">(
+    "instance",
+  );
   const [selectedAvailability, setSelectedAvailability] =
     React.useState<StaffAvailability | null>(null);
   const [editingId, setEditingId] = React.useState<string | null>(null);
@@ -71,21 +74,26 @@ export default function Availability() {
   const staffAvailability = availabilities ?? [];
 
   const availabilityMethods = useForm<StaffAvailabilityForm>({
-    resolver: zodResolver(StaffAvailabilitySchema) as unknown as Resolver<StaffAvailabilityForm>,
+    resolver: zodResolver(
+      StaffAvailabilitySchema,
+    ) as unknown as Resolver<StaffAvailabilityForm>,
     mode: "onChange",
     defaultValues: initialAvailabilityFormValues as StaffAvailabilityForm,
   });
 
   const absenceMethods = useForm<StaffBookAbsenceForm>({
-    resolver: zodResolver(StaffBookAbsenceSchema) as unknown as Resolver<StaffBookAbsenceForm>,
+    resolver: zodResolver(
+      StaffBookAbsenceSchema,
+    ) as unknown as Resolver<StaffBookAbsenceForm>,
     mode: "onChange",
     defaultValues: initialAbsenceFormValues as StaffBookAbsenceForm,
   });
 
-
   const openForAddAvailability = () => {
     setEditingId(null);
-    availabilityMethods.reset(initialAvailabilityFormValues as StaffAvailabilityForm);
+    availabilityMethods.reset(
+      initialAvailabilityFormValues as StaffAvailabilityForm,
+    );
     setOpenAvailabilitySheet(true);
   };
 
@@ -113,11 +121,17 @@ export default function Availability() {
 
       setOpenAvailabilitySheet(false);
       setEditingId(null);
-      availabilityMethods.reset(initialAvailabilityFormValues as StaffAvailabilityForm);
+      availabilityMethods.reset(
+        initialAvailabilityFormValues as StaffAvailabilityForm,
+      );
     } catch (err: unknown) {
-      console.error("Save failed", err);
-      const message = err instanceof Error ? err.message : "Save failed, try again";
-      toast.error(message);
+      handleFormApiError<StaffAvailabilityForm>(
+        err,
+        availabilityMethods.setError,
+        editingId
+          ? "Failed to update staff availability"
+          : "Failed to create staff availability",
+      );
     }
   };
 
@@ -131,7 +145,7 @@ export default function Availability() {
       handleFormApiError<StaffBookAbsenceForm>(
         err,
         absenceMethods.setError,
-        "Failed to book absence"
+        "Failed to book absence",
       );
     }
   };
@@ -150,12 +164,16 @@ export default function Availability() {
     }
   };
 
-  const handleAvailabilitySheetSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleAvailabilitySheetSubmit: React.FormEventHandler<
+    HTMLFormElement
+  > = (e) => {
     e.preventDefault();
     void availabilityMethods.handleSubmit(onSubmitAvailability)();
   };
 
-  const handleAbsenceSheetSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleAbsenceSheetSubmit: React.FormEventHandler<HTMLFormElement> = (
+    e,
+  ) => {
     e.preventDefault();
     void absenceMethods.handleSubmit(onSubmitAbsence)();
   };
@@ -172,7 +190,8 @@ export default function Availability() {
                 {staffData?.user.firstname}'s availability schedule
               </h1>
               <p className="mt-1 text-xs text-muted-foreground">
-                Set working availability and manage absences for this staff member
+                Set working availability and manage absences for this staff
+                member
               </p>
             </div>
           )
@@ -239,7 +258,9 @@ Add availability to enable scheduling."
           setOpenAvailabilitySheet(open);
           if (!open) {
             setEditingId(null);
-            availabilityMethods.reset(initialAvailabilityFormValues as StaffAvailabilityForm);
+            availabilityMethods.reset(
+              initialAvailabilityFormValues as StaffAvailabilityForm,
+            );
           }
         }}
         title={editingId ? "Edit Availability" : "Add Availability"}
@@ -267,14 +288,20 @@ Add availability to enable scheduling."
         onOpenChange={(open) => {
           setOpenAbsenceSheet(open);
           if (!open) {
-            absenceMethods.reset(initialAbsenceFormValues as StaffBookAbsenceForm);
+            absenceMethods.reset(
+              initialAbsenceFormValues as StaffBookAbsenceForm,
+            );
           }
         }}
         title="Book absence"
         description="Record when this staff member will be unavailable"
         headerClassName="bg-[#E4E7EC] py-2.5"
         submitLabel={
-          absenceMethods.formState.isSubmitting ? <Spinner size="sm" /> : "Book absence"
+          absenceMethods.formState.isSubmitting ? (
+            <Spinner size="sm" />
+          ) : (
+            "Book absence"
+          )
         }
         submitDisabled={absenceMethods.formState.isSubmitting}
         onSubmit={handleAbsenceSheetSubmit}

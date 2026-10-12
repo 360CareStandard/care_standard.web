@@ -28,6 +28,7 @@ import { AssessmentFormFields } from "./forms/care-plan/assessment-fields";
 import { Spinner } from "@/components/shared/spinner";
 import { CarePlanDetailsSheet } from "./components/care-plan-details-sheet";
 import { CarePlanCardSkeleton } from "./components/care-plan-skeleton";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 const initialFormValues: Partial<AssessmentForm> = {
   assessmentType: "personal-care",
@@ -118,9 +119,14 @@ export default function CarePlan() {
       setOpen(false);
       setEditingId(null);
       methods.reset(initialFormValues as any);
-    } catch (err: any) {
-      console.error(err);
-      toast.error("Save failed");
+    } catch (err) {
+      handleFormApiError<AssessmentForm>(
+        err,
+        methods.setError,
+        editingId
+          ? "Failed to update assessment"
+          : "Failed to create assessment",
+      );
     }
   };
   const handleView = (plan: CarePlan) => {

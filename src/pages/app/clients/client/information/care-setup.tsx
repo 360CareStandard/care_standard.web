@@ -22,6 +22,7 @@ import { ClientClientCarePlan } from "@/types/client/care-setup";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/shared/spinner";
 import { Edit } from "iconsax-react";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 // in CareSetup component when creating `useForm`
 const initialFormValues: Partial<CareSetupForm> = {
@@ -131,7 +132,7 @@ const CareSetup = ({ clientId }: Props) => {
               plan.lateVisitAlertThreshold === undefined
             ? undefined
             : Number(plan.lateVisitAlertThreshold) || undefined,
-      escalationContactId: plan.escalationContactId ?? undefined,
+      escalationContactId: plan.escalationContact?.id ?? undefined,
       loneWorkerAlertEnabled: !!plan.loneWorkerAlertEnabled,
       authorisedHoursPerWeek:
         typeof plan.authorisedHoursPerWeek === "number"
@@ -161,8 +162,13 @@ const CareSetup = ({ clientId }: Props) => {
       // methods.reset(initialFormValues as any);
       setEditingSetupId(null);
     } catch (err) {
-      console.error(err);
-      toast.error("Save failed, try again");
+      handleFormApiError<CareSetupForm>(
+        err,
+        methods.setError,
+        editingSetupId
+          ? "Failed to update care setup"
+          : "Failed to create care setup",
+      );
     }
     // console.log("submit:", values);
     // setOpen(false);

@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { LongText } from "@/components/shared/long-text";
-import { Link } from "react-router-dom";
 import { AgencyNew } from "@/types/agency";
 import { DataTableRowActions } from "./data-table-row-actions";
 
@@ -27,10 +26,7 @@ export const agencyColumns: ColumnDef<AgencyNew>[] = [
         .toUpperCase();
 
       return (
-        <Link
-          to={`/app/agencies/${agency.id}`}
-          className="flex min-w-[220px] items-center gap-3"
-        >
+        <div className="flex min-w-[220px] items-center gap-3">
           <Avatar className="h-10 w-10 shrink-0">
             {agency.logo ? (
               <AvatarImage
@@ -54,7 +50,7 @@ export const agencyColumns: ColumnDef<AgencyNew>[] = [
               {agency.legalName || "—"}
             </span>
           </div>
-        </Link>
+        </div>
       );
     },
     enableHiding: false,

@@ -25,6 +25,7 @@ import {
   useStaffContact,
 } from "@/hooks/staff/useStaffContacts";
 import { ErrorStateCard } from "../components/error-state";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 type Props = {
   staffId: string;
@@ -133,8 +134,13 @@ const ContactNextOfKin: React.FC<Props> = ({ staffId }) => {
       methods.reset(initialFormValues as any);
       setEditingContactId(null);
     } catch (err) {
-      console.error(err);
-      toast.error("Save failed, try again");
+      handleFormApiError<AddStaffContactForm>(
+        err,
+        methods.setError,
+        editingContactId
+          ? "Failed to update contact"
+          : "Failed to create contact",
+      );
     }
   };
   const handleSheetSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {

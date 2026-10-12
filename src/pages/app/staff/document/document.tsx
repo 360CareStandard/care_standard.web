@@ -19,6 +19,7 @@ import { StaffDocumentForm, StaffDocumentSchema } from "../schemas/document";
 import { DocumentForm } from "./components/form/document";
 import { DocumentType, StaffDocument } from "@/types/staff/document";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { handleFormApiError } from "@/lib/handle-form-error";
 
 const initialFormValues: Partial<StaffDocumentForm> = {
   expired: false, // ✅ IMPORTANT
@@ -150,8 +151,14 @@ const Document = ({ staffId }: Props) => {
 
       setOpen(false);
       methods.reset(initialFormValues as any);
-    } catch (err: any) {
-      toast.error(err?.message ?? "Save failed");
+    } catch (err) {
+      handleFormApiError<StaffDocumentForm>(
+        err,
+        methods.setError,
+        editingId
+          ? "Failed to update staff document"
+          : "Failed to create staff document",
+      );
     }
   }
   const requiredDocumentTypes: DocumentType[] = [
