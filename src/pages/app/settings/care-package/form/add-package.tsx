@@ -41,7 +41,7 @@ const AddCarePackage = ({ open, onOpenChange, packageId }: Props) => {
         description: "",
         agencyId: agencyId ?? "",
         rate: "hourly",
-        amount: 0,
+        amount: "",
       },
       mode: "onSubmit",
       reValidateMode: "onChange",
@@ -198,7 +198,6 @@ const AddCarePackage = ({ open, onOpenChange, packageId }: Props) => {
                 <div className="space-y-2">
                   <TextField
                     label="Amount (£)"
-                    type="number"
                     inputMode="decimal"
                     min="0.01"
                     step="0.01"

@@ -132,7 +132,7 @@ const CareSetup = ({ clientId }: Props) => {
               plan.lateVisitAlertThreshold === undefined
             ? undefined
             : Number(plan.lateVisitAlertThreshold) || undefined,
-      escalationContactId: plan.escalationContactId ?? undefined,
+      escalationContactId: plan.escalationContact?.id ?? undefined,
       loneWorkerAlertEnabled: !!plan.loneWorkerAlertEnabled,
       authorisedHoursPerWeek:
         typeof plan.authorisedHoursPerWeek === "number"

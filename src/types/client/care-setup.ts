@@ -31,7 +31,26 @@ export interface CarerDetails {
   };
 }
 
+interface EscalationContact {
+  id: string;
+  contactName: string;
+  contactEmail: string;
+  contactPhone: string;
+  relationshipToClient: string;
+  isEmergencyContact: boolean;
+  isPrimaryContact: boolean;
+  hasAppAccess: boolean;
+  notes: string;
+  status: string;
+  metadata: Record<string, unknown>;
+}
+
 export interface ClientClientCarePlan {
+  carePackage: {
+    id: string;
+    name: string;
+    description: string;
+  };
   id: string; // UUID
   clientId: string;
   agencyId: string;
@@ -46,7 +65,8 @@ export interface ClientClientCarePlan {
   continuityPriority: boolean;
   createdAt: string; // ISO datetime
   doubleUpVisitRequired: boolean;
-  escalationContact?: string | null; // UUID
+  escalationContact?: EscalationContact;
+  fundingType?: "NHS" | "local authority" | "private" | "mixed" | null;
   funder?: string | null;
   fundingSource?: "NHS" | "local authority" | "private" | "mixed" | null;
   languageRequirements: string[];

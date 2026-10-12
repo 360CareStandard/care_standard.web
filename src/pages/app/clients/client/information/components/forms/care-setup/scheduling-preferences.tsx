@@ -6,19 +6,18 @@ import {
   LanguageEnum,
   SkillEnum,
   CareSetupForm,
-  VisitPresetEnum,
 } from "../../../../../schemas/care-setup";
 import z from "zod";
 import { customSelectStyles } from "@/styles/react-select";
 import React from "react";
 import CarerSelector from "./selector";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 import CreatableSelect from "react-select/creatable";
 
-const durationOptions = VisitPresetEnum.options.map((v) => ({
-  value: v,
-  label: v,
-}));
+// const durationOptions = VisitPresetEnum.options.map((v) => ({
+//   value: v,
+//   label: v,
+// }));
 
 const skills = SkillEnum.options.map((v) => ({ value: v, label: v }));
 type SkillValue = z.infer<typeof SkillEnum>; // "Medication" | "Dementia Care" | ...
@@ -41,7 +40,7 @@ export function SchedulingPreferencesFields() {
       {/* Visit Duration Presets (multi-checkbox) */}
 
       <div>
-        <Label className="mb-2 block text-sm font-medium">
+        {/* <Label className="mb-2 block text-sm font-medium">
           Visit Period Presets
         </Label>
 
@@ -72,7 +71,7 @@ export function SchedulingPreferencesFields() {
               </div>
             );
           }}
-        />
+        /> */}
         {/* 
         {errors.visitPeriodPreset?.message && (
           <p className="mt-1 text-sm text-red-600">

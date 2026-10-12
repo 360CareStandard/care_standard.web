@@ -79,7 +79,7 @@ export function ErrorStateCard({
         {actions ? <div className="mt-1">{actions}</div> : null}
 
         <div className="mt-1">
-          <Button onClick={onClick} className="text-xs" size={"sm"}>
+          <Button onClick={onClick} className="text-xs">
             <RefreshCw />
             Retry
           </Button>
