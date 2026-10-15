@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useVerifyMagicCallback } from "@/hooks/useMagicLink";
+import { BrandedLoadingState } from "@/components/shared/branded-loading-state";
 
 export default function MagicLinkCallback() {
   const { search } = useLocation();
@@ -11,7 +12,7 @@ export default function MagicLinkCallback() {
   const email = qs.get("email") || "";
   const agencyId = qs.get("agencyId") || undefined;
 
-  const { mutateAsync, isPending } = useVerifyMagicCallback();
+  const { mutateAsync } = useVerifyMagicCallback();
 
   useEffect(() => {
     if (!token || !email) {
@@ -48,20 +49,11 @@ export default function MagicLinkCallback() {
     verifyMagicLink();
   }, [token, email, agencyId, mutateAsync, navigate]);
   return (
-    <section className="relative z-10 min-h-dvh grid place-items-center p-6 text-white">
-      <div className="flex flex-col items-center gap-6">
-        <img
-          src="/logo/logo-care-standard.svg"
-          alt="care-standard"
-          className="h-16 w-auto drop-shadow-md"
-        />
-
-        <div className="flex items-center gap-3 text-sm opacity-90">
-          <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/60 border-t-transparent" />
-
-          {isPending ? "Signing you in…" : "Processing magic link…"}
-        </div>
-      </div>
+    <section className="relative z-10 grid min-h-dvh place-items-center p-6">
+      <BrandedLoadingState
+        title="Welcome back"
+        description="We’re securely checking your sign-in link and preparing your workspace."
+      />
     </section>
   );
 }

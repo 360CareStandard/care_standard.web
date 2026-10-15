@@ -20,27 +20,18 @@ export function useSelectWorkspace() {
   return useMutation({
     mutationFn: (body: { agencyId: string }) => AuthApi.selectAgency(body),
     onSuccess: async (res) => {
+      // Clear agency-scoped data before changing the active credentials so
+      // no cached records from the previous agency can render after the switch.
+      // Keep only the user and workspace-list queries used by the current layout.
+      qc.removeQueries({
+        predicate: (query) =>
+          query.queryKey[0] !== qk.me[0] &&
+          query.queryKey[0] !== qk.workspace[0],
+      });
+
       const token = res.data?.token;
       if (token) setToken(token);
       if (res.data?.agency) setWorkspace(res.data.agency);
-
-      // Remove all cached agency-scoped data so the next page
-      // fetches fresh data for the new workspace.
-      // We use removeQueries (not invalidate) so nothing re-fetches
-      // on the current page — only the next page the user lands on.
-      qc.removeQueries({ queryKey: ["client"] });
-      qc.removeQueries({ queryKey: ["staff"] });
-      qc.removeQueries({ queryKey: ["care-plan"] });
-      qc.removeQueries({ queryKey: ["medication"] });
-      qc.removeQueries({ queryKey: ["shift-roster"] });
-      qc.removeQueries({ queryKey: ["safeguarding"] });
-      qc.removeQueries({ queryKey: ["agency-logo"] });
-      qc.removeQueries({ queryKey: ["agency-document"] });
-      qc.removeQueries({ queryKey: ["care-package"] });
-      qc.removeQueries({ queryKey: ["menu"] });
-
-      // DO NOT touch ["workspace"] or ["me"] —
-      // those are needed for the current layout to stay stable
     },
   });
 }
