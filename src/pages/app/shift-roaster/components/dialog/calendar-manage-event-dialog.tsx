@@ -62,11 +62,16 @@ export default function CalendarManageEventDialog({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editingScheduleId, setEditingScheduleId] = useState<string | null>(null);
+  const [editingClientId, setEditingClientId] = useState<string | null>(null);
 
   const effectiveScheduleId = editingScheduleId || scheduleId;
+  const effectiveClientId = editingClientId || clientId;
 
   const deleteVisitSchedule = useDeleteVisitSchedule(clientId);
-  const updateVisitSchedule = useUpdateVisitSchedule(clientId, effectiveScheduleId ?? "");
+  const updateVisitSchedule = useUpdateVisitSchedule(
+    effectiveClientId,
+    effectiveScheduleId ?? "",
+  );
 
   const enabled = open && !!scheduleId;
   const { data: visitScheduleDetails, isLoading: isLoadingDetails } =
@@ -175,6 +180,7 @@ export default function CalendarManageEventDialog({
       toast.success("Visit schedule updated");
       setEditOpen(false);
       setEditingScheduleId(null);
+      setEditingClientId(null);
     } catch (err) {
       handleFormApiError<VisitScheduleForm>(
         err,
@@ -200,6 +206,10 @@ export default function CalendarManageEventDialog({
 
   const openForEdit = async (visit: VisitScheduleType) => {
     setEditingScheduleId(visit.id);
+    // The details sheet closes the selected roster shift before the edit sheet
+    // opens, which clears the clientId prop. Keep the canonical ID from the
+    // loaded schedule for the update request.
+    setEditingClientId(visit.clientId);
     await resetAndValidate(mapApiToFormValues(visit));
     setEditOpen(true);
   };
@@ -239,6 +249,7 @@ export default function CalendarManageEventDialog({
           setEditOpen(v);
           if (!v) {
             setEditingScheduleId(null);
+            setEditingClientId(null);
           }
         }}
         title={"Edit Visit"}

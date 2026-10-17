@@ -15,7 +15,7 @@ export function useClientContacts(clientId: string) {
 export function useClientContact(
   clientId: string,
   contactId: string,
-  enabled = false
+  enabled = false,
 ) {
   return useQuery({
     // unique key for a single contact
@@ -25,6 +25,21 @@ export function useClientContact(
         : ["client-contact-temp", contactId],
     queryFn: () => ClientContactApi.get(clientId, contactId),
     enabled: Boolean(clientId && contactId && enabled),
+  });
+}
+
+export function useClientContactInvitation(clientId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: { email: string }) => {
+      if (!clientId) throw new Error("clientId is required to send invite");
+      return ClientContactApi.sendInvitation(clientId, body);
+    },
+    onSuccess: () => {
+      // optionally update client query detail cache if needed
+      qc.invalidateQueries({ queryKey: qk.client(clientId) });
+      return qc.invalidateQueries({ queryKey: qk.clientContacts(clientId) });
+    },
   });
 }
 /**

@@ -3,11 +3,8 @@ export const qk = {
   me: ["me"] as const,
   menu: (p?: any) => ["menu", p] as const,
   carePackage: (p?: any) => ["care-package", p] as const,
-  clientInfinite: (params?: { page?: number; limit?: number; q?: string }) => [
-    "client",
-    "infinite",
-    params,
-  ] as const,
+  clientInfinite: (params?: { page?: number; limit?: number; q?: string }) =>
+    ["client", "infinite", params] as const,
   clientList: (params?: { page?: number; limit?: number; q?: string }) => [
     "client",
     "list",
@@ -16,6 +13,8 @@ export const qk = {
 
   client: (id: string) => ["client", id] as const,
   clientContacts: (clientId?: string) => ["client-contacts", clientId] as const,
+  clientContactInvitation: (clientId?: string) =>
+    ["client-contact-invitation", clientId] as const,
   // unique key for a single contact
   clientContact: (clientId?: string, contactId?: string) =>
     ["client-contact", clientId, contactId] as const,
@@ -34,11 +33,9 @@ export const qk = {
     ["client-home-enviroment", clientId] as const,
   clientPreferences: (clientId?: string) =>
     ["client-preferences", clientId] as const,
-  clientSettings: (clientId?: string) =>
-    ["client-settings", clientId] as const,
+  clientSettings: (clientId?: string) => ["client-settings", clientId] as const,
 
-  clientExport: (clientId?: string) =>
-    ["client-export", clientId] as const,
+  clientExport: (clientId?: string) => ["client-export", clientId] as const,
   clientFamilyAccessList: (clientId?: string) =>
     ["client-access", clientId] as const,
   clientFamilyAccess: (clientId?: string, accessId?: string) =>
@@ -77,18 +74,21 @@ export const qk = {
   staffDocument: (staffId?: string) => ["staff-document", staffId] as const,
   staffAvailability: (staffId?: string) =>
     ["staff-availability", staffId] as const,
-  staffAbsence: (staffId?: string) =>
-    ["staff-absence", staffId] as const,
-  staffVisitSchedules: (staffId?: string) =>
-    ["staff-visit", staffId] as const,
+  staffAbsence: (staffId?: string) => ["staff-absence", staffId] as const,
+  staffVisitSchedules: (staffId?: string) => ["staff-visit", staffId] as const,
 
   //Shift Roster
-  shiftRosterList: (params?: { view?: string; date?: string; endDate?: string }) => [
-    "shift-roster",
-    params?.view ?? "daily",
-    params?.date ?? "",
-    params?.endDate ?? "",
-  ] as const,
+  shiftRosterList: (params?: {
+    view?: string;
+    date?: string;
+    endDate?: string;
+  }) =>
+    [
+      "shift-roster",
+      params?.view ?? "daily",
+      params?.date ?? "",
+      params?.endDate ?? "",
+    ] as const,
   shiftRoster: (id: string) => ["shift-roster", id],
   StaffPermission: (clientId?: string) =>
     ["staff-permission", clientId] as const,
@@ -100,7 +100,8 @@ export const qk = {
     priority?: string;
     dateFrom?: string;
     dateTo?: string;
-    page?: number; limit?: number;
+    page?: number;
+    limit?: number;
   }) => ["safeguarding", "list", params] as const,
   safeguarding: (id: string) => ["safeguarding", id] as const,
   safeguardingReport: (id: string) => ["safeguarding", "report", id] as const,
@@ -109,36 +110,25 @@ export const qk = {
   agencyLogo: () => ["agency-logo"] as const,
   agencyDocument: () => ["agency-document"] as const,
 
-
   // Activity
 
   activity: ["activity"] as const,
 
-  activityAlerts: (params?: unknown) =>
-    ["activity", "alerts", params] as const,
+  activityAlerts: (params?: unknown) => ["activity", "alerts", params] as const,
 
-  careLogs: (params?: unknown) =>
-    ["activity", "care-logs", params] as const,
+  careLogs: (params?: unknown) => ["activity", "care-logs", params] as const,
 
   systemActivities: (params?: unknown) =>
     ["activity", "system", params] as const,
 
   //Finance
   financeOverview: () => ["finance", "overview"] as const,
-  financeInvoices: (params?: { page?: number; limit?: number; q?: string }) => [
-    "finance",
-    "invoices",
-    params,] as const,
-  financeCharges: (params?: { page?: number; limit?: number; q?: string }) => [
-    "finance",
-    "charges",
-    params,] as const,
-  financePayments: (params?: { page?: number; limit?: number; q?: string }) => [
-    "finance",
-    "payments",
-    params,
-  ] as const,
-
+  financeInvoices: (params?: { page?: number; limit?: number; q?: string }) =>
+    ["finance", "invoices", params] as const,
+  financeCharges: (params?: { page?: number; limit?: number; q?: string }) =>
+    ["finance", "charges", params] as const,
+  financePayments: (params?: { page?: number; limit?: number; q?: string }) =>
+    ["finance", "payments", params] as const,
 
   //Agency
   agencyList: (params?: { page?: number; limit?: number; q?: string }) => [

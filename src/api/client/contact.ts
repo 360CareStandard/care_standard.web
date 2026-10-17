@@ -35,6 +35,11 @@ export const ClientContactApi = {
   post: (id: string, body: AddContactForm) =>
     api.post<ClientContact>(`/client/${id}/contacts`, body).then((r) => r.data), // ← FIXED
 
+  sendInvitation: (id: string, body: { email: string }) =>
+    api
+      .post<{ status: "success" }>(`/client/invite-care-contact/${id}`, body)
+      .then((r) => r.data),
+
   delete: (id: string, contactId: string) =>
     api
       .delete<{ status: "success" }>(`/client/${id}/contacts/${contactId}`)
