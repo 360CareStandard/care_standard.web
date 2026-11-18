@@ -43,6 +43,13 @@ export const medicationSchema = z
     route: routeEnum,
     frequency: z.string().min(1, "Frequency is required"),
     doseInstruction: z.string().optional(),
+    bodyMap: z
+      .object({
+        bodyPart: z.string().min(1, "Body part is required"),
+        instruction: z.string().min(1, "Instruction is required"),
+      })
+      .nullable()
+      .optional(),
 
     doseTimes: z.array(z.string()).min(1, "At least one dose time is required"),
 
@@ -71,7 +78,7 @@ export const medicationSchema = z
     {
       path: ["doseTimes"],
       message: "Dose times must match selected frequency",
-    }
+    },
   )
 
   .superRefine((data, ctx) => {
@@ -89,6 +96,13 @@ export const medicationSchema = z
         path: ["endDate"],
         message: "End date must be empty when 'No end date' is selected",
         code: z.ZodIssueCode.custom,
+      });
+    }
+    if (data.route === "topical" && !data.bodyMap) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["bodyMap"],
+        message: "Body map information is required for topical medication",
       });
     }
   });

@@ -35,7 +35,10 @@ export interface Medication {
 
   doseInstruction: string; // "two tablets"
   doseTimes: string[]; // ["08:00", "20:00"]
-
+  bodyMap?: {
+    bodyPart: string;
+    instruction: string;
+  } | null;
   startDate: string; // YYYY-MM-DD
   endDate: string | null;
   noEndDate: boolean;

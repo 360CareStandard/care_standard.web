@@ -33,11 +33,7 @@ export function SidebarNav({ basePath, nav, header }: SidebarNavProps) {
   const { setOpenMobile } = useSidebar();
 
   return (
-    <Sidebar
-      collapsible="offcanvas"
-      variant="sidebar"
-      className="!bg-white pt-20 !w-[272px]"
-    >
+    <Sidebar variant="sidebar" className="!bg-white pt-20 !w-[272px]">
       {header && (
         <SidebarHeader className="border-b bg-white">{header}</SidebarHeader>
       )}
