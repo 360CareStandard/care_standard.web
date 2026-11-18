@@ -29,6 +29,7 @@ import { MedicationList } from "./components/medication-list";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { handleFormApiError } from "@/lib/handle-form-error";
+import SinglePageLoader from "@/components/loading/single-page-loader";
 
 export const initialMedicationValues: MedicationForm = {
   // createdBy: "",
@@ -45,6 +46,10 @@ export const initialMedicationValues: MedicationForm = {
   additionalInstructions: "",
   administeredBy: "carer",
   linkedCareDomain: "",
+  bodyMap: {
+    bodyPart: "",
+    instruction: "",
+  },
   metadata: {
     source: "web-app",
   },
@@ -118,6 +123,10 @@ const Medications = () => {
     doseTimes: medication.doseTimes,
     startDate: medication.startDate,
     endDate: medication.endDate,
+    bodyMap: {
+      bodyPart: medication.bodyMap?.bodyPart ?? "",
+      instruction: medication.bodyMap?.instruction ?? "",
+    },
     noEndDate: medication.noEndDate,
     prescriberName: medication.prescriberName,
     additionalInstructions: medication.additionalInstructions,
@@ -233,14 +242,7 @@ const Medications = () => {
   };
   const hasMedications = medications.length > 0;
   if (isInitialLoading) {
-    return (
-      <div className="w-full flex-1 flex items-center justify-center min-h-[400px]">
-        <div className="flex flex-col items-center gap-3 text-muted-foreground">
-          <Spinner size="lg" />
-          <p className="text-sm">Checking client information...</p>
-        </div>
-      </div>
-    );
+    return <SinglePageLoader text="client information..." />;
   }
   // if (hasLoadError) {
   //   return (

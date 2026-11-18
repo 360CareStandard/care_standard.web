@@ -3,97 +3,79 @@ import { createPortal } from "react-dom";
 import { WifiOff, RefreshCw, X } from "lucide-react";
 
 const OnlineStatus: FC = () => {
-  const [online, setOnline] = useState<boolean>(
-    typeof navigator !== "undefined" ? navigator.onLine : true
+  const [online, setOnline] = useState(
+    typeof navigator !== "undefined" ? navigator.onLine : true,
   );
-  const [open, setOpen] = useState<boolean>(false);
-
-  // avoid initial flash on mount
-  useEffect(() => {
-    const init = () => setOnline(navigator.onLine);
-    init();
-  }, []);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    setOnline(navigator.onLine);
+
     const handleOnline = () => setOnline(true);
     const handleOffline = () => setOnline(false);
+
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
+
     return () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
-  // show when offline, hide when back online
   useEffect(() => {
-    setOpen(!online);
+    if (online) setOpen(false);
+    else setOpen(true);
   }, [online]);
 
   const retry = () => setOnline(navigator.onLine);
 
   if (!open) return null;
 
-  const toast = (
+  return createPortal(
     <div
-      aria-live="polite"
       role="status"
-      className="fixed inset-x-0 top-4 z-[100] flex justify-center pointer-events-none"
+      aria-live="polite"
+      className="fixed inset-x-0 top-5 z-[100] flex justify-center px-4 pointer-events-none"
     >
-      <div
-        className={[
-          "pointer-events-auto",
-          "flex items-start gap-3",
-          "rounded-lg border border-red-200/60 bg-red-600 backdrop-blur",
-          "shadow-lg px-4 py-3",
-          "w-[92%] max-w-md",
-          "transition-all duration-200 ease-out",
-          "animate-[slideDown_200ms_ease-out]",
-          "dark:border-red-900/40 dark:bg-zinc-900/90",
-        ].join(" ")}
-      >
-        <div className="mt-0.5">
-          <WifiOff className="h-5 w-5 text-white" aria-hidden="true" />
-        </div>
+      <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-rose-100 bg-white/95 px-4 py-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl animate-[slideDown_200ms_ease-out]">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rose-50">
+          <WifiOff className="h-4 w-4 text-rose-400" />
+        </span>
 
-        <div className="flex-1">
-          <p className="text-sm font-medium text-white dark:text-zinc-100">
-            You’re offline
-          </p>
-          <p className="text-xs text-white">
-            Check your connection. We’ll resume once you’re back online.
-          </p>
-          <div className="mt-2 flex gap-2">
-            <button
-              onClick={retry}
-              className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium
-                         border-zinc-300 text-white
-                        "
-            >
-              <RefreshCw className="h-3.5 w-3.5" />
-              Retry
-            </button>
-            <button
-              onClick={() => setOpen(false)}
-              className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-white
-                         dark:text-zinc-400 dark:hover:bg-zinc-800"
-              aria-label="Dismiss offline message"
-            >
-              <X className="h-3.5 w-3.5" />
-              Dismiss
-            </button>
-          </div>
-        </div>
+        <p className="whitespace-nowrap text-sm font-medium text-zinc-700">
+          You’re offline
+          <span className="ml-1.5 font-normal text-zinc-400">
+            · Waiting for connection
+          </span>
+        </p>
+
+        <button
+          onClick={retry}
+          aria-label="Retry connection"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-500 transition hover:bg-rose-100 active:scale-95"
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+        </button>
+
+        <button
+          onClick={() => setOpen(false)}
+          aria-label="Dismiss offline message"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-600"
+        >
+          <X className="h-4 w-4" />
+        </button>
       </div>
 
-      {/* tiny keyframes without adding a css file */}
       <style>
-        {`@keyframes slideDown{from{transform:translateY(-8px);opacity:.0 }to{transform:translateY(0);opacity:1}}`}
+        {`@keyframes slideDown {
+          from { transform: translateY(-8px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }`}
       </style>
-    </div>
+    </div>,
+    document.body,
   );
-
-  return createPortal(toast, document.body);
 };
 
 export default OnlineStatus;

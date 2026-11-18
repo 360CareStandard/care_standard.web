@@ -25,7 +25,7 @@ export const healthcareProfessionalSchema = z.object({
     }),
   email: z.string().email().optional(),
   organisation: z.string().optional(),
-  notes: z.string().optional(),
+  notes: z.string().min(2, "Notes are required"),
 });
 
 export const gpSupportSchema = z.object({

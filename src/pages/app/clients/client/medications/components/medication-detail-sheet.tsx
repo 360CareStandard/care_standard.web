@@ -9,6 +9,7 @@ import { InfoRow } from "../../components/info-row";
 import dayjs from "dayjs";
 import { Edit, Trash } from "iconsax-react";
 import { Undo } from "lucide-react";
+import { BodyMap } from "./body-map-display";
 
 interface Props {
   open: boolean;
@@ -133,6 +134,31 @@ export function MedicationDetailSheet({
                   : dayjs(medication.endDate).format("DD MMMM YYYY")}
               </InfoRow>
             </div>
+            {medication.bodyMap && (
+              <div className="border rounded-2xl px-5 py-4 bg-white shadow shadow-gray-50 space-y-3">
+                <div>
+                  <h3 className="text-sm font-semibold">Body Map</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Medication application site and instructions
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <InfoRow label="Body Part">
+                    {medication.bodyMap.bodyPart}
+                  </InfoRow>
+
+                  <InfoRow label="Application Instruction">
+                    {medication.bodyMap.instruction}
+                  </InfoRow>
+                </div>
+                <BodyMap
+                  bodyPart={medication.bodyMap?.bodyPart}
+                  instruction={medication.bodyMap?.instruction}
+                  interactive={false}
+                />
+              </div>
+            )}
             <div className="border  rounded-2xl px-5 py-2  bg-white shadow shadow-gray-50">
               <InfoRow label="Prescriber">{medication.prescriberName}</InfoRow>
               <InfoRow label="Instructions">

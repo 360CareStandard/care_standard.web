@@ -11,6 +11,7 @@ import {
 import { MedicationForm } from "../../../../schemas/medication";
 import { MedicationScheduleSection } from "./medication-schedule";
 import { MedicationDatesSection } from "./medical-dates";
+import { BodyMapSection } from "./body-map";
 
 export function MedicationDetailsSection() {
   const {
@@ -110,6 +111,7 @@ export function MedicationDetailsSection() {
           />
         </div>
       </div>
+      <BodyMapSection />
       <MedicationScheduleSection />
       <MedicationDatesSection />
     </div>

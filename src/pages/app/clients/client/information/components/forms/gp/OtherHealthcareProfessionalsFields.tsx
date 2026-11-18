@@ -39,7 +39,11 @@ const makeBlank = () => ({
 });
 
 export function OtherHealthcareProfessionalsFields() {
-  const { control, register } = useFormContext<GpSupportForm>();
+  const {
+    control,
+    register,
+    formState: { errors },
+  } = useFormContext<GpSupportForm>();
 
   const { fields, append, remove, replace } = useFieldArray({
     control,
@@ -109,6 +113,12 @@ export function OtherHealthcareProfessionalsFields() {
                   </Select>
                 )}
               />
+
+              {errors.otherHealthcareProfessionals?.[idx]?.role && (
+                <p className="form-error">
+                  {errors.otherHealthcareProfessionals[idx].role.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -116,10 +126,15 @@ export function OtherHealthcareProfessionalsFields() {
               <Input
                 placeholder="Professional name"
                 {...register(
-                  `otherHealthcareProfessionals.${idx}.name` as const
+                  `otherHealthcareProfessionals.${idx}.name` as const,
                 )}
-                defaultValue={field.name ?? ""}
               />
+
+              {errors.otherHealthcareProfessionals?.[idx]?.name && (
+                <p className="form-error">
+                  {errors.otherHealthcareProfessionals[idx].name.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -130,7 +145,7 @@ export function OtherHealthcareProfessionalsFields() {
                 inputMode="tel"
                 placeholder="+234 801 234 5678"
                 {...register(
-                  `otherHealthcareProfessionals.${idx}.phone` as const
+                  `otherHealthcareProfessionals.${idx}.phone` as const,
                 )}
                 defaultValue={field.phone ?? ""}
               />
@@ -145,7 +160,7 @@ export function OtherHealthcareProfessionalsFields() {
                 inputMode="email"
                 placeholder="clinician@org.com"
                 {...register(
-                  `otherHealthcareProfessionals.${idx}.email` as const
+                  `otherHealthcareProfessionals.${idx}.email` as const,
                 )}
                 defaultValue={field.email ?? ""}
               />
@@ -157,7 +172,7 @@ export function OtherHealthcareProfessionalsFields() {
             <Input
               placeholder="Organisation name"
               {...register(
-                `otherHealthcareProfessionals.${idx}.organisation` as const
+                `otherHealthcareProfessionals.${idx}.organisation` as const,
               )}
               defaultValue={field.organisation ?? ""}
             />
@@ -168,12 +183,17 @@ export function OtherHealthcareProfessionalsFields() {
             <Textarea
               placeholder="Additional notes..."
               {...register(
-                `otherHealthcareProfessionals.${idx}.notes` as const
+                `otherHealthcareProfessionals.${idx}.notes` as const,
               )}
               defaultValue={field.notes ?? ""}
               className="min-h-[84px] resize-y"
             />
           </div>
+          {errors.otherHealthcareProfessionals?.[idx]?.notes && (
+            <p className="form-error">
+              {errors.otherHealthcareProfessionals[idx].notes.message}
+            </p>
+          )}
         </div>
       ))}
 
