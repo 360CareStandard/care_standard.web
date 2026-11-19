@@ -251,7 +251,6 @@ export const BODY_PART_ID_TO_LABEL = LABELS;
 
 export const BodyMap: React.FC<BodyMapProps> = ({
   bodyPart,
-  instruction,
   view = "front",
   interactive = false,
   onBodyPartChange,
